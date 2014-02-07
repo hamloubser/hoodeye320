@@ -1,140 +1,361 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8" />
-    <title>Hello, World</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="jquery-mobile/styles/jquery.mobile-1.3.1.min.css" rel="stylesheet" />
-    <link href="styles/main.css" rel="stylesheet" />
+	<head>
+		<title>Hood Eye</title>
+		<meta charset="utf-8">
+		<meta name=viewport content="user-scalable=no,width=device-width" />
+        
+        <link href="styles/main.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="styles/main.css" />
+        
+        <link href="jquery-mobile/jquery.mobile-1.3.0.min.css" rel="stylesheet" type="text/css" />
 
-    <script src="cordova.js" type="text/javascript"></script>
-    <script src="jquery-mobile/js/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="jquery-mobile/js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true"></script>
+		<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+		<script type="text/javascript" charset="utf-8" src="scripts/main.js"></script>
+        
+        
+        
+        <script src="jquery-mobile/jquery-1.8.2.min.js" type="text/javascript"></script>
+        <script src="jquery-mobile/jquery.mobile-1.3.0.min.js" type="text/javascript"></script>
+        <script src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  
+		
+        
+        <script src="jquery_ui_map/jquery.ui.map.js" type="text/javascript"></script>
+        <script src="jquery_ui_map/jquery.ui.map.extenstions.js" type="text/javascript"></script>
+        <script src="jquery_ui_map/jquery.ui.map.services.js" type="text/javascript"></script>
+        
+        
+              
+        <script src="js/hello-world.js" type="text/javascript"></script>
+        
+        
+	</head>
 
-    <script src="scripts/login.js" type="text/javascript"></script>
-    <script src="scripts/location.js" type="text/javascript"></script>
-</head>
-<body>
+        
 
-    <!--Home-->
-    <div id="page-home" data-role="page">
 
-        <!--Header-->
-        <div data-role="header" data-position="fixed">
-            <h1>Home!</h1>
-        </div>
 
-        <!--Content-->
-        <div data-role="content">
-            <h1>Welcome to Telerik AppBuilder!</h1>
-            <p>
-                Telerik AppBuilder&trade; enables you to build cross-platform device applications regardless of your
-                    development platform by combining the convenience of a local development toolset with the
-                    power and flexibility of the cloud.
-            </p>
-        </div>
-        <div class="nav">
-            <ul data-role="listview">
-                <li>
-                    <a href="#page-ui-interaction" data-transition="slide">UI Interaction Example</a>
-                </li>
-                <li>
-                    <a href="#page-location" data-transition="slide">Location Example</a>
-                </li>
-            </ul>
-        </div>
 
-        <!--Footer-->
-        <div data-role="footer" data-position="fixed" data-id="oneFooter">
-            <span class="footerText">Built with Telerik AppBuilder&trade;</span>
-        </div>
-
-    </div>
-
-    <!--UI interaction-->
-    <div id="page-ui-interaction" data-role="page" data-add-back-btn="true">
-
-        <!--Header-->
-        <div data-role="header" data-position="fixed">
-            <h1>Login</h1>
-        </div>
-
-        <!--Content-->
-        <div data-role="content">
-            <div id="login-wrap">
-                <form data-ajax="false" id="login-form">
-                    <h3 id="login-text">Enter your credentials:</h3>
-                    <div>
-                        <input id="login-username" type="text" placeholder="Username" />
-                        <input id="login-password" type="password" placeholder="Password" />
-                    </div>
-
-                    <div class="buttons ui-bar">
-                        <div>
-                            <div class="left">
-                                <input type="submit" id="login" data-icon="check" data-inline="true" class="left" value="Login" />
-                            </div>
-                            <div class="right">
-                                <button id="login-reset" data-icon="delete" data-inline="true" class="right">Reset</button>
-                            </div>
-                            <div class="clear"></div>
-                        </div>
-                    </div>
-                </form>
+ <body> 
+        
+        <div data-role="page" id="home" --------------------------------------- homepage >
+            <div data-role="header">
+               <a href="#mysettingspage" data-icon="info" class="ui-btn-right">Settings</a>
+                <h1>Hoodeye</h1>
             </div>
+             <div data-role="content">
+                  
 
-            <div id="logout-wrap">
-                <div>
-                    <h1 class="welcome">Welcome, <span id="logout-username"></span>!
-                    </h1>
+                 
+                 
+<div class="ui-grid-a" id="menupage">
+            <div class="ui-block-a" style="text-align: center;">
+                <a id="img1" href="#inputlistpage">
+                    <div style="text-align: center;">
+                        <img id="img1" style="width: 100px; height: 100px;" src="images/imglogin.png">
+                    </div>
+                </a>
+login
+            </div>
+            <div class="ui-block-b" style="text-align: center;">
+                <a id="img2" href="#communitylistpage">
+                    <div style="text-align: center;">
+                        <img  id="img2" style="width: 100px; height: 100px;" src="images/imgreportincident.jpg">
+                    </div>
+                </a>
+ report incident
+            </div>
+            <div class="ui-block-a" style="text-align: center;">
+                <a id="img3" href="#panicpage">
+                    <div style="text-align: center;">
+                        <img id="img3" style="width: 100px; height: 100px;" src="images/imgpanic.png">
+                    </div>
+                </a>
+panic
+            </div>
+            <div class="ui-block-b" style="text-align: center;">
+                <a id="img4" href="index-testsimple.html">
+                    <div style="text-align: center;">
+                        <img id="img4" style="width: 100px; height: 100px;" src="images/imgsafetybox.png">
+                    </div>
+                </a>
+safety box
+            </div>
+            <div class="ui-block-a" style="text-align: center;">
+                 <a id="img5" href="#pagemap">
+                    <div style="text-align: center;">
+                        <img id="img5" style="width: 100px; height: 100px;" src="images/imgmap.png">
+                    </div>
+                </a>
+map
+            </div>
+            <div class="ui-block-b" style="text-align: center;">
+                     <a id="img6" href="#eventlistpage">
+                    <div style="text-align: center;">
+                        <img id="img6" style="width: 100px; height: 100px;" src="images/imgviewalerts.png">
+                    </div>
+                </a>
+view events           
+             </div>
+                            
+   </div>
+ </div>     
+</div>     
+     
+      
+<div data-role="page" data-transition="slideup" id="reportpage"---------------------------------------------- reportpage>
+   <div data-role="header">
+     <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
+       <h1>reportpage</h1>
+   </div>
+                           <div data-role="content">
+                  
+                               
+    
+
+                        <form id = "EventForm" onsubmit="return submitEvent();">
+                                                  <div data-role="fieldcontain">
+                                    <label for="comment">Comment  </label>
+                                    <textarea name="detail" id="detail" type="text" placeholder=""> </textarea>
+                                   </div>
+                         
+                            
+                                  <div class="content">
+            <div class="action-area ch50">
+                <button class="button dh" id="captureVideo">Capture Video</button>
+			    <button class="button dh" id="captureAudio">Capture Audio</button>
+                <button class="button dh" id="captureImage">Capture Image</button>
+			</div>
+            <div class="result-area ch50">
+                <div class="results">
+                    <div id="media"></div>
                 </div>
-
-                <div class="buttons">
-                    <div data-role="controlgroup" data-type="horizontal">
-                        <button id="logout" data-icon="back">Logout</button>
-                    </div>
-                </div>
-            </div>
+				<div class="separator"></div>
+			</div>
         </div>
+                            
+                            
+                               
+                        <input name='community_id' id="eventcommunity" type="hidden" value='-no community id-'>
+                        <input name='intype' id="eventintype" type="hidden" value='testing'>
+                        <input name='device_id' id="eventdevicedetails" type="hidden" value='-no device details - '>
+                        <input id="event_latitude" type="hidden" name='lat'  val='-'>
+                        <input id="event_longitude" type="hidden" name='long'  val='-'>
+                        <input id="create_time" type="hidden" name='create_time'  val='-'>
+                            
+                         <input id="camera_image" type="text" name='camera_image'  val='-'>   
+                            
+  
+                        <input name='submit'  value="Report" data-icon="alert" type='submit' style="color:black; background-color:#ed1c24";>
+  
+                               </form>
+                        
+                            <div id='result'>No Result yet</div>
 
-        <!--Footer-->
-        <div data-role="footer" data-position="fixed" data-id="oneFooter">
-            <span class="footerText">Built with Telerik AppBuilder&trade;</span>
-        </div>
 
     </div>
+</div>
 
-    <!--Location-->
-    <div id="page-location" data-role="page" data-add-back-btn="true">
+          
+             
+<div data-role="page" id="pagemap"----------------------------------------------------------------- mappage>
+   <div data-role="header">
+        
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
+       
+     <h1>Map</h1>
+   </div>
+   <div data-role="content" >
+    
 
-        <!--Header-->
-        <div id="page-location-header" data-role="header" data-position="fixed">
-            <h1>Location</h1>
-        </div>
 
-        <!--Content-->
-        <div id="page-location-content" data-role="content">
-            <div id="map-search-wrap">
-                <a id="map-navigate-home"></a>
-                <form data-ajax="false" onsubmit="return false;">
-                    <input id="map-address" type="search" data-role="none" placeholder="Address" />
-                    <input id="map-search" type="submit" value="" data-role="none" />
-                </form>
+  
+    </div>
+</div>
+
+
+     
+     
+ 
+     
+     
+      
+<div data-role="page" data-transition="slideup" id="panicpage"---------------------------------------------- panicpage>
+   <div data-role="header">
+     <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
+       <h1>Panic</h1>
+   </div>
+                           <div data-role="content">
+                          
+             <form action="">
+            <div data-role="fieldcontain">
+                <label for="textinput1">
+                    panic
+                </label>
+                <input name="panic" id="textinput1" type="text" placeholder="help me - "
+                value="help me - ">
             </div>
-            <div id="map-canvas"></div>
-        </div>
-
-        <!--Footer-->
-        <div id="page-location-footer" data-role="footer" data-position="fixed" data-id="oneFooter">
-            <span class="footerText">Built with Telerik AppBuilder&trade;</span>
-        </div>
+                   
+                  <fieldset data-role="controlgroup" data-type="vertical">
+                        <legend>
+                            Choose:
+                        </legend>
+                        <input name="contactfamily" id="checkbox1" type="checkbox">
+                        <label for="checkbox1">
+                            my family
+                        </label>
+                        <input name="contactfriends" id="checkbox2" type="checkbox">
+                        <label for="checkbox2">
+                            my friends
+                        </label>
+                        <input name="contactmedical" id="checkbox3" type="checkbox">
+                        <label for="checkbox3">
+                            my medical contacts
+                        </label>
+                    </fieldset>
+                 
+                <a href="sms:0823774883">Send SMS</a>
+                 
+     
+                            
+                 <input id="panic_event_latitude" type="text" name='lat'  val='-'>
+                 <input id="panic_event_longitude" type="text" name='long'  val='-'>
+                        
+                   
+        </form>                    
+                               
 
     </div>
-    <script type="text/javascript">
-        document.addEventListener('deviceready', function () {
-            navigator.splashscreen.hide();
-        }, false);
-    </script>
-</body>
+</div>
+
+          
+
+    
+<div data-role="page" id="inputlistpage"----------------------------------------------------------------- inputpage>
+   <div data-role="header">
+       
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
+       
+      <h1>Choose Community </h1>
+   </div>
+   <div data-role="content">
+
+       
+        <label for="intypelist" class="select"   >  </label>  
+          <ul data-role="listview"   id="intypelist">    
+      
+                </ul>
+
+
+       
+        <p></p>
+       <p><a href="#reportpage">- Server Down - link to emergency report </a> </p>  
+        
+        
+                        
+             <div data-role="footer"  data-position="fixed" id="reportincidentsfooter">		
+                  <div data-role="navbar" data-iconpos="top">
+                    <ul> 
+                        <li><a href="#communitylistpage" data-icon="grid">Login </a></li>
+     
+                        <li><a href="" data-icon="star" data-theme="e"> Panic </a></li>
+                        <li><a href="" data-icon="gear"> safety box </a></li>
+
+                    </ul>
+                </div><!-- /navbar -->
+             </div>
+       
+       
+    </div>
+</div>              
+        
+
+        
+   
+    
+<div data-role="page" id="eventlistpage"----------------------------------------------------------------- eventpage>
+   <div data-role="header">
+       
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
+       
+      <h1 id="eventlisttitle"> Alerts </h1>
+   </div>
+    
+    
+    
+     <div id="map_canvas_events"> </div>
+
+    
+    
+   <div data-role="content">
+ 
+                <ul data-role="listview"   id="eventlist" >    
+    <li>Waiting for server</li>
+                </ul>
+                 
+    
+    </div>
+</div>
+        
+      
+        
+      
+        
+      
+<div data-role="page" id="communitylistpage"--------------------------------------------------------- communitylist>
+   <div data-role="header">
+       
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
+       
+      <h1> Login Community </h1>
+   </div>
+   <div data-role="content">
+     
+ 
+   
+  
+<label for="communitylist2" class="select">  
+                                                    </label>  
+  
+
+
+                <ul data-role="listview"   id="communitylist2"  >    
+     
+                </ul>
+                 
+    
+ <p>Server Down</p>    
+<p>Support notified</p>
+    
+    </div>
+</div>
+        
+              
+        
+        
+        
+        
+ 
+<div data-role="page" id="mysettingspage"----------------------------------------------------------------------------------------------- mysettingspage>
+   <div data-role="header">
+        
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
+       
+     <h1>mysettingspage</h1>
+   </div>
+   <div data-role="content">
+      <p>my account info</p>
+ 
+<p>what is my user</p>    
+<p>what is my subscrition</p>
+
+
+    </div>
+</div>       
+        
+        
+        
+    </body>
+
 </html>
