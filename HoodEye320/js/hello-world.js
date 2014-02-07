@@ -9,7 +9,7 @@ var currentcommunity ;
 var community_list;
 var intype_list ;
 
-var locations = [] ;
+//var locations = [] ;
 
 
 // PhoneGap is ready
@@ -127,10 +127,10 @@ function onGeolocationSuccess(position) {
 	var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
              
-  
-    
- 	locations.push(['1 you are here', lat,long,1] );     // works
-  //  locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.
+    var locations = [] ;
+    locations = listevents() ;
+ 	//locations.push(['1 you are here', lat,long,1] );     // works
+   // locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.
  
           var latlng = new google.maps.LatLng (lat, long);
           var options = { 
@@ -168,7 +168,7 @@ function onGeolocationSuccess(position) {
 
 
 
-google.maps.event.addDomListener(window, 'load', initialize);
+//google.maps.event.addDomListener(window, 'load', initialize);
 
 //        <img width="288" height="200" id="mapmarker" 
 //        src="https://maps.googleapis.com/maps/api/staticmap?center=-26.11305892469931,27.9846208915375&amp;
@@ -319,9 +319,10 @@ function listcommunity2() {
 
 
 function listevents() {
+   var event_locations = [];
    var params = 'community_id=' + currentcommunity._id;
    $("#eventlisttitle").html("inf " + currentcommunity.name);
-   $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
+   return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       var items_html;
        var latlngalert;
     
@@ -334,7 +335,7 @@ function listevents() {
           
           
          	// and event locations to loacation variable		  //--bad == bad	/--bad == bad/--bad == bad/--bad == bad		
-          // locations.push([ 'event', event.lat , event.long , 2]) ;
+           event_locations.push([ 'event'+$count, event.lat , event.long , $count]) ;
           
           count += 1;
       });
@@ -355,7 +356,7 @@ function listevents() {
    var mapImg = '<img src="' + googleApis_map_Url + '" />';
     $("#map_canvas_events").html(mapImg);       
     
-
+   return event_locations;
        
    });
     
