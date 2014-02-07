@@ -21,11 +21,11 @@ function onDeviceReady() {
     //listactivity();  //--- depricated
     listintype1();
     listcommunity2();//--- thing for default com
-   // listevents();
+   listevents();
   
     getLocation(); 
    
- 
+    listevents();
     
     navigator.splashscreen.hide();
   
@@ -48,7 +48,7 @@ $('#eventlistpage').live('pageshow',function(event, ui){
 function getLocation() {
     navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
     
-    
+       listevents();
    
 }
   
@@ -102,7 +102,7 @@ function onGeolocationSuccess(position) {
         }
     });
     
-    // Use Google API to get a map of the current location
+   // Use Google API to get a map of the current location
     // http://maps.googleapis.com/maps/api/staticmap?size=280x300&maptype=hybrid&zoom=16&markers=size:mid%7Ccolor:red%7C42.375022,-71.273729&sensor=true
     //var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?size=300x200&maptype=street&zoom=13&sensor=true&markers=size:mid%7Ccolor:red%7C' + latlng + latlngalert ;
  	//      		 var lat = hoodeye_last_position.coords.latitude;
@@ -162,7 +162,6 @@ function onGeolocationSuccess(position) {
         }
       })(marker, i));
      }
-  
 
     
 }
