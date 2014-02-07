@@ -9,7 +9,7 @@ var currentcommunity ;
 var community_list;
 var intype_list ;
 
-var locations ;
+var locations = [] ;
 
 
 // PhoneGap is ready
@@ -21,11 +21,11 @@ function onDeviceReady() {
     //listactivity();  //--- depricated
     listintype1();
     listcommunity2();//--- thing for default com
-   listevents();
+    listevents();
   
     getLocation(); 
    
-    listevents();
+
     
     navigator.splashscreen.hide();
   
