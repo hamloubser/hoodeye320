@@ -15,7 +15,6 @@ var intype_list ;
 // PhoneGap is ready
 function onDeviceReady() {
     
-
   
    // listCommunities1()
     //listactivity();  //--- depricated
@@ -26,6 +25,9 @@ function onDeviceReady() {
     getLocation(); 
    
 
+    captureApp = new captureApp();
+    captureApp.run();
+    
     
     navigator.splashscreen.hide();
   
@@ -41,9 +43,25 @@ $('#eventlistpage').live('pageshow',function(event, ui){
            });
 
 
+function submitLogin() {
+    var username = encodeURIComponent($("#login_username").val());
+    var password = encodeURIComponent($("#login_password").val());
 
+    $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
+    });
+   
+    return false;
+    
+}
   
-
+function submitLogout() {
+    $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
+    });
+   
+    return false;
+    
+}
+  
 
 function getLocation() {
     navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
@@ -127,7 +145,7 @@ function onGeolocationSuccess(position) {
 	var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
              
-    var locations = [] ;
+    var locations  ;
     locations = listevents() ;
  	//locations.push(['1 you are here', lat,long,1] );     // works
    // locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.

@@ -1,13 +1,10 @@
-document.addEventListener("deviceready", onDeviceReady, false);
+
  
 function id(element) {
     return document.getElementById(element);
 }
 
-function onDeviceReady() {
-    captureApp = new captureApp();
-    captureApp.run();
-}
+
 
 function captureApp() {
 }
