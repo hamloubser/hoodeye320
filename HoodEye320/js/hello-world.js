@@ -20,9 +20,7 @@ function onDeviceReady() {
    });
 
   
-   // listCommunities1()
-    //listactivity();  //--- depricated
-    listintype1();
+    mycommunities();
     listcommunity2();//--- thing for default com
     listevents();
   
@@ -235,61 +233,6 @@ function listCommunities() {
     });
 }
 
-/////AL -testing and learning: working with the js and modifying subpage       
-function testlist()
-{
-var txt1="<p>added</p>";              // Create text with HTML
-var txt2=$("<p></p>").text("Text.");  // Create text with jQuery
-var txt3=document.createElement("p");
-txt3.innerHTML="Text.";               // Create text with DOM
-$("#inputlistV").append(txt1,txt2,txt3);        // Append new elements
-}
-
-function listactivity()
-{
-var txt1="<option>bad person</option>";              // Create text with HTML
-var txt2=$("<option ></option>").text("sad person");  // Create text with jQuery
-var txt3=document.createElement("option");
-txt3.innerHTML="ugly person";               // Create text with DOM
-$("#activity").append(txt1,txt2,txt3);        // Append new elements
-   
-}
-
-
-
-function listCommunities1() {
-   $.get('http://dev.hoodeye.com:4242/api/community', function(data) {
-        
-      var items = [];
-      var options;
-      $.each(data, function(key, community) { 
-        
-          options += '<option>'+community.name+'</option>';
-     });
-     
-     $("#communitylist1").html(options);
-
-    });
-}
-
-
-
-function listintype() {
-   $.get('http://dev.hoodeye.com:4242/api/intype', function(data) {
-        
-      var items = [];
-      var options;
-      $.each(data, function(key, intype) { 
-         items.push(intype.label);
-          options += '<option>'+intype.label+'</option>';
-     });
-     
-     $("#intypelist").html(options);
-
-    });
-}
-
-
 
 
 function assigncommunity (key) {
@@ -305,7 +248,7 @@ function assignintype (key) {
     
 }
 
-function listintype1() {
+function mycommunities() {
    $.get('http://dev.hoodeye.com:4242/api/community', function(data) {
        // default to first community listed for now
        currentcommunity = data[0];
@@ -322,10 +265,12 @@ function listintype1() {
           
       });
      
-     $("#intypelist").html(options);
+     $("#mycommunities").html(options);
        
     });
 }
+
+
 
 function listcommunity2() {
    
