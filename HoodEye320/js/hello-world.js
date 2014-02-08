@@ -21,8 +21,8 @@ function onDeviceReady() {
 
   
     mycommunities();
-    listcommunityeventtypes();//--- thing for default com
-    listevents();
+    //listcommunityeventtypes();//--- thing for default com
+    //listevents();
   
     getLocation(); 
    
@@ -255,6 +255,7 @@ function mycommunities() {
 
 
       community_list = data;
+      assigncommunity(0);
         
       var items = [];
       var options;
