@@ -53,7 +53,18 @@ function submitLogin() {
     return false;
     
 }
-  
+
+function submitRegister() {
+    var username = encodeURIComponent($("#reg_username").val());
+    var password = encodeURIComponent($("#reg_password").val());
+    var password_verify = encodeURIComponent($("#reg_password_verify").val());
+    $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
+    });
+   
+    return false;
+    
+}
+
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
     });
