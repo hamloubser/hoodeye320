@@ -21,7 +21,7 @@ function onDeviceReady() {
 
   
     mycommunities();
-    listcommunity2();//--- thing for default com
+    listcommunityeventtypes();//--- thing for default com
     listevents();
   
     getLocation(); 
@@ -238,7 +238,7 @@ function listCommunities() {
 function assigncommunity (key) {
            currentcommunity = community_list[key] ;
     $("#eventcommunity").val(currentcommunity._id);
-    listcommunity2();
+    listcommunityeventtypes();
     
 }
 
@@ -272,7 +272,7 @@ function mycommunities() {
 
 
 
-function listcommunity2() {
+function listcommunityeventtypes() {
    
       
        intype_list = currentcommunity.intypes;
@@ -286,7 +286,7 @@ function listcommunity2() {
       
       });
    
-     $("#communitylist2").html(options);
+     $("#communityeventlist").html(options);
 
     
 }
