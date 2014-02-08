@@ -10,7 +10,7 @@ var community_list;
 var intype_list ;
 var captureApp;
 
-//var locations = [] ;
+var locations = [] ;
 
 
 // PhoneGap is ready
@@ -78,7 +78,7 @@ function submitLogout() {
 function getLocation() {
     navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
     
-       listevents();
+     listevents();
    
 }
   
@@ -157,9 +157,9 @@ function onGeolocationSuccess(position) {
 	var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
              
-    var locations  ;
-    locations = listevents() ;
- 	//locations.push(['1 you are here', lat,long,1] );     // works
+  //  var locations  ;
+  //  locations = listevents() ;
+ 	locations.push(['1 you are here', lat,long,1] );     // works
    // locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.
  
           var latlng = new google.maps.LatLng (lat, long);
