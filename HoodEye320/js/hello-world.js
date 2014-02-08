@@ -17,7 +17,8 @@ var locations = [] ;
 function onDeviceReady() {
 
    $(document).delegate('#eventlistpage','pageshow',function(){
-       listevents();
+      // listevents();
+       listeventLocations() ;
    });
 
    $(document).delegate('#pagemap','pageshow',function(){
@@ -77,8 +78,8 @@ function submitLogout() {
 
 function getLocation() {
     navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
-    
-     listevents();
+    listeventLocations() ;
+  //   listevents();
    
 }
   
@@ -346,7 +347,70 @@ function listevents() {
 //------------------try to get cool map with locations   
 
 
+function listeventLocations() {
+  
+    var lat = hoodeye_last_position.coords.latitude;
+    var long = hoodeye_last_position.coords.longitude;
+    var event_locations = [];
+   var params = 'community_id=' + currentcommunity._id;
+   $("#eventlisttitle").html(currentcommunity.name);
+   $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
+      var items_html;
+       var latlngalert;
+    
+       
+      var count = 0;
+      $.each(data, function(key, event) { 
+        
+          event_locations.push([ 'event'+$count, event.lat , event.long , $count]) ;
+          
+          count += 1;
+      });
+       	   if (count == 0) {
+             event_locations.push(['Nothing Near', lat,long,1] );
+              }
+ // var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?center='+lat+','+long+'&size=300x200&maptype=street&zoom=11&sensor=true&markers=size:mid%7Ccolor:red%7C' +  latlngalert ;
+ //  var mapImg = '<img src="' + googleApis_map_Url + '" />';
+ //   $("#map_canvas_events").html(mapImg);       
+    
+//  return event_locations;
+       var latlng = new google.maps.LatLng (lat, long);
+          var options = { 
+            zoom : 15, 
+            center : latlng, 
+            mapTypeId : google.maps.MapTypeId.ROADMAP 
+          };
+          var $content = $("#map_canvas_events div:jqmData(role=content)");
+          $content.height (screen.height - 50);
+          var map = new google.maps.Map ($content[0], options);
+          $.mobile.changePage ($("#eventlistpage"));
+          
+			
+    var infowindow = new google.maps.InfoWindow();
 
+    var marker, i;
+
+    for (i = 0; i < event_locations.length; i++) {  
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
+        animation : google.maps.Animation.DROP,  
+        map: map
+      });
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(event_locations[i][0]);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+     }
+       
+       
+       
+       
+   });
+    
+}
 
       
 
