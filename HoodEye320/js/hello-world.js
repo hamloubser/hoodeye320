@@ -14,7 +14,11 @@ var intype_list ;
 
 // PhoneGap is ready
 function onDeviceReady() {
-    
+
+   $(document).delegate('#eventlistpage','pageshow',function(){
+       listevents();
+   });
+
   
    // listCommunities1()
     //listactivity();  //--- depricated
@@ -37,10 +41,6 @@ function onDeviceReady() {
 
 
 
-
-$('#eventlistpage').live('pageshow',function(event, ui){
-       listevents();
-           });
 
 
 function submitLogin() {
@@ -307,6 +307,10 @@ function assignintype (key) {
 
 function listintype1() {
    $.get('http://dev.hoodeye.com:4242/api/community', function(data) {
+       // default to first community listed for now
+       currentcommunity = data[0];
+
+
       community_list = data;
         
       var items = [];
@@ -320,9 +324,6 @@ function listintype1() {
      
      $("#intypelist").html(options);
        
-       // default to public community
-       currentcommunity = data[3];
-
     });
 }
 
