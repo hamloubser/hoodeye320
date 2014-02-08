@@ -8,6 +8,7 @@ var currentintype ;
 var currentcommunity ;
 var community_list;
 var intype_list ;
+var captureApp;
 
 //var locations = [] ;
 
@@ -19,21 +20,23 @@ function onDeviceReady() {
        listevents();
    });
 
+   $(document).delegate('#pagemap','pageshow',function(){
+       getLocation();
+       navigator.splashscreen.hide();
+   });
+
+   mycommunities();
+
   
-    mycommunities();
     //listcommunityeventtypes();//--- thing for default com
     //listevents();
   
-    getLocation(); 
+    //getLocation(); 
    
 
     captureApp = new captureApp();
-    captureApp.run();
+   captureApp.run();
     
-    
-    navigator.splashscreen.hide();
-  
-
 }
 
 
