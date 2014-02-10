@@ -5,16 +5,38 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 //-----------------------
 var currentintype ;
-var currentcommunity ;
+var currentcommunity = { name: "No Community"}
 var community_list;
 var intype_list ;
 var captureApp;
+var current_user = { username: "Anonymous" };
 
 var locations = [] ;
+var default_community_id = "51c8ad43caa81c7d28000002";
+
+//adw: global variable for last position, until we know how to do it better
+var hoodeye_last_position;
 
 
 // PhoneGap is ready
 function onDeviceReady() {
+    
+   captureApp = new captureApp();
+   captureApp.run();
+
+    // Get the default community and assign it
+    $.get('http://dev.hoodeye.com:4242/api/community/'+default_community_id,function(community) {
+        assigncommunity(community);
+    });
+
+    $(document).delegate('#selectcommunity','pageshow',function(){
+       mycommunities();
+   });
+    $(document).delegate('#communityeventpage','pageshow',function(){
+       mycommunities();
+   });
+    
+    
 
    $(document).delegate('#eventlistpage','pageshow',function(){
       // listevents();
@@ -26,24 +48,15 @@ function onDeviceReady() {
        navigator.splashscreen.hide();
    });
 
-   mycommunities();
 
+
+   
   
     //listcommunityeventtypes();//--- thing for default com
-    //listevents();
   
-    //getLocation(); 
-   
-
-    captureApp = new captureApp();
-   captureApp.run();
+  
     
 }
-
-
-
-
-
 
 function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
@@ -83,32 +96,10 @@ function getLocation() {
    
 }
   
-//=======================Say Hello (Page 1) Operations=======================//
-function sayHello() {
-    var sayHelloInputElem = document.getElementById('helloWorldInput');
-    var sayHelloTextElem = document.getElementById('helloWorldText');
-    var inputText = document.getElementById('txtName');
-    
-    sayHelloTextElem.innerHTML = 'Hello you bad ass, ' + inputText.value + '!';
-    sayHelloTextElem.style.display = 'block';
-    sayHelloInputElem.style.display = 'none';
-}
-
-function sayHelloReset() {
-    var sayHelloInputElem = document.getElementById('helloWorldInput');
-    var sayHelloTextElem = document.getElementById('helloWorldText');
-    var inputText = document.getElementById('txtName');
-    
-    inputText.value = '';
-    sayHelloTextElem.style.display = 'none';
-    sayHelloInputElem.style.display = 'block';
-}
 
 //=======================Geolocation Operations=======================//
 // onGeolocationSuccess Geolocation
 
-//adw: global variable for last position, until we know how to do it better
-var hoodeye_last_position;
 
 
 function onGeolocationSuccess(position) {
@@ -239,12 +230,17 @@ function listCommunities() {
 
 
 
-function assigncommunity (key) {
-           currentcommunity = community_list[key] ;
+function assigncommunity_from_list (key) {
+    assigncommunity(community_list[key]);
+}
+
+function assigncommunity(community) {
+    currentcommunity = community;
+    // Update submitted community id for reportig events
     $("#eventcommunity").val(currentcommunity._id);
     listcommunityeventtypes();
-    
 }
+
 
 function assignintype (key) {
            currentintype = intype_list[key] ;
@@ -255,19 +251,12 @@ function assignintype (key) {
 function mycommunities() {
    $.get('http://dev.hoodeye.com:4242/api/community', function(data) {
        // default to first community listed for now
-       currentcommunity = data[0];
-
-
       community_list = data;
-      assigncommunity(0);
         
       var items = [];
       var options;
       $.each(data, function(key, community) { 
-       
-          options += '<li><a onClick="assigncommunity('+key+')" href="#home"> <img src="images/redbullhorn.jpg" /> <h3> '+community.name+'</h3><p> '+'com-'+community._id+'</p></a></li>';
-  
-          
+         options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home"> <img src="images/redbullhorn.jpg" /> <h3> '+community.name+'</h3><p> '+'com-'+community._id+'</p></a></li>';
       });
      
      $("#mycommunities").html(options);
@@ -446,5 +435,25 @@ function listeventLocations() {
 //------------------------ capture stuff
 
  
+//=======================Say Hello (Page 1) Operations=======================//
+function sayHello() {
+    var sayHelloInputElem = document.getElementById('helloWorldInput');
+    var sayHelloTextElem = document.getElementById('helloWorldText');
+    var inputText = document.getElementById('txtName');
+    
+    sayHelloTextElem.innerHTML = 'Hello you bad ass, ' + inputText.value + '!';
+    sayHelloTextElem.style.display = 'block';
+    sayHelloInputElem.style.display = 'none';
+}
+
+function sayHelloReset() {
+    var sayHelloInputElem = document.getElementById('helloWorldInput');
+    var sayHelloTextElem = document.getElementById('helloWorldText');
+    var inputText = document.getElementById('txtName');
+    
+    inputText.value = '';
+    sayHelloTextElem.style.display = 'none';
+    sayHelloInputElem.style.display = 'block';
+}
 
 

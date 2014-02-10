@@ -42,7 +42,7 @@
         <div data-role="page" id="home" --------------------------------------- homepage >
             <div data-role="header">
                <a href="#mysettingspage" data-icon="info" class="ui-btn-right">Settings</a>
-                <h1>Hoodeye</h1>
+                <h1 id="appheader">Hoodeye</h1>
             </div>
              <div data-role="content">
                   
@@ -51,7 +51,7 @@
                  
 <div class="ui-grid-a" id="menupage">
             <div class="ui-block-a" style="text-align: center;">
-                <a id="img1" href="#inputlistpage">
+                <a id="img1" href="#selectcommunity">
                     <div style="text-align: center;">
                         <img id="img1" style="width: 100px; height: 100px;" src="images/imglogin.png">
                     </div>
@@ -232,7 +232,7 @@ view events
           
 
     
-<div data-role="page" id="inputlistpage"----------------------------------------------------------------- inputpage>
+<div data-role="page" id="selectcommunity"----------------------------------------------------------------- inputpage>
    <div data-role="header">
        
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -311,30 +311,12 @@ view events
       <h1> Event Type </h1>
    </div>
    <div data-role="content">
-     
- 
-   
-  
-<label for="communityeventlist" class="select">  
-                                                    </label>  
-  
-
-
-                <ul data-role="listview"   id="communityeventlist"  >    
-     
-                </ul>
-                 
-    
- <p>Server Down</p>    
-<p>Support notified</p>
-    
-    </div>
-</div>
-        
-              
-        
-        
-        
+     <label for="communityeventlist" class="select"> Type of Event</label>  
+     <ul data-role="listview"   id="communityeventlist"  >    
+       <li>Server Down, support notified</li>
+     </ul>
+   </div>
+</div>        
         
  
 <div data-role="page" id="mysettingspage"-------------------------------------------------------------------------------- mysettingspage>
