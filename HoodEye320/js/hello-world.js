@@ -62,7 +62,7 @@ function updateHomeTitle() {
     var newtitle;
     newtitle = "Hoodeye: " + current_user.username + " in " + current_community.name;
     debugmsg("Setting title to "+newtitle);
-    $("#appheader").val(newtitle);
+    $("#appheader").html(newtitle);
 }
 
 function submitLogin() {
