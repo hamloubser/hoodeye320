@@ -9,7 +9,8 @@ var currentcommunity = { name: "No Community"}
 var community_list;
 var intype_list ;
 var captureApp;
-var current_user = { username: "Anonymous" };
+var anonymous_user = { username: "Anonymous" };
+var current_user = anonymous_user;
 
 var locations = [] ;
 var default_community_id = "51c8ad43caa81c7d28000002";
@@ -17,6 +18,11 @@ var default_community_id = "51c8ad43caa81c7d28000002";
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
 
+function debugmsg(msg) {
+    var encmsg = encodeURIComponent(msg);
+    $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
+    });
+}
 
 // PhoneGap is ready
 function onDeviceReady() {
@@ -24,10 +30,17 @@ function onDeviceReady() {
    captureApp = new captureApp();
    captureApp.run();
 
-    // Get the default community and assign it
-    $.get('http://dev.hoodeye.com:4242/api/community/'+default_community_id,function(community) {
-        assigncommunity(community);
+    // Get my user detail and default community and assign it
+    $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
+      current_user = user_info;
+      $.get('http://dev.hoodeye.com:4242/api/community/'+default_community_id,function(community) {
+          assigncommunity(community);
+      });
     });
+    
+    $(document).delegate('#home','pageshow',function(){
+        updateHomeTitle();
+   });
 
     $(document).delegate('#selectcommunity','pageshow',function(){
        mycommunities();
@@ -36,8 +49,6 @@ function onDeviceReady() {
        mycommunities();
    });
     
-    
-
    $(document).delegate('#eventlistpage','pageshow',function(){
       // listevents();
        listeventLocations() ;
@@ -46,27 +57,29 @@ function onDeviceReady() {
    $(document).delegate('#pagemap','pageshow',function(){
        getLocation();
        navigator.splashscreen.hide();
-   });
+   });    
+}
 
-
-
-   
-  
-    //listcommunityeventtypes();//--- thing for default com
-  
-  
-    
+function updateHomeTitle() {
+    // Update app header
+    var newtitle;
+    newtitle = "Hoodeye: " + current_user.username + " in " + current_community.name;
+    debugmsg("Setting title to "+newtitle);
+    $("#appheader").val(newtitle);
 }
 
 function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
 
-    $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
+    return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
+        current_user = result.user;
+        if (result.status == 1) {
+          return true;
+        } else {
+          return false;
+        }
     });
-   
-    return false;
-    
 }
 
 function submitRegister() {
@@ -74,6 +87,10 @@ function submitRegister() {
     var password = encodeURIComponent($("#reg_password").val());
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
+        current_user = result.user;
+        if (result.status == 0) {
+            $("#registerstatus").val("")
+        }
     });
    
     return false;
@@ -233,6 +250,7 @@ function listCommunities() {
 function assigncommunity_from_list (key) {
     assigncommunity(community_list[key]);
 }
+
 
 function assigncommunity(community) {
     currentcommunity = community;
