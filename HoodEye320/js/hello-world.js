@@ -20,7 +20,8 @@ var hoodeye_last_position;
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
-    $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
+    return $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
+        return result;
     });
 }
 
@@ -38,10 +39,6 @@ function onDeviceReady() {
       });
     });
     
-    $(document).delegate('#home','pageshow',function(){
-        updateHomeTitle();
-   });
-
     $(document).delegate('#selectcommunity','pageshow',function(){
        mycommunities();
    });
@@ -256,6 +253,7 @@ function assigncommunity(community) {
     currentcommunity = community;
     // Update submitted community id for reportig events
     $("#eventcommunity").val(currentcommunity._id);
+    updateHomeTitle();
     listcommunityeventtypes();
 }
 
