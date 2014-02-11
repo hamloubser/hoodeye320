@@ -5,7 +5,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 //-----------------------
 var currentintype ;
-var currentcommunity = { name: "No Community"}
+var current_community = { name: "No Community"}
 var community_list;
 var intype_list ;
 var captureApp;
@@ -250,9 +250,9 @@ function assigncommunity_from_list (key) {
 
 
 function assigncommunity(community) {
-    currentcommunity = community;
+    current_community = community;
     // Update submitted community id for reportig events
-    $("#eventcommunity").val(currentcommunity._id);
+    $("#eventcommunity").val(current_community._id);
     updateHomeTitle();
     listcommunityeventtypes();
 }
@@ -285,12 +285,12 @@ function mycommunities() {
 function listcommunityeventtypes() {
    
       
-       intype_list = currentcommunity.intypes;
+       intype_list = current_community.intypes;
        
       var items = [];
       var options;
      
-       $.each(currentcommunity.intypes, function(key, intype) { 
+       $.each(current_community.intypes, function(key, intype) { 
  
           options += '<li><a onClick="assignintype('+key+')" href="#reportpage"> <img style="width: 50px; height: 50px;" src="images/redface.jpg" /> <h3> '+intype.label+'</h3><p> '+'--thing of community---'+'</p></a></li>';
       
@@ -305,8 +305,8 @@ function listcommunityeventtypes() {
 
 function listevents() {
    var event_locations = [];
-   var params = 'community_id=' + currentcommunity._id;
-   $("#eventlisttitle").html("inf " + currentcommunity.name);
+   var params = 'community_id=' + current_community._id;
+   $("#eventlisttitle").html("inf " + current_community.name);
    return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       var items_html;
        var latlngalert;
@@ -357,8 +357,8 @@ function listeventLocations() {
     var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
     var event_locations = [];
-   var params = 'community_id=' + currentcommunity._id;
-   $("#eventlisttitle").html(currentcommunity.name);
+   var params = 'community_id=' + current_community._id;
+   $("#eventlisttitle").html(current_community.name);
    $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       var items_html;
        var latlngalert;
@@ -423,7 +423,7 @@ function listeventLocations() {
        
   
      
-     $("#eventcommunity").val(currentcommunity._id) ;
+     $("#eventcommunity").val(current_community._id) ;
      $("#eventintype").val(currentintype.label) ;
      $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
    
