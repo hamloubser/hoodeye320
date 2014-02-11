@@ -58,7 +58,7 @@ function onDeviceReady() {
 }
 
 function updateHomeTitle() {
-    // Update app header
+    // Update app header.
     var newtitle;
     newtitle = "Hoodeye: " + current_user.username + " in " + current_community.name;
     debugmsg("Setting title to "+newtitle);
