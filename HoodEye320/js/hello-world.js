@@ -14,6 +14,7 @@ var current_user = anonymous_user;
 
 var locations = [] ;
 var default_community_id = "51c8ad43caa81c7d28000002";
+var newtitle;
 
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
@@ -59,7 +60,6 @@ function onDeviceReady() {
 
 function updateHomeTitle() {
     // Update app header.
-    var newtitle;
     newtitle = "Hoodeye: " + current_user.username + " in " + current_community.name;
     debugmsg("Setting title to "+newtitle);
     $("#appheader").html(newtitle);
