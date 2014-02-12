@@ -49,7 +49,7 @@ function onDeviceReady() {
     
    $(document).delegate('#eventlistpage','pageshow',function(){
       // listevents();
-		getLocation();       
+//		getLocation();       
        listeventLocations() ;
    });
 
@@ -364,6 +364,7 @@ function listeventLocations() {
     var event_locations = [];
    var params = 'community_id=' + current_community._id;
    $("#eventlisttitle").html(current_community.name);
+   debugmsg("In listeventLocations");
    $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       var items_html;
        var latlngalert;
