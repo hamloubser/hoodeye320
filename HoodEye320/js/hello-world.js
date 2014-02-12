@@ -66,7 +66,7 @@ function onDeviceReady() {
 
 function updateHomeTitle() {
     // Update app header.
-    newtitle = "Hoodeye: " + current_user.username + " in " + current_community.name;
+    newtitle = current_user.username + " in " + current_community.name;
     debugmsg("Setting title to "+newtitle);
     $("#appheader").html(newtitle);
 }
@@ -369,7 +369,7 @@ function listeventLocations() {
 
          for (i = 0; i < data.length; i++) {  
            event = data[i]; 
-            event_locations.push([ 'event'+i, event.lat , event.long , i]) ;
+            event_locations.push([ event.detail + " @ "+event.create_time, event.lat , event.long , i]) ;
          }
        } else {
                   debugmsg("Hallo0");
