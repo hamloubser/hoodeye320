@@ -70,8 +70,9 @@ function submitLogin() {
     var password = encodeURIComponent($("#login_password").val());
 
     return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
-        current_user = result.user;
         if (result.status == 1) {
+          current_user = result.user;
+          updateHomeTitle();  
           return true;
         } else {
           return false;
@@ -84,9 +85,12 @@ function submitRegister() {
     var password = encodeURIComponent($("#reg_password").val());
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
-        current_user = result.user;
         if (result.status == 0) {
             $("#registerstatus").val("")
+        } else {
+          current_user = result.user;
+            
+            
         }
     });
    
