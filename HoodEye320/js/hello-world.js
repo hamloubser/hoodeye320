@@ -49,6 +49,7 @@ function onDeviceReady() {
     
    $(document).delegate('#eventlistpage','pageshow',function(){
       // listevents();
+		getLocation();       
        listeventLocations() ;
    });
 
@@ -109,7 +110,7 @@ function submitLogout() {
 
 function getLocation() {
     navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
-    listeventLocations() ;
+  //  listeventLocations() ;
   //   listevents();
    
 }
@@ -381,7 +382,7 @@ function listeventLocations() {
  // var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?center='+lat+','+long+'&size=300x200&maptype=street&zoom=11&sensor=true&markers=size:mid%7Ccolor:red%7C' +  latlngalert ;
  //  var mapImg = '<img src="' + googleApis_map_Url + '" />';
  //   $("#map_canvas_events").html(mapImg);       
-    
+    debugmsg(event_locations);
 //  return event_locations;
        var latlng = new google.maps.LatLng (lat, long);
           var options = { 
@@ -389,7 +390,7 @@ function listeventLocations() {
             center : latlng, 
             mapTypeId : google.maps.MapTypeId.ROADMAP 
           };
-          var $content = $("#map_canvas_events div:jqmData(role=content)");
+          var $content = $("#eventlistpage div:jqmData(role=content)");
           $content.height (screen.height - 50);
           var map = new google.maps.Map ($content[0], options);
           $.mobile.changePage ($("#eventlistpage"));
