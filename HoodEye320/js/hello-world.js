@@ -113,8 +113,10 @@ function submitLogout() {
 }
   
 
-function getLocation() {
-    navigator.geolocation.getCurrentPosition(onGeolocationSuccess, onGeolocationError);
+function getLocation(on_success) {
+    navigator.geolocation.getCurrentPosition(function(position){
+        hoodeye_last_position = position;
+        on_success();},onGeolocationError);
 }
   
 function onGeolocationSuccess(position) {
@@ -128,8 +130,6 @@ function onGeolocationError(error) {
 
 function onGeolocationSuccess_old(position) {
 
-    $("#event_latitude").val(hoodeye_last_position.coords.latitude);
-    $("#event_longitude").val(hoodeye_last_position.coords.longitude);
     $("#panic_event_latitude").val(hoodeye_last_position.coords.latitude);
     $("#panic_event_longitude").val(hoodeye_last_position.coords.longitude);
       
@@ -415,26 +415,24 @@ function listeventLocations() {
 
  function submitEvent() {
        
+     getLocation(function() {
   
+        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
+        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
      
-     $("#eventcommunity").val(current_community._id) ;
-     $("#eventintype").val(currentintype.label) ;
-     $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
+	    $("#eventcommunity").val(current_community._id) ;
+   	    $("#eventintype").val(currentintype.label) ;
+     	$("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
    
-     // add timestamp 
-     var currentTime = new Date();
-     $("#create_time").val(currentTime.toISOString());
-     
-     
-     
-     
-     $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
+     	// add timestamp 
+     	var currentTime = new Date();
+     	$("#create_time").val(currentTime.toISOString());
+	    $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
                             {
                             $('#result').html(response);
                             }});
-                    return false;
-
- }
+     });
+}
 
 
 
