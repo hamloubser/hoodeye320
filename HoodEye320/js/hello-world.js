@@ -269,10 +269,13 @@ function mycommunities() {
       var items = [];
       var options;
       $.each(data, function(key, community) { 
-         options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
+       options += '<li ><a onClick="assigncommunity_from_list('+key+')" href="#home" data-split-theme="b" > <h3> '+community.name+'</h3></a></li>';
+          //  options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
+      //    try a new way for the community options
+       //    options += '<option ><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></option>';
       });
      
-     $("#mycommunities").html(options);
+     $("#mycommunities").html(options).listview('refresh');
        
     });
 }
@@ -289,11 +292,11 @@ function listcommunityeventtypes() {
      
        $.each(current_community.intypes, function(key, intype) { 
  
-          options += '<li><a onClick="assignintype('+key+')" href="#reportpage">  '+intype.label+'</a></li>';
+          options += '<li><a onClick="assignintype('+key+')" href="#reportpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
       
       });
    
-     $("#communityeventlist").html(options);
+     $("#communityeventlist").html(options).listview('refresh');
 
     
 }
