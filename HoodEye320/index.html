@@ -85,15 +85,15 @@ safety box
             <div class="ui-block-a" style="text-align: center;">
                  <a id="img5" href="#pagemap">
                     <div style="text-align: center;">
-                        <img id="img6" style="width: 100px; height: 100px;" src="images/imgmap.png">
+                        <img id="img5" style="width: 100px; height: 100px;" src="images/imgviewalerts.png">
                     </div>
                 </a>
 where am I
             </div>
             <div class="ui-block-b" style="text-align: center;">
-                     <a id="img5" href="#eventlistpage">
+                     <a id="img6" href="#eventlistpage">
                     <div style="text-align: center;">
-                        <img id="img5" style="width: 100px; height: 100px;" src="images/imgviewalerts.png">
+                        <img id="img6" style="width: 100px; height: 100px;" src="images/imgmap.png">
                     </div>
                 </a>
 View Alerts           
@@ -123,8 +123,8 @@ View Alerts
                             
                                   <div class="content">
             <div class="action-area ch50">
-                <button class="button dh" id="captureVideo">Capture Video</button>
-			    <button class="button dh" id="captureAudio">Capture Audio</button>
+                <button class="button dh" id="captureVideo" type="hidden">Capture Video</button>
+			    <button class="button dh" id="captureAudio" type="hidden">Capture Audio</button>
                 <button class="button dh" id="captureImage">Capture Image</button>
 			</div>
             <div class="result-area ch50">
@@ -144,14 +144,14 @@ View Alerts
                         <input id="event_longitude" type="hidden" name='long'  val='-'>
                         <input id="create_time" type="hidden" name='create_time'  val='-'>
                             
-                         <input id="camera_image" type="text" name='camera_image'  val='-'>   
+                         <input id="camera_image" type="hidden" name='camera_image'  val='-'>   
                             
   
                         <input name='submit'  value="Report" data-icon="alert" type='submit' style="color:black; background-color:#ed1c24";>
   
                                </form>
                         
-                            <div id='result'>No Result yet</div>
+                            <div id='result'>Alert not registered</div>
 
 
     </div>
@@ -229,7 +229,7 @@ View Alerts
     </div>
 </div>
 
-          
+
 
     
 <div data-role="page" id="selectcommunity"----------------------------------------------------------------- inputpage>
@@ -240,14 +240,12 @@ View Alerts
       <h1>Choose Community </h1>
    </div>
    <div data-role="content">
-
-       
-        <label for="mycommunities" class="select"   >  </label>  
-          <ul data-role="listview"   id="mycommunities">    
-      
+     <label for="mycommunities" class="select"> Available Communities  </label>  
+          <ul data-role="listview"   id="mycommunities"  >    
+     		 <li>Server Down, support notified</li>
                 </ul>
 
-
+	</div>
        
         <p></p>
        <p><a href="#reportpage">- Server Down - link to emergency report </a> </p>  
@@ -267,8 +265,8 @@ View Alerts
              </div>
        
        
-    </div>
-</div>              
+</div>
+             
         
 
         
