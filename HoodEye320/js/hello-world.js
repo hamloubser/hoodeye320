@@ -269,7 +269,7 @@ function mycommunities() {
       var items = [];
       var options;
       $.each(data, function(key, community) { 
-         options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home"> <h3> '+community.name+'</h3></a></li>';
+         options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
       });
      
      $("#mycommunities").html(options);
@@ -289,7 +289,7 @@ function listcommunityeventtypes() {
      
        $.each(current_community.intypes, function(key, intype) { 
  
-          options += '<li><a onClick="assignintype('+key+')" href="#reportpage"> <h3> '+intype.label+'</h3></a></li>';
+          options += '<li><a onClick="assignintype('+key+')" href="#reportpage">  '+intype.label+'</a></li>';
       
       });
    
