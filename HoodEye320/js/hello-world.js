@@ -372,7 +372,7 @@ function listeventLocations() {
 
          for (i = 0; i < data.length; i++) {  
            event = data[i]; 
-            event_locations.push([ event.detail + " @ "+event.create_time, event.lat , event.long , i]) ;
+             event_locations.push([ " <B>"+event.intype  + "</B><br/> "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
          }
        } else {
                   debugmsg("Hallo0");
@@ -425,7 +425,7 @@ function listeventLocations() {
      
 	    $("#eventcommunity").val(current_community._id) ;
    	    $("#eventintype").val(currentintype.label) ;
-     	$("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
+         $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
    
      	// add timestamp 
      	var currentTime = new Date();
