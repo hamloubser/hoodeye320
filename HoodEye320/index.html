@@ -39,7 +39,9 @@
 
  <body> 
         
-        <div data-role="page" id="home" --------------------------------------- homepage >
+<!-- homepage -->
+
+        <div data-role="page" id="home" >
             <div data-role="header">
                <a href="#mysettingspage" data-icon="info" class="ui-btn-right">Settings</a>
                 <h1 id="appheader">Hoodeye</h1>
@@ -51,51 +53,51 @@
                  
 <div class="ui-grid-a" id="menupage">
             <div class="ui-block-a" style="text-align: center;">
-                <a id="img1" href="#selectcommunity">
                     <div style="text-align: center;">
+                <a href="#selectcommunity">
                         <img id="img1" style="width: 100px; height: 100px;" src="images/imglogin.png">
-                    </div>
                 </a>
+                    </div>
 Select Community
             </div>
             <div class="ui-block-b" style="text-align: center;">
-                <a id="img2" href="#communityeventpage">
                     <div style="text-align: center;">
+                <a href="#communityeventpage">
                         <img  id="img2" style="width: 100px; height: 100px;" src="images/imgreportincident.jpg">
-                    </div>
                 </a>
+                    </div>
 Alert Community
             </div>
             <div class="ui-block-a" style="text-align: center;">
-                <a id="img3" href="#panicpage">
                     <div style="text-align: center;">
+                <a href="#panicpage">
                         <img id="img3" style="width: 100px; height: 100px;" src="images/imgpanic.png">
-                    </div>
                 </a>
+                    </div>
 panic
             </div>
             <div class="ui-block-b" style="text-align: center;">
-                <a id="img4" href="index-testsimple.html">
                     <div style="text-align: center;">
+                <a href="index-testsimple.html">
                         <img id="img4" style="width: 100px; height: 100px;" src="images/imgsafetybox.png">
-                    </div>
                 </a>
+                    </div>
 safety box
             </div>
             <div class="ui-block-a" style="text-align: center;">
-                 <a id="img5" href="#pagemap">
                     <div style="text-align: center;">
+                 <a href="#pagemap">
                         <img id="img5" style="width: 100px; height: 100px;" src="images/imgviewalerts.png">
-                    </div>
                 </a>
+                    </div>
 where am I
             </div>
             <div class="ui-block-b" style="text-align: center;">
-                     <a id="img6" href="#eventlistpage">
                     <div style="text-align: center;">
+                     <a href="#eventlistpage">
                         <img id="img6" style="width: 100px; height: 100px;" src="images/imgmap.png">
+                    </a>
                     </div>
-                </a>
 View Alerts           
              </div>
                             
@@ -103,8 +105,9 @@ View Alerts
  </div>     
 </div>     
      
+<!-- Event entry page -->
       
-<div data-role="page" data-transition="slideup" id="reportpage"---------------------------------------------- reportpage>
+<div data-role="page" data-transition="slideup" id="reportpage">
    <div data-role="header">
      <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
        <h1>reportpage</h1>
@@ -147,7 +150,7 @@ View Alerts
                          <input id="camera_image" type="hidden" name='camera_image'  val='-'>   
                             
   
-                        <input name='submit'  value="Report" data-icon="alert" type='submit' style="color:black; background-color:#ed1c24";>
+                        <input name='submit'  value="Report" data-icon="alert" type='submit' style="color:black; background-color:#ed1c24">
   
                                </form>
                         
@@ -158,8 +161,9 @@ View Alerts
 </div>
 
           
+<!-- map page -->
              
-<div data-role="page" id="pagemap"----------------------------------------------------------------- mappage>
+<div data-role="page" id="pagemap">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
@@ -179,9 +183,9 @@ View Alerts
      
  
      
-     
+<!-- Panic page -->
       
-<div data-role="page" data-transition="slideup" id="panicpage"---------------------------------------------- panicpage>
+<div data-role="page" data-transition="slideup" id="panicpage">
    <div data-role="header">
      <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
        <h1>Panic</h1>
@@ -231,8 +235,9 @@ View Alerts
 
 
        
+<!-- Select event type for community page -->
       
-<div data-role="page" id="communityeventpage"--------------------------------------------------------- communityeventlist>
+<div data-role="page" id="communityeventpage">
    <div data-role="header">
        
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -248,7 +253,9 @@ View Alerts
 </div>        
    
     
-<div data-role="page" id="selectcommunity"----------------------------------------------------------------- selectcommunitypage>
+<!-- Select community page -->
+
+<div data-role="page" id="selectcommunity">
    <div data-role="header">
        
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -272,7 +279,7 @@ View Alerts
                         <li><a href="" data-icon="gear"> safety box </a></li>
 
                     </ul>
-                </div><!-- /navbar -->
+                </div>
              </div>
      
 </div>
@@ -281,8 +288,9 @@ View Alerts
 
         
    
+<!-- Event/Alert report on map -->
     
-<div data-role="page" id="eventlistpage"----------------------------------------------------------------- eventpage>
+<div data-role="page" id="eventlistpage">
    <div data-role="header">
        
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
@@ -303,9 +311,9 @@ View Alerts
       
         
       
-      
+<!-- My settings page -->
  
-<div data-role="page" id="mysettingspage"-------------------------------------------------------------------------------- mysettingspage>
+<div data-role="page" id="mysettingspage">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -313,16 +321,18 @@ View Alerts
      <h1>mysettingspage</h1>
    </div>
    <div data-role="content">
-       <a href="#loginpage"  data-icon="arrow-l" class="ui-btn-Left">Login</a><br/> <br/> <br/><br/> <br/>
-       <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br/> <br/> <br/><br/> <br/>
-       <a href="#logoutpage"  data-icon="arrow-l" class="ui-btn-Left">Logout</a><br/> <br/> <br/>
+       <a href="#loginpage"  data-icon="arrow-l" class="ui-btn-Left">Login</a><br> <br> <br><br> <br>
+       <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
+       <a href="#logoutpage"  data-icon="arrow-l" class="ui-btn-Left">Logout</a><br> <br> <br>
 
 
 
     </div>
 </div>       
+
+<!-- Login form -->
      
-<div data-role="page" id="loginpage"-------------------------------------------------------------------------------- mysettingspage>
+<div data-role="page" id="loginpage">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -330,16 +340,18 @@ View Alerts
        <h1>Sign into your account</h1>
    </div>
    <div data-role="content">
-       <form name="loginform" id="loginForm"  onsubmit="return submitLogin();">
-          <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br/>
-           <label for="password">Password</label> <input type="password" name="password" id="login_password"/> <br/>
+       <form name="loginForm" id="loginForm"  onsubmit="return submitLogin();">
+          <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br>
+           <label for="password">Password</label> <input type="password" name="password" id="login_password"/> <br>
            <input name="submit" value="Login" type="submit">
        </form>
 
     </div>
 </div>       
 
-     <div data-role="page" id="logoutpage"-------------------------------------------------------------------------------- mysettingspage>
+<!-- Logout form -->
+
+     <div data-role="page" id="logoutpage">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -348,14 +360,16 @@ View Alerts
        <h1>Logout</h1>
    </div>
    <div data-role="content">
-       <form name="logoutform" id="logoutForm"  onsubmit="return submitLogout();">
+       <form name="logoutForm" id="logoutForm"  onsubmit="return submitLogout();">
            <input name="submit" value="Logout" type="submit">
        </form>
 
     </div>
 </div>       
 
-<div data-role="page" id="registerpage"-------------------------------------------------------------------------------- mysettingspage>
+<!-- Register form-->
+
+<div data-role="page" id="registerpage">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
@@ -365,9 +379,9 @@ View Alerts
    <div data-role="content">
        <div id="registerstatus"></div>
        <form name="registerform" id="registerform"  onsubmit="return submitRegister();">
-          <label for="username">UserName</label><input type="text" name="username" id="reg_username" /> <br/>
-           <label for="password">Password</label> <input type="password" name="password" id="reg_password"/> <br/>
-           <label for="password_verify">Verify Password</label> <input type="password" name="password_verify" id="reg_password_verify"/> <br/>
+          <label for="username">UserName</label><input type="text" name="username" id="reg_username" /> <br>
+           <label for="password">Password</label> <input type="password" name="password" id="reg_password"/> <br>
+           <label for="password_verify">Verify Password</label> <input type="password" name="password_verify" id="reg_password_verify"/> <br>
            <input name="submit" value="Register" type="submit">
        </form>
     </div>
