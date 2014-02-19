@@ -254,11 +254,14 @@ function assigncommunity(community) {
     listcommunityeventtypes();
 }
 
-
+//xxx
 function assignintype (key) {
-           currentintype = intype_list[key] ;
-      $("#eventintype").val(currentintype.label) ;
-    
+    currentintype = intype_list[key] ;
+    var content = $("#reportpage div:jqmData(role=content)");
+    $.get('input-types/'+key+'.html',function(html) { content.html(html); })
+	.fail(function() { 
+	   $.get('input-types/default.html', function(){ debugmsg("loaded default input the for "+key);})
+        });
 }
 
 function mycommunities() {
