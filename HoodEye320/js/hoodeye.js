@@ -257,15 +257,15 @@ function assigncommunity(community) {
 //xxx
 function assignintype (key) {
     currentintype = intype_list[key] ;
-    debugmsg("Assigning intype to "+key);
+    debugmsg("Assigning intype to "+currentintype.name);
     var content = $("#reportpage div:jqmData(role=content)");
-    $.get('input-types/'+key+'.html',
+    $.get('input-types/'+currentintype.name+'.html',
 	function(html) { 
 	  content.html(html); 
-          debugmsg("loaded input-types/"+key+".html");
+          debugmsg("loaded input-types/"+currentintype.name+".html");
          })
 	.fail(function() { 
-	   $.get('input-types/default.html', function(){ debugmsg("loaded default input the for "+key);})
+	   $.get('input-types/default.html', function(){ debugmsg("loaded default input the for "+currentintype.name);})
         });
 }
 
