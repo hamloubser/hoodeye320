@@ -257,6 +257,7 @@ function assigncommunity(community) {
 //xxx
 function assignintype (key) {
     currentintype = intype_list[key] ;
+    debugmsg("Assigning intype to "+key);
     var content = $("#reportpage div:jqmData(role=content)");
     $.get('input-types/'+key+'.html',
 	function(html) { 
