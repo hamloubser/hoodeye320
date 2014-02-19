@@ -258,7 +258,11 @@ function assigncommunity(community) {
 function assignintype (key) {
     currentintype = intype_list[key] ;
     var content = $("#reportpage div:jqmData(role=content)");
-    $.get('input-types/'+key+'.html',function(html) { content.html(html); })
+    $.get('input-types/'+key+'.html',
+	function(html) { 
+	  content.html(html); 
+          debugmsg("loaded input-types/"+key+".html");
+         })
 	.fail(function() { 
 	   $.get('input-types/default.html', function(){ debugmsg("loaded default input the for "+key);})
         });
