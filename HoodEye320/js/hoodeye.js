@@ -9,7 +9,7 @@ var current_community = { name: "No Community"}
 var community_list;
 var intype_list ;
 var captureApp;
-var anonymous_user = { username: "Anonymous" };
+var anonymous_user = { username: "Guest" };
 var current_user = anonymous_user;
 
 var locations = [] ;
