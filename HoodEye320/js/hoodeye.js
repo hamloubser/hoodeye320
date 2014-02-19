@@ -39,7 +39,13 @@ function onDeviceReady() {
           assigncommunity(community);
       });
     });
-    
+     $(document).delegate('#loginpage','pageshow',function(){
+      if (localStorage.login_username) {
+        $("#login_username").val(localStorage.login_username);
+        $("#login_password").val(localStorage.login_password);
+      }
+   });
+   
     $(document).delegate('#selectcommunity','pageshow',function(){
        mycommunities();
    });
@@ -77,6 +83,8 @@ function submitLogin() {
 
     return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
         if (result.status == 1) {
+          localStorage.login_username=username;
+          localStorage.login_password=password;
           current_user = result.user;
           updateHomeTitle();  
           return true;
@@ -94,9 +102,9 @@ function submitRegister() {
         if (result.status == 0) {
             $("#registerstatus").val("")
         } else {
+          localStorage.login_username = $("#reg_username").val();
+          localStorage.login_password = $("#reg_password").val();
           current_user = result.user;
-            
-            
         }
     });
    
