@@ -265,7 +265,10 @@ function assignintype (key) {
           debugmsg("loaded input-types/"+currentintype.name+".html");
          })
 	.fail(function() { 
-	   $.get('input-types/default.html', function(){ debugmsg("loaded default input the for "+currentintype.name);})
+	   $.get('input-types/default.html', function(def_html){ 
+		content.html(def_html); 
+		debugmsg("loaded default input the for "+currentintype.name);
+           })
         });
 }
 
