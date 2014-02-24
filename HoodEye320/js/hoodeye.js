@@ -64,9 +64,12 @@ function onDeviceReady() {
        listeventLocations() ;
    });
 
-   $(document).delegate('#pagemap','pageshow',function(){
+   $(document).delegate('#eventcontentpage','pageshow',function(){
+      
+       
        getLocation();
-       navigator.splashscreen.hide();
+       listeventscontent();
+       //navigator.splashscreen.hide();
    });    
 }
 
@@ -322,45 +325,32 @@ function listcommunityeventtypes() {
 
 
 
-function listevents() {
-   var event_locations = [];
+function listeventscontent() {
+ 
    var params = 'community_id=' + current_community._id;
-   $("#eventlisttitle").html("inf " + current_community.name);
+   $("#eventcontentlist").html("error " + current_community.name);
    return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
-      var items_html;
-       var latlngalert;
-    
-       
+      
+       var items_html ;
+      
       var count = 0;
       $.each(data, function(key, event) { 
-         items_html += '<li><img src="images/imgviewalerts.png" style="width: 20px; height: 20px;" /> '+event.intype+''+event.detail+'<br>|'+event.lat+','+event.long+'|</br></li>';
+         items_html += '<li > '+event.intype+'  <span class="ui-li-count"> 2</span></li> <a href="#"><h2>'+event.user.username+'</h2><p><b> '+event.detail+'</b></p> <p class="ui-li-aside">'+event.create_time+'</p></a> </li> ';
      	
-          latlngalert += '|'+event.lat+','+event.long ;
-          
-          
-         	// and event locations to loacation variable		  //--bad == bad	/--bad == bad/--bad == bad/--bad == bad		
-           event_locations.push([ 'event'+$count, event.lat , event.long , $count]) ;
           
           count += 1;
       });
        	   if (count == 0) {
-              items_html = "<li>No Events found.</li>";
+              items_html = "<li>No Events foun.</li>";
             
                ;
           }
-     $("#eventlist").html(items_html);
+       
+     
+       
+     $("#eventcontentlist").html(items_html).listview('refresh');
    
-   // var latlngalert = "|-26.11305892469931,27.984621|-26.113058924691,27.984620891537|-26.1130589249,27.984620892"
-    
-    var lat = hoodeye_last_position.coords.latitude;
-    var long = hoodeye_last_position.coords.longitude;
-       
-       
-   var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?center='+lat+','+long+'&size=300x200&maptype=street&zoom=11&sensor=true&markers=size:mid%7Ccolor:red%7C' +  latlngalert ;
-   var mapImg = '<img src="' + googleApis_map_Url + '" />';
-    $("#map_canvas_events").html(mapImg);       
-    
-   return event_locations;
+
        
    });
     

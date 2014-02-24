@@ -43,7 +43,7 @@
 
         <div data-role="page" id="home" >
             <div data-role="header">
-                <a href="#about" data-icon="info" class="ui-btn-right"></a>
+                <a href="#about" data-icon="info" class="ui-btn-right">about</a>
                 <h1 id="appheader">Hoodeye</h1>
             </div>
              <div data-role="content">
@@ -86,11 +86,11 @@ safety box
             </div>
             <div class="ui-block-a" style="text-align: center;">
                     <div style="text-align: center;">
-                 <a href="#pagemap">
-                        <img id="img5" style="width: 90px; height: 90px;" src="images/imgviewalerts.png">
+                 <a href="#eventcontentpage">
+                        <img id="img5" style="width: 90px; height: 90px;" src="images/imgcontent.png">
                 </a>
                     </div>
-where am I
+Notices
             </div>
             <div class="ui-block-b" style="text-align: center;">
                     <div style="text-align: center;">
@@ -162,20 +162,21 @@ View Alerts
 </div>
 
           
-<!-- map page -->
+<!-- eventcontentpage Notices-->
              
-<div data-role="page" id="pagemap">
+<div data-role="page" id="eventcontentpage">
    <div data-role="header">
         
         <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
        
-     <h1>Map</h1>
+     <h1> Content </h1>
    </div>
-   <div data-role="content" >
-    
-
-
   
+  <div data-role="main" class="ui-content" id="eventcontent">
+    
+     <ul data-role="listview" data-inset="true" id="eventcontentlist">
+
+       </ul>
     </div>
     
     
