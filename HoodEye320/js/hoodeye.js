@@ -328,14 +328,14 @@ function listcommunityeventtypes() {
 function listeventscontent() {
  
    var params = 'community_id=' + current_community._id;
-   $("#eventcontentlist").html("error " + current_community.name);
+  $("#eventcontentlisttitle").html(current_community.name);
    return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       
        var items_html ;
       
       var count = 0;
       $.each(data, function(key, event) { 
-         items_html += '<li > '+event.intype+'  <span class="ui-li-count"> 2</span></li> <a href="#"><h2>'+event.user.username+'</h2><p><b> '+event.detail+'</b></p> <p class="ui-li-aside">'+event.create_time+'</p></a> </li> ';
+         items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside">'+event.user.username+' - '+event.create_time+'</p> </li> ';
      	
           
           count += 1;
