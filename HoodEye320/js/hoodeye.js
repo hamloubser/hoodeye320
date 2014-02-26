@@ -57,7 +57,7 @@ function onDeviceReady() {
       // listevents();
        debugmsg("pageshow on #eventlistpage");       
 
-	   getLocation();
+           getLocation();
        debugmsg("Got location:");       
        debugmsg(hoodeye_last_position);       
        
@@ -161,14 +161,14 @@ function onGeolocationSuccess_old(position) {
    // Use Google API to get a map of the current location
     // http://maps.googleapis.com/maps/api/staticmap?size=280x300&maptype=hybrid&zoom=16&markers=size:mid%7Ccolor:red%7C42.375022,-71.273729&sensor=true
     //var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?size=300x200&maptype=street&zoom=13&sensor=true&markers=size:mid%7Ccolor:red%7C' + latlng + latlngalert ;
- 	//      		 var lat = hoodeye_last_position.coords.latitude;
-  	//			 var long = hoodeye_last_position.coords.longitude;
+        //                       var lat = hoodeye_last_position.coords.latitude;
+        //                       var long = hoodeye_last_position.coords.longitude;
     //
-    //   	    $('#map_canvas').gmap().bind('init', function(ev, map) {
-	//		$('#map_canvas').gmap('addMarker', {'position': ''+lat+','+long+'', 'bounds': true}).click(function() {
-	//		$('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
-	//				});
-	//			});
+    //              $('#map_canvas').gmap().bind('init', function(ev, map) {
+        //              $('#map_canvas').gmap('addMarker', {'position': ''+lat+','+long+'', 'bounds': true}).click(function() {
+        //              $('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
+        //                              });
+        //                      });
    
   //  -----------good  
    // var latlngalert = "|-26.11305892469931,27.984621|-26.113058924691,27.984620891537|-26.1130589249,27.984620892"
@@ -180,12 +180,12 @@ function onGeolocationSuccess_old(position) {
     
     //------------hear follows a cool map
     
-	var lat = hoodeye_last_position.coords.latitude;
+        var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
              
   //  var locations  ;
   //  locations = listevents() ;
- 	locations.push(['1 you are here', lat,long,1] );     // works
+        locations.push(['1 you are here', lat,long,1] );     // works
    // locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.
  
           var latlng = new google.maps.LatLng (lat, long);
@@ -199,7 +199,7 @@ function onGeolocationSuccess_old(position) {
           var map = new google.maps.Map ($content[0], options);
           $.mobile.changePage ($("#pagemap"));
           
-			
+                        
     var infowindow = new google.maps.InfoWindow();
 
     var marker, i;
@@ -273,14 +273,14 @@ function assignintype (key) {
     debugmsg("Assigning intype to "+currentintype.name);
     var content = $("#reportpage div:jqmData(role=content)");
     $.get('input-types/'+currentintype.name+'.html',
-	function(html) { 
-	  content.html(html); 
+        function(html) { 
+          content.html(html); 
           debugmsg("loaded input-types/"+currentintype.name+".html");
          })
-	.fail(function() { 
-	   $.get('input-types/default.html', function(def_html){ 
-		content.html(def_html); 
-		debugmsg("loaded default input the for "+currentintype.name);
+        .fail(function() { 
+           $.get('input-types/default.html', function(def_html){ 
+                content.html(def_html); 
+                debugmsg("loaded default input the for "+currentintype.name);
            });
         });
 }
@@ -338,11 +338,11 @@ function listeventscontent() {
       var count = 0;
       $.each(data, function(key, event) { 
          items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside">'+event.user.username+' - '+event.create_time+'</p> </li> ';
-     	
+        
           
           count += 1;
       });
-       	   if (count === 0) {
+           if (count === 0) {
               items_html = "<li>No Events foun.</li>";
             
           }
@@ -435,14 +435,14 @@ function listeventLocations() {
         $("#event_latitude").val(hoodeye_last_position.coords.latitude);
         $("#event_longitude").val(hoodeye_last_position.coords.longitude);
      
-	    $("#eventcommunity").val(current_community._id) ;
-   	    $("#eventintype").val(currentintype.label) ;
+            $("#eventcommunity").val(current_community._id) ;
+            $("#eventintype").val(currentintype.label) ;
          $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
    
-     	// add timestamp 
-     	var currentTime = new Date();
-     	$("#create_time").val(currentTime.toISOString());
-	    $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
+        // add timestamp 
+        var currentTime = new Date();
+        $("#create_time").val(currentTime.toISOString());
+            $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
                             {
                             $('#result').html(response);
                             }});
