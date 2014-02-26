@@ -5,7 +5,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 //-----------------------
 var currentintype ;
-var current_community = { name: "No Community"}
+var current_community = { name: "No Community"};
 var community_list;
 var intype_list ;
 var captureApp;
@@ -102,8 +102,8 @@ function submitRegister() {
     var password = encodeURIComponent($("#reg_password").val());
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
-        if (result.status == 0) {
-            $("#registerstatus").val("")
+        if (result.status === 0) {
+            $("#registerstatus").val("");
         } else {
           localStorage.login_username = $("#reg_username").val();
           localStorage.login_password = $("#reg_password").val();
@@ -148,8 +148,8 @@ function onGeolocationSuccess_old(position) {
     
     // Use Google API to get the location data for the current coordinates
     var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    geocoder.geocode({ "latLng": latlng }, function (results, status) {
+    var latlngtmp = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    geocoder.geocode({ "latLng": latlngtmp }, function (results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             if ((results.length > 1) && results[1]) {
                 $("#myLocation").html(results[1].formatted_address);
@@ -211,11 +211,13 @@ function onGeolocationSuccess_old(position) {
         map: map
       });
 
+      //adw: jshint says: Don't make functions within a loop.
+      //this may lead to issues?
       google.maps.event.addListener(marker, 'click', (function(marker, i) {
         return function() {
           infowindow.setContent(locations[i][0]);
           infowindow.open(map, marker);
-        }
+        };
       })(marker, i));
      }
 
@@ -279,7 +281,7 @@ function assignintype (key) {
 	   $.get('input-types/default.html', function(def_html){ 
 		content.html(def_html); 
 		debugmsg("loaded default input the for "+currentintype.name);
-           })
+           });
         });
 }
 
@@ -340,10 +342,9 @@ function listeventscontent() {
           
           count += 1;
       });
-       	   if (count == 0) {
+       	   if (count === 0) {
               items_html = "<li>No Events foun.</li>";
             
-               ;
           }
        
      
@@ -404,7 +405,7 @@ function listeventLocations() {
         $.mobile.changePage ($("#eventlistpage"));
       var infowindow = new google.maps.InfoWindow();
 
-      var marker, i;
+      var marker;
 
     for (i = 0; i < event_locations.length; i++) {  
       marker = new google.maps.Marker({
@@ -413,11 +414,13 @@ function listeventLocations() {
         map: map
       });
 
+      //adw: jshint says: Don't make functions within a loop.
+      //this may lead to issues?
       google.maps.event.addListener(marker, 'click', (function(marker, i) {
         return function() {
           infowindow.setContent(event_locations[i][0]);
           infowindow.open(map, marker);
-        }
+        };
       })(marker, i));
      }
    });
