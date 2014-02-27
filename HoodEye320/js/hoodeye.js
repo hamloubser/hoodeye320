@@ -411,7 +411,7 @@ function listeventLocations() {
      var    memarker;
        memarker = new google.maps.Marker({
         position: new google.maps.LatLng(latlng),
-        icon: 'images/here.png', 
+   //     icon: 'images/here.png', 
            draggable: true,          
         map: map
       });
@@ -433,7 +433,8 @@ function listeventLocations() {
       marker = new google.maps.Marker({
         position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
         animation : google.maps.Animation.DROP,  
-           draggable: true,  
+           draggable: true,
+           icon: 'images/here.png', 
         map: map
       });
       
