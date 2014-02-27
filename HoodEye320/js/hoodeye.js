@@ -16,8 +16,11 @@ var locations = [] ;
 var default_community_id = "51c8ad43caa81c7d28000002";
 var newtitle;
 
+
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
+
+var currentmarker;
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
@@ -405,7 +408,13 @@ function listeventLocations() {
         $.mobile.changePage ($("#eventlistpage"));
       var infowindow = new google.maps.InfoWindow();
 
-      var marker;
+ 
+       
+       
+       
+       
+       var marker;
+ 
 
     for (i = 0; i < event_locations.length; i++) {  
       marker = new google.maps.Marker({
@@ -414,7 +423,7 @@ function listeventLocations() {
          
         map: map
       });
-
+      
       //adw: jshint says: Don't make functions within a loop.
       //this may lead to issues?
       google.maps.event.addListener(marker, 'click', (function(marker, i) {
