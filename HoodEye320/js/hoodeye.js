@@ -20,8 +20,6 @@ var newtitle;
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
 
-var currentmarker;
-
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
     return $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
@@ -408,10 +406,25 @@ function listeventLocations() {
         $.mobile.changePage ($("#eventlistpage"));
       var infowindow = new google.maps.InfoWindow();
 
- 
+       
+       //----- Trying to add a moveable marker to upgate location
+     var    memarker;
+       memarker = new google.maps.Marker({
+        position: new google.maps.LatLng(latlng),
+        icon: 'images/here.png', 
+           draggable: true,          
+        map: map
+      });
+   
+ //     google.maps.event.addListener(memarker, 'click', (function(memarker, -1) {
+  //      return function() {
+ //         infowindow.setContent('mark here');
+  //        infowindow.open(map, memarker);
+  //      };
+ //     })(memarker, -1));  
        
        
-       
+    //----- ---------------------------------------------------   
        
        var marker;
  
@@ -420,7 +433,7 @@ function listeventLocations() {
       marker = new google.maps.Marker({
         position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
         animation : google.maps.Animation.DROP,  
-         
+           draggable: true,  
         map: map
       });
       
