@@ -411,6 +411,7 @@ function listeventLocations() {
       marker = new google.maps.Marker({
         position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
         animation : google.maps.Animation.DROP,  
+         
         map: map
       });
 
