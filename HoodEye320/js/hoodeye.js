@@ -19,6 +19,7 @@ var newtitle;
 
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
+var manmarker_position;
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
@@ -338,7 +339,7 @@ function listeventscontent() {
       
       var count = 0;
       $.each(data, function(key, event) { 
-         items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside">'+event.user.username+' - '+event.create_time+'</p> </li> ';
+         items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
         
           
           count += 1;
@@ -408,7 +409,7 @@ function listeventLocations() {
 
        
        //----- Trying to add a moveable marker to upgate location
-      var manmarker;
+      var manmarker ;
   
  
        manmarker = new google.maps.Marker({
@@ -421,9 +422,9 @@ function listeventLocations() {
        // try to get the position of the manmarker
         google.maps.event.addListener(manmarker, 'dragend',  function() {
      //      var pos = manmarker.getPosition();
-     //      hoodeye_last_position = pos ;
+         manmarker_position = manmarker.getPosition();
       
-            $("#eventlisttitle").html(" new XY " );
+            $("#eventlisttitle").html("???" );
  			
         		});
       
@@ -458,8 +459,11 @@ function listeventLocations() {
        
      getLocation(function() {
   
-        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
-        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
+         
+       $("#event_latitude").val(hoodeye_last_position.coords.latitude);
+       $("#event_longitude").val(hoodeye_last_position.coords.longitude);
+   //     $("#event_latitude").val(manmarker_position.coords.latitude);
+   //     $("#event_longitude").val(manmarker_position.coords.longitude);
      
             $("#eventcommunity").val(current_community._id) ;
             $("#eventintype").val(currentintype.label) ;
