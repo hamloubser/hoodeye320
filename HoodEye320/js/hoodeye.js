@@ -68,7 +68,7 @@ function onDeviceReady() {
    $(document).delegate('#eventcontentpage','pageshow',function(){
       
        
-       getLocation();
+      getLocation();
        listeventscontent();
        //navigator.splashscreen.hide();
    });    
@@ -344,7 +344,7 @@ function listeventscontent() {
           count += 1;
       });
            if (count === 0) {
-              items_html = "<li>No Events foun.</li>";
+              items_html = "<li>No Events found.</li>";
             
           }
        
