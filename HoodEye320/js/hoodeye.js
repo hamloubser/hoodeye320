@@ -408,33 +408,35 @@ function listeventLocations() {
 
        
        //----- Trying to add a moveable marker to upgate location
-     var    memarker;
-       memarker = new google.maps.Marker({
-        position: new google.maps.LatLng(latlng),
-   //     icon: 'images/here.png', 
-           draggable: true,          
-        map: map
-      });
-   
- //     google.maps.event.addListener(memarker, 'click', (function(memarker, -1) {
-  //      return function() {
- //         infowindow.setContent('mark here');
-  //        infowindow.open(map, memarker);
-  //      };
- //     })(memarker, -1));  
-       
-       
-    //----- ---------------------------------------------------   
-       
-       var marker;
+      var manmarker;
+  
  
+       manmarker = new google.maps.Marker({
+        position: new google.maps.LatLng(lat, long),
+        animation : google.maps.Animation.DROP,  
+           draggable: true,
+          icon: 'images/imgman.png', 
+        map: map
+           });
+       // try to get the position of the manmarker
+        google.maps.event.addListener(manmarker, 'dragend',  function() {
+     //      var pos = manmarker.getPosition();
+     //      hoodeye_last_position = pos ;
+      
+            $("#eventlisttitle").html(" new XY " );
+ 			
+        		});
+      
 
+    //----- ---------------------------------------------------  
+         var marker;
+       
     for (i = 0; i < event_locations.length; i++) {  
       marker = new google.maps.Marker({
         position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
         animation : google.maps.Animation.DROP,  
-           draggable: true,
-           icon: 'images/here.png', 
+         //  draggable: true,
+        //   icon: 'images/here.png', 
         map: map
       });
       
