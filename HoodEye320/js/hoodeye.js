@@ -81,12 +81,16 @@ function onDeviceReady() {
 
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
+        var isnewuser = current_user.name == user_info.name;
+        debugmsg("whoami isnewuser: "+isnewuser)
+        
         current_user = user_info;
-        if (current_user.username == 'Guest') {
+        if (isnewuser) {
+          if (current_user.username == 'Guest') {
             assigncommunity_byid(public_community_id);
-        }
-        if(!current_community._id) {
-            assigncommunity_byid(default_community_id);
+          } else {
+            assigncommunity_byid(default_community_id);  
+          }
         }
     });
 }
@@ -158,9 +162,11 @@ function submitJoincommunity() {
         community: $("#join_community").val(),
         nickname:  $("#join_nickname").val(),
     };
+    debugmsg(submitdata);
     $.post('http://dev.hoodeye.com:4242/api/membership',submitdata,function(result) {
         // Should show success/fail feedback
-        mycommunities();
+        whoami();
+        $.mobile.changePage("#selectcommunitypage");
     });
     return false;
 }
@@ -348,7 +354,7 @@ function assignintype (key) {
 function mycommunities() {
       community_list = current_user.communities;
         
-      var options;
+      var options = '';
       $.each(community_list, function(key, community) { 
           debugmsg("Adding to communitylist:" + community.name);
         options += '<li ><a onClick="assigncommunity_from_list('+key+')" href="#home" data-split-theme="b" > <h3> '+community.name+'</h3></a></li>';
@@ -365,11 +371,11 @@ function mycommunities() {
 }
     
 function updateAvailableCommunities() {
-    var options;
+    var options = '';
     $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
         $("#join_nickname").val(current_user.default_nickname);
         debugmsg(community_names);
-        $.each(community_mames,function(key,community_name) {
+        $.each(community_names,function(key,community_name) {
           options += '<option value='+community_name+'> '+community_name+'</option>';
           debugmsg('<option value='+community_name+'> '+community_name+'</option>');
         });
