@@ -328,11 +328,12 @@ function mycommunities() {
 function updateAvailableCommunities() {
     var options;
     $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
+        $("#join_nickname").val(current_user.default_nickname);
         $.each(community_mames,function(key,community_name) {
           options += '<option value='+community_name+'> '+community_name+'</option>';
         });
+        $("#join_community").html(options).selectmenu('refresh');
     });
-    $("#join_community").html(options).selectmenu('refresh');
 }
 
 
