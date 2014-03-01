@@ -13,6 +13,7 @@ var anonymous_user = { username: "Guest" };
 var current_user = anonymous_user;
 
 var locations = [] ;
+var public_community_id = "51c8ad43caa81c7d28000002";
 var default_community_id = "51c8ad43caa81c7d28000002";
 var newtitle;
 
@@ -35,13 +36,11 @@ function onDeviceReady() {
    captureApp.run();
 
     // Get my user detail and default community and assign it
-    $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
-      current_user = user_info;
-      $.get('http://dev.hoodeye.com:4242/api/community/'+default_community_id,function(community) {
-          assigncommunity(community);
-      });
-    });
-     $(document).delegate('#loginpage','pageshow',function(){
+    try_auto_login();
+    whoami();
+    assigncommunity_byid(default_community_id);
+    
+    $(document).delegate('#loginpage','pageshow',function(){
       if (localStorage.login_username) {
         $("#login_username").val(localStorage.login_username);
         $("#login_password").val(localStorage.login_password);
@@ -78,6 +77,16 @@ function onDeviceReady() {
    });
 }
 
+function whoami() {
+    $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
+        current_user = user_info;
+        if (current_user.username == 'Guest') {
+            assigncommunity_byid(public_community_id);
+        }
+        updateHomeTitle();  
+    });
+}
+
 function updateHomeTitle() {
     // Update app header.
     newtitle = current_user.username + " in " + current_community.name;
@@ -85,12 +94,26 @@ function updateHomeTitle() {
     $("#appheader").html(newtitle);
 }
 
+function try_auto_login() {
+    if (localStorage.login_username && localStorage.login_password) {
+      $.get('http://dev.hoodeye.com:4242/api/login?username=' + localStorage.login_username + '&password=' + localStorage.login_password,function(result) {
+        if (result.status === 1) {
+          current_user = result.user;
+          updateHomeTitle();  
+          return true;
+        } else {
+          return false;
+        }
+      });
+    }
+}
+
 function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
 
     return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
-        if (result.status == 1) {
+        if (result.status === 1) {
           localStorage.login_username=username;
           localStorage.login_password=password;
           current_user = result.user;
@@ -122,6 +145,9 @@ function submitRegister() {
 
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
+      current_user = xxx;  
+      updateHomeTitle();  
+
     });
    
     return false;
@@ -275,6 +301,15 @@ function assigncommunity_from_list (key) {
     assigncommunity(community_list[key]);
 }
 
+function assigncommunity_byid(community_id) {
+    var newhood = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
+    if (newhood) {
+     assigncommunity(newhood)
+    } else {
+        //TODO: this could be more elegant
+	     assigncommunity(current_user.communities[0]);
+    }
+}
 
 function assigncommunity(community) {
     current_community = community;
@@ -284,7 +319,6 @@ function assigncommunity(community) {
     listcommunityeventtypes();
 }
 
-//xxx
 function assignintype (key) {
     currentintype = intype_list[key] ;
     debugmsg("Assigning intype to "+currentintype.name);
@@ -329,8 +363,10 @@ function updateAvailableCommunities() {
     var options;
     $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
         $("#join_nickname").val(current_user.default_nickname);
+        debugmsg(community_names);
         $.each(community_mames,function(key,community_name) {
           options += '<option value='+community_name+'> '+community_name+'</option>';
+          debugmsg('<option value='+community_name+'> '+community_name+'</option>');
         });
         $("#join_community").html(options).selectmenu('refresh');
     });
@@ -454,7 +490,7 @@ function listeventLocations() {
      //      var pos = manmarker.getPosition();
          manmarker_position = manmarker.getPosition();
       
-            $("#eventlisttitle").html(manmarker.getPosition().lng().toString() );
+            $("#eventlisttitle").html("???" );
  			
         		});
       
