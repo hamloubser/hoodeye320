@@ -454,7 +454,7 @@ function listeventLocations() {
      //      var pos = manmarker.getPosition();
          manmarker_position = manmarker.getPosition();
       
-            $("#eventlisttitle").html(manmarker.getPosition().lng());
+            $("#eventlisttitle").html(manmarker.getPosition().lng().toString() );
  			
         		});
       
