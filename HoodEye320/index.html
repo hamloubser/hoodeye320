@@ -407,7 +407,24 @@ View Alerts
     </div>
 </div>       
         
+<!-- joincommunity -->
+<div data-role="page" id="joincommunitypage">
+   <div data-role="header">
         
+        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
+       <h1>Join a community</h1>
+   </div>
+   <div data-role="content">
+       <form name="joincommunityform" id="joincommunityform"  onsubmit="return submitJoincommunity();">
+           <label for="community">Community</label> 
+           <select type="select" name="community" id="join_community"> 
+           </select><br>
+           <label for="nickname">Nickname in this community</label>
+           <input type="text" name="nickname" id="join_nickname"/> <br>
+           <input name="submit" value="Join Community" type="submit">
+       </form>
+</div>       
+     
      
      <!-- about -->
       

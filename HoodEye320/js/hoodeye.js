@@ -73,6 +73,9 @@ function onDeviceReady() {
        listeventscontent();
        //navigator.splashscreen.hide();
    });    
+   $(document).delegate('#joincommunitypage','pageshow',function(){
+       updateAvailableCommunities();
+   }
 }
 
 function updateHomeTitle() {
@@ -125,6 +128,18 @@ function submitLogout() {
     
 }
   
+function submitJoincommunity() {
+    var submitdata = {
+        community: $("#join_community").val(),
+        nickname:  $("#join_nickname").val(),
+    }
+    $.post('http://dev.hoodeye.com:4242/api/membership',submitdata,function(result) {
+        // Should show success/fail feedback
+        mycommunities();
+    });
+    return false;
+}
+    
 
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
@@ -233,7 +248,7 @@ function onGeolocationSuccess_old(position) {
 
 
 //=======================Get Community from hoodeye=======================//
-
+//adw: this isn't being called from anywhere, can we remove it?
 function listCommunities() {
     var mydevice =  device.uuid;
     var lat = hoodeye_last_position.coords.latitude;
@@ -288,7 +303,7 @@ function assignintype (key) {
 }
 
 function mycommunities() {
-   $.get('http://dev.hoodeye.com:4242/api/community', function(data) {
+   $.get('http://dev.hoodeye.com:4242/api/hood/myhoods', function(data) {
        // default to first community listed for now
       community_list = data;
         
@@ -300,10 +315,24 @@ function mycommunities() {
       //    try a new way for the community options
        //    options += '<option ><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></option>';
       });
-     
+       if (current_user.username == 'Guest') {
+         options += '<li ><a href="#loginpage" data-split-theme="b" > <h3>Log in to join communities</h3></a></li>';           
+       }  else {
+         options += '<li ><a href="#joincommunitypage" data-split-theme="b" > <h3>Join more communities</h3></a></li>';
+       }
      $("#mycommunities").html(options).listview('refresh');
        
     });
+}
+    
+function updateAvailableCommunities() {
+    var options;
+    $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
+        $.each(community_mames,function(key,community_name) {
+          options += '<option value='+community_name+'> '+community_name+'</option>';
+        });
+    });
+    $("#join_community").html(options).selectmenu('refresh');
 }
 
 
