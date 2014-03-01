@@ -302,6 +302,7 @@ function assigncommunity_from_list (key) {
 }
 
 function assigncommunity_byid(community_id) {
+     debugmsg("Hallo from assigncommunity_byid");
     var newhood = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
     if (newhood) {
      debugmsg("assigncommunity_byid found "+newhood.name);
