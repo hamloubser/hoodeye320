@@ -152,7 +152,7 @@ function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
       current_community = { name: "No Community"};
       current_user = anonymous_user;
-      whoami;
+      whoami();
     });
     return false;
 }
@@ -460,7 +460,7 @@ function listeventLocations() {
 
          for (i = 0; i < data.length; i++) {  
            event = data[i]; 
-             event_locations.push([ " <B>"+event.intype  + "</B><br/> "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
+             event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/imgpanic.png' alt='image in infowindow'>  "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
          }
        } else {
                   debugmsg("Hallo0");
