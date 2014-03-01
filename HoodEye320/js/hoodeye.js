@@ -82,8 +82,8 @@ function whoami() {
         current_user = user_info;
         if (current_user.username == 'Guest') {
             assigncommunity_byid(public_community_id);
+            updateHomeTitle();
         }
-        updateHomeTitle();  
     });
 }
 
