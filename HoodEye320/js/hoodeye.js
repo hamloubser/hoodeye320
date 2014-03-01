@@ -82,7 +82,7 @@ function onDeviceReady() {
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
         var isnewuser = current_user.name == user_info.name;
-        debugmsg("whoami isnewuser: "+isnewuser)
+        debugmsg("whoami isnewuser: "+isnewuser);
         
         current_user = user_info;
         if (isnewuser) {
