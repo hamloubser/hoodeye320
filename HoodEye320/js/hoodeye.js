@@ -75,7 +75,7 @@ function onDeviceReady() {
    });    
    $(document).delegate('#joincommunitypage','pageshow',function(){
        updateAvailableCommunities();
-   }
+   });
 }
 
 function updateHomeTitle() {
@@ -132,7 +132,7 @@ function submitJoincommunity() {
     var submitdata = {
         community: $("#join_community").val(),
         nickname:  $("#join_nickname").val(),
-    }
+    };
     $.post('http://dev.hoodeye.com:4242/api/membership',submitdata,function(result) {
         // Should show success/fail feedback
         mycommunities();
