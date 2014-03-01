@@ -84,6 +84,9 @@ function whoami() {
             assigncommunity_byid(public_community_id);
             updateHomeTitle();
         }
+        if(!current_community._id) {
+            assigncommunity_byid(default_community_id);
+        }
     });
 }
 
@@ -145,13 +148,11 @@ function submitRegister() {
 
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
-      current_user = xxx;  
-      updateHomeTitle();  
-
+      current_community = { name: "No Community"};
+      current_user = anonymous_user;
+      whoami;
     });
-   
     return false;
-    
 }
   
 function submitJoincommunity() {
