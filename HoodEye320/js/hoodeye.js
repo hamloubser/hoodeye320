@@ -175,8 +175,8 @@ function submitJoincommunity() {
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
         hoodeye_last_position = position;
-        debugmsg("Got location:");       
-        debugmsg(hoodeye_last_position);       
+        //debugmsg("Got location:");       
+        //debugmsg(hoodeye_last_position);       
         on_success();
     },onGeolocationError);
 }
@@ -356,28 +356,38 @@ function mycommunities() {
         
       var options = '';
       $.each(community_list, function(key, community) { 
-          debugmsg("Adding to communitylist:" + community.name);
-        options += '<li ><a onClick="assigncommunity_from_list('+key+')" href="#home" data-split-theme="b" > <h3> '+community.name+'</h3></a></li>';
-        //  options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
-        //    try a new way for the community options
-        //    options += '<option ><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></option>';
+          //debugmsg("Adding to communitylist:" + community.name);
+          options += '<li ><a onClick="assigncommunity_from_list('+key+
+              ')" href="#home" data-split-theme="b" > <h3> '+
+              community.name+'</h3>(as '+getNickname4Community(community.name)+')</a></li>';
       });
        if (current_user.username == 'Guest') {
-         options += '<li ><a href="#loginpage" data-split-theme="b" > <h3>Log in to join communities</h3></a></li>';           
+         options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';           
        }  else {
-         options += '<li ><a href="#joincommunitypage" data-split-theme="b" > <h3>Join more communities</h3></a></li>';
+         options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
        }
      $("#mycommunities").html(options).listview('refresh');
+}
+
+function getNickname4Community(community_name) {
+    var nick = current_user.default_nickname;
+    $.each(current_user.memberships,function(idx,membership) {
+        if (membership.community_name == community_name) {
+          nick = membership.nickname;
+          return false;
+        }
+    });
+    return nick;
 }
     
 function updateAvailableCommunities() {
     var options = '';
     $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
         $("#join_nickname").val(current_user.default_nickname);
-        debugmsg(community_names);
+        //debugmsg(community_names);
         $.each(community_names,function(key,community_name) {
           options += '<option value='+community_name+'> '+community_name+'</option>';
-          debugmsg('<option value='+community_name+'> '+community_name+'</option>');
+          //debugmsg('<option value='+community_name+'> '+community_name+'</option>');
         });
         $("#join_community").html(options).selectmenu('refresh');
     });
