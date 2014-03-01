@@ -304,14 +304,18 @@ function assigncommunity_from_list (key) {
 function assigncommunity_byid(community_id) {
     var newhood = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
     if (newhood) {
-     assigncommunity(newhood)
+     debugmsg("assigncommunity_byid found "+newhood.name);
+     assigncommunity(newhood);
     } else {
         //TODO: this could be more elegant
-	     assigncommunity(current_user.communities[0]);
+        debugmsg("assigncommunity_byid found none, using "+current_user.communities[0].name);
+        assigncommunity(current_user.communities[0]);
     }
 }
 
 function assigncommunity(community) {
+    debugmsg("assigncommunity setting current_community to "+current_community.name);
+
     current_community = community;
     // Update submitted community id for reportig events
     $("#eventcommunity").val(current_community._id);
@@ -490,7 +494,7 @@ function listeventLocations() {
      //      var pos = manmarker.getPosition();
          manmarker_position = manmarker.getPosition();
       
-            $("#eventlisttitle").html(manmarker.getPosition().lng().toString());
+            $("#eventlisttitle").html("???" );
  			
         		});
       
