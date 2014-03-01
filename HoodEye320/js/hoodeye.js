@@ -13,8 +13,8 @@ var anonymous_user = { username: "Guest" };
 var current_user = anonymous_user;
 
 var locations = [] ;
-var public_community_id = "51c8ad43caa81c7d28000002";
-var default_community_id = "51c8ad43caa81c7d28000002";
+var public_community_id = "52f5ec9daef933ee6997218a";
+var default_community_id = "52f5ec9daef933ee6997218a";
 var newtitle;
 
 
