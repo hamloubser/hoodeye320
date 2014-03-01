@@ -38,7 +38,7 @@ function onDeviceReady() {
     // Get my user detail and default community and assign it
     try_auto_login();
     whoami();
-    assigncommunity_byid(default_community_id);
+    debugmsg("Default community assigned:" + current_community.name);
     
     $(document).delegate('#loginpage','pageshow',function(){
         debugmsg("Showing #loginpage");
@@ -48,18 +48,18 @@ function onDeviceReady() {
       }
     });
    
-    $(document).delegate('#selectcommunitypage','pageshow',function(){
+    $(document).delegate('#selectcommunitypage','pagebeforeshow',function(){
        debugmsg("Showing #selectcommunitypage");
        mycommunities();
     }); 
     
-    $(document).delegate('#joincommunitypage','pageshow',function(){
+    $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
        debugmsg("Showing #joincommunitypage");
 	   updateAvailableCommunities();
     });
 
-    $(document).delegate('#communityeventpage','pageshow',function(){
-       debugmsg("Showing #communityeventpage");
+    $(document).delegate('#communityeventpage','pagebeforeshow',function(){
+       debugmsg("Showing  #communityeventpage");
        listcommunityeventtypes();
     });
     
@@ -84,7 +84,6 @@ function whoami() {
         current_user = user_info;
         if (current_user.username == 'Guest') {
             assigncommunity_byid(public_community_id);
-            updateHomeTitle();
         }
         if(!current_community._id) {
             assigncommunity_byid(default_community_id);
@@ -105,9 +104,6 @@ function try_auto_login() {
         if (result.status === 1) {
           current_user = result.user;
           assigncommunity_byid(default_community_id);
-          return true;
-        } else {
-          return false;
         }
       });
     }
@@ -328,8 +324,8 @@ function assigncommunity(community) {
     // Update submitted community id for reportig events
     $("#eventcommunity").val(current_community._id);
     updateHomeTitle();
-    debugmsg("Going for listcommunityeventtypes");
-    listcommunityeventtypes();
+    //debugmsg("Going for listcommunityeventtypes");
+    //listcommunityeventtypes();
 }
 
 function assignintype (key) {
@@ -460,7 +456,7 @@ function listeventLocations() {
 
          for (i = 0; i < data.length; i++) {  
            event = data[i]; 
-             event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/imgpanic.png' alt='image in infowindow'>  "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
+             event_locations.push([ " <B>"+event.intype  + "</B><br/> "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
          }
        } else {
                   debugmsg("Hallo0");
