@@ -98,11 +98,11 @@ function updateHomeTitle() {
 }
 
 function try_auto_login() {
-    if (localStorage.login_username && localStorage.login_password) {
+    if (localStorage.login_password) {
       $.get('http://dev.hoodeye.com:4242/api/login?username=' + localStorage.login_username + '&password=' + localStorage.login_password,function(result) {
         if (result.status === 1) {
           current_user = result.user;
-          updateHomeTitle();  
+          assigncommunity_byid(default_community_id);
           return true;
         } else {
           return false;
@@ -120,7 +120,7 @@ function submitLogin() {
           localStorage.login_username=username;
           localStorage.login_password=password;
           current_user = result.user;
-          updateHomeTitle();  
+          assigncommunity_byid(default_community_id);
           return true;
         } else {
           return false;
