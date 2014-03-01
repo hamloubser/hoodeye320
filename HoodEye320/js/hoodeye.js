@@ -32,8 +32,8 @@ function debugmsg(msg) {
 // PhoneGap is ready
 function onDeviceReady() {
     
-   captureApp = new captureApp();
-   captureApp.run();
+    captureApp = new captureApp();
+    captureApp.run();
 
     // Get my user detail and default community and assign it
     try_auto_login();
@@ -41,40 +41,42 @@ function onDeviceReady() {
     assigncommunity_byid(default_community_id);
     
     $(document).delegate('#loginpage','pageshow',function(){
+        debugmsg("Showing #loginpage");
       if (localStorage.login_username) {
         $("#login_username").val(localStorage.login_username);
         $("#login_password").val(localStorage.login_password);
       }
-   });
+    });
    
-    $(document).delegate('#selectcommunity','pageshow',function(){
+    $(document).delegate('#selectcommunitypage','pageshow',function(){
+       debugmsg("Showing #selectcommunitypage");
        mycommunities();
-   });
-    $(document).delegate('#communityeventpage','pageshow',function(){
-       mycommunities();
-   });
+    }); 
     
-   $(document).delegate('#eventlistpage','pageshow',function(){
-      // listevents();
-       debugmsg("pageshow on #eventlistpage");       
+    $(document).delegate('#joincommunitypage','pageshow',function(){
+       debugmsg("Showing #joincommunitypage");
+	   updateAvailableCommunities();
+    });
 
-           getLocation();
-       debugmsg("Got location:");       
-       debugmsg(hoodeye_last_position);       
-       
-       listeventLocations() ;
-   });
+    $(document).delegate('#communityeventpage','pageshow',function(){
+       debugmsg("Showing #communityeventpage");
+       listcommunityeventtypes();
+    });
+    
+    $(document).delegate('#eventlistpage','pageshow',function(){
+        // listevents();
+        debugmsg("pageshow on #eventlistpage");       
 
-   $(document).delegate('#eventcontentpage','pageshow',function(){
-      
+        getLocation();
        
-      getLocation();
-       listeventscontent();
-       //navigator.splashscreen.hide();
-   });    
-   $(document).delegate('#joincommunitypage','pageshow',function(){
-       updateAvailableCommunities();
-   });
+        listeventLocations() ;
+    });
+
+    $(document).delegate('#eventcontentpage','pageshow',function(){
+        getLocation();
+        listeventscontent();
+        //navigator.splashscreen.hide();
+    });    
 }
 
 function whoami() {
@@ -171,7 +173,10 @@ function submitJoincommunity() {
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
         hoodeye_last_position = position;
-        on_success();},onGeolocationError);
+        debugmsg("Got location:");       
+        debugmsg(hoodeye_last_position);       
+        on_success();
+    },onGeolocationError);
 }
   
 function onGeolocationSuccess(position) {
@@ -179,6 +184,7 @@ function onGeolocationSuccess(position) {
 }
 
 function onGeolocationError(error) {
+    debugmsg("getLocation gave an error");
     $("#myLocation").html("<span class='err'>" + error.message + "</span>");
 }
 
@@ -303,25 +309,26 @@ function assigncommunity_from_list (key) {
 }
 
 function assigncommunity_byid(community_id) {
-     debugmsg("Hallo from assigncommunity_byid");
-    var newhood = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
+    var newhood_list = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
+    newhood = newhood_list[0];
+    
     if (newhood) {
-     debugmsg("assigncommunity_byid found "+newhood.name);
+     //debugmsg("assigncommunity_byid found "+newhood.name);
      assigncommunity(newhood);
     } else {
         //TODO: this could be more elegant
-        debugmsg("assigncommunity_byid found none, using "+current_user.communities[0].name);
+        //debugmsg("assigncommunity_byid found none, using "+current_user.communities[0].name);
         assigncommunity(current_user.communities[0]);
     }
 }
 
 function assigncommunity(community) {
-    debugmsg("assigncommunity setting current_community to "+current_community.name);
-
     current_community = community;
+    debugmsg("assigncommunity setting current_community to "+current_community.name);
     // Update submitted community id for reportig events
     $("#eventcommunity").val(current_community._id);
     updateHomeTitle();
+    debugmsg("Going for listcommunityeventtypes");
     listcommunityeventtypes();
 }
 
@@ -343,17 +350,15 @@ function assignintype (key) {
 }
 
 function mycommunities() {
-   $.get('http://dev.hoodeye.com:4242/api/hood/myhoods', function(data) {
-       // default to first community listed for now
-      community_list = data;
+      community_list = current_user.communities;
         
-      var items = [];
       var options;
-      $.each(data, function(key, community) { 
-       options += '<li ><a onClick="assigncommunity_from_list('+key+')" href="#home" data-split-theme="b" > <h3> '+community.name+'</h3></a></li>';
-          //  options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
-      //    try a new way for the community options
-       //    options += '<option ><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></option>';
+      $.each(community_list, function(key, community) { 
+          debugmsg("Adding to communitylist:" + community.name);
+        options += '<li ><a onClick="assigncommunity_from_list('+key+')" href="#home" data-split-theme="b" > <h3> '+community.name+'</h3></a></li>';
+        //  options += '<li><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></li>';
+        //    try a new way for the community options
+        //    options += '<option ><a onClick="assigncommunity_from_list('+key+')" href="#home">  '+community.name+'</a></option>';
       });
        if (current_user.username == 'Guest') {
          options += '<li ><a href="#loginpage" data-split-theme="b" > <h3>Log in to join communities</h3></a></li>';           
@@ -361,8 +366,6 @@ function mycommunities() {
          options += '<li ><a href="#joincommunitypage" data-split-theme="b" > <h3>Join more communities</h3></a></li>';
        }
      $("#mycommunities").html(options).listview('refresh');
-       
-    });
 }
     
 function updateAvailableCommunities() {
@@ -389,6 +392,7 @@ function listcommunityeventtypes() {
       var options;
      
        $.each(current_community.intypes, function(key, intype) { 
+           debugmsg("Adding intype: "+intype.label);
  
           options += '<li><a onClick="assignintype('+key+')" href="#reportpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
       
