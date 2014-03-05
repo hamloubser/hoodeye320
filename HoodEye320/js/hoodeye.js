@@ -31,6 +31,7 @@ function debugmsg(msg) {
 
 // PhoneGap is ready
 function onDeviceReady() {
+    alert("Delegates starting");
     
     captureApp = new captureApp();
     captureApp.run();
@@ -77,6 +78,26 @@ function onDeviceReady() {
         listeventscontent();
         //navigator.splashscreen.hide();
     });    
+     $(document).delegate('#simplealert', 'click', function() {
+         alert("dont tuch me on my button!");
+     });
+
+	$(document).delegate('#opendialog', 'click', function() {
+  // NOTE: The selector can be whatever you like, so long as it is an HTML element.
+  //       If you prefer, it can be a member of the current page, or an anonymous div
+  //       like shown. 
+        alert("opendialog called");
+		  $('<div>').simpledialog2({
+    mode: 'blank',
+    headerText: 'Some Stuff',
+    headerClose: true,
+    blankContent : 
+      "<ul data-role='listview'><li>Some</li><li>List</li><li>Items</li></ul>"+
+      // NOTE: the use of rel="close" causes this button to close the dialog.
+      "<a rel='close' data-role='button' href='#'>Close</a>"
+      })
+    })
+    alert("Delegates done");
 }
 
 function whoami() {
