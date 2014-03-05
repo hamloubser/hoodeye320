@@ -87,7 +87,7 @@ function onDeviceReady() {
   //       If you prefer, it can be a member of the current page, or an anonymous div
   //       like shown. 
         alert("opendialog called");
-		  $('<div>').simpledialog2({
+		  $(this).simpledialog2({
     mode: 'blank',
     headerText: 'Some Stuff',
     headerClose: true,
