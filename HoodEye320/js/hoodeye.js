@@ -427,7 +427,7 @@ function listeventscontent() {
       
       var count = 0;
       $.each(data, function(key, event) { 
-         items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
+         items_html += '<li ><a href="#"> '+event.intype+' </a> '+event.user.username+'<span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
         
           
           count += 1;
@@ -552,8 +552,8 @@ function listeventLocations() {
        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
           // if the manmarker is moved use its location.     
-           if ( manmarker_position != 0 ) {
-                   $("#event_latitude").val(manmarker_position.lat().toString());
+           if ( manmarker_position != 0  ) {
+                   $("#event_latitude").val(manmarkeer_position.lat().toString());
                    $("#event_longitude").val(manmarker_position.lng().toString());
                          }
             $("#eventcommunity").val(current_community._id) ;
