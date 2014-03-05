@@ -20,7 +20,7 @@ var newtitle;
 
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
-var manmarker_position;
+var manmarker_position = 0;
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
@@ -82,7 +82,7 @@ function onDeviceReady() {
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
         var isnewuser = current_user.name == user_info.name;
-        debugmsg("whoami isnewuser: "+isnewuser)
+        debugmsg("whoami isnewuser: "+isnewuser);
         
         current_user = user_info;
         if (isnewuser) {
@@ -427,7 +427,7 @@ function listeventscontent() {
       
       var count = 0;
       $.each(data, function(key, event) { 
-         items_html += '<li ><a href="#"> '+event.intype+' </a> <span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
+         items_html += '<li ><a href="#"> '+event.intype+' </a> '+event.user.username+'<span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
         
           
           count += 1;
@@ -472,14 +472,14 @@ function listeventLocations() {
 
          for (i = 0; i < data.length; i++) {  
            event = data[i]; 
-             event_locations.push([ " <B>"+event.intype  + "</B><br/> "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
+             event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
          }
        } else {
                   debugmsg("Hallo0");
          event_locations.push(['Nothing Near', lat,long,1] );
        }
  // var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?center='+lat+','+long+'&size=300x200&maptype=street&zoom=11&sensor=true&markers=size:mid%7Ccolor:red%7C' +  latlngalert ;
- //  var mapImg = '<img src="' + googleApis_map_Url + '" />';
+ //  var mapImg = '<src="' + googleApis_map_Url + '" />';
  //   $("#map_canvas_events").html(mapImg);       
        debugmsg("Number of events: "+event_locations.length);
 //  return event_locations;
@@ -511,9 +511,10 @@ function listeventLocations() {
         google.maps.event.addListener(manmarker, 'dragend',  function() {
      //      var pos = manmarker.getPosition();
          manmarker_position = manmarker.getPosition();
-      
-            $("#eventlisttitle").html("???" );
- 			
+         
+            $("#eventlisttitle").html("Alert at Man" );
+ 	    
+       
         		});
       
 
@@ -547,12 +548,14 @@ function listeventLocations() {
        
      getLocation(function() {
   
-         
+       
        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
-   //     $("#event_latitude").val(manmarker_position.coords.latitude);
-   //     $("#event_longitude").val(manmarker_position.coords.longitude);
-     
+          // if the manmarker is moved use its location.     
+           if ( manmarker_position != 0  ) {
+                   $("#event_latitude").val(manmarkeer_position.lat().toString());
+                   $("#event_longitude").val(manmarker_position.lng().toString());
+                         }
             $("#eventcommunity").val(current_community._id) ;
             $("#eventintype").val(currentintype.label) ;
          $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
