@@ -83,11 +83,13 @@ function onDeviceReady() {
          
      });
 
-$(document).delegate('#stringselect', 'change', function(e) {
-  var self = this;
-  $(self+':selected:not([data-placeholder])').each(function(){
-alert("selected");
-  });
+$(document).delegate('#selectview', 'click', function() {
+// ---- Still to add menu options dynamically
+              //            <select data-native-menu="false" name='selectview' id='selectview' > 
+              //             <li>  <a href="#eventcontentpage">List Notice </a>    </li>
+              //             <li>  <a href="#eventcontentpage">List Alerts </a>    </li>
+             //              <li>  <a  href="#eventlistpage">Map</a>    </li> 
+             //            </select> 
 });
     
     

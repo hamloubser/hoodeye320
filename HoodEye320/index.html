@@ -49,45 +49,24 @@
                  
                  
 <div class="ui-grid-a" id="menupage">
-            <div class="ui-block-a" style="text-align: center;">
-                    <div style="text-align: center;">
-                <a href="#selectcommunitypage">
-                        <img id="img1" style="width: 90px; height: 90px;" src="images/imglogin.png">
-                </a>
-                    </div>
-Select Community
-            </div>
-            <div class="ui-block-b" style="text-align: center;">
-                    <div style="text-align: center;">
-                <a href="#communityeventpage">
-                        <img  id="img2" style="width: 90px; height: 90px;" src="images/imgreportincident.jpg">
-                </a>
-                    </div>
-Alert Community
-            </div>
+
+
             <div class="ui-block-a" style="text-align: center;">
                     <div style="text-align: center;">
                 <a href="#panicpage">
                         <img id="img3" style="width: 90px; height: 90px;" src="images/imgpanic.png">
                 </a>
                     </div>
-panic
+
             </div>
-            <div class="ui-block-b" style="text-align: center;">
-                    <div style="text-align: center;">
-                <a href="index-testsimple.html">
-                        <img id="img4" style="width: 90px; height: 90px;" src="images/imgsafetybox.png">
-                </a>
-                    </div>
-safety box
-            </div>
+
             <div class="ui-block-a" style="text-align: center;">
                     <div style="text-align: center;">
                  <a href="#eventcontentpage">
                         <img id="img5" style="width: 90px; height: 90px;" src="images/imgcontent.png">
                 </a>
                     </div>
-Notices
+
             </div>
             <div class="ui-block-b" style="text-align: center;">
                     <div style="text-align: center;">
@@ -95,7 +74,7 @@ Notices
                         <img id="img6" style="width: 90px; height: 90px;" src="images/imgmap.png">
                     </a>
                     </div>
-View Alerts           
+          
              </div>
                             
    </div>
@@ -104,18 +83,15 @@ View Alerts
  <div data-role="footer"  data-position="fixed" id="homefooter">		
                   <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li>
-                        <select data-native-menu="false" name='stringselect' id='stringselect' > 
-                            <option data-placeholder='true'>Choose View...</option> 
-                            <option value='List Notice'> <a href="#eventcontentpage">List Notice</a></option> 
-                            <option value='List Alerts'>List Alerts</option> 
-                            <option value='Map'> <a href="#eventlistpage">Map</a></option> 
-                          </select> 
+                        <li id='selectview' ><a href="#" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         
-                        </li>
-     
-                        <li><a href="#mysettingspage" data-icon="gear" > Accounts </a></li>
+                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+
+                        <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                         
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
 
                     </ul>
                 </div>
@@ -185,7 +161,22 @@ View Alerts
     </div>
     
     
-    
+     <div data-role="footer"  data-position="fixed" id="eventcontentpagefooter">		
+                  <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        
+                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+
+                        <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                         
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                        
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+
+                    </ul>
+                </div>
+       </div>     
 </div>
 
 
@@ -260,6 +251,24 @@ View Alerts
       
      </ul>
    </div>
+
+       <div data-role="footer"  data-position="fixed" id="communityeventpagefooter">		
+                  <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        
+                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+
+                        <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                         
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                        
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+
+                    </ul>
+                </div>
+             </div>          
+     
 </div>        
    
     
@@ -278,19 +287,25 @@ View Alerts
      	    <li>Waiting for server...</li>
           </ul>
 	</div>   
-  
-                      
-             <div data-role="footer"  data-position="fixed" id="reportincidentsfooter">		
-                  <div data-role="navbar" data-iconpos="top">
+
+    
+       <div data-role="footer"  data-position="fixed" id="selectcommunitypagefooter">		
+                  <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li><a href="#communityeventpage" data-icon="grid">Login </a></li>
-     
-                        <li><a href="" data-icon="star" data-theme="e"> Panic </a></li>
-                        <li><a href="" data-icon="gear"> safety box </a></li>
+                        <li id='selectview' ><a href="#" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        
+                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+
+                        <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                         
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                        
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
 
                     </ul>
                 </div>
-             </div>
+             </div>          
+     
      
 </div>
              
@@ -316,20 +331,25 @@ View Alerts
        
     
     </div>
-     <div data-role="footer"  data-position="fixed" id="reportfooter">		
+
         
-         
-         <div data-role="navbar" data-iconpos="top">
+       <div data-role="footer"  data-position="fixed" id="eventlistpagefooter">		
+                  <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                         <li><a href="#" data-icon="star" > View  </a></li>
-                        <li><a href="#communityeventpage" data-icon="search"> What kind ? </a></li>
-    
-                        <li><a href="#reportpage" data-icon="plus" data-theme="e"> edit Alert </a></li>
-						<li><a  data-icon="plus" data-theme="f" onclick="return submitEvent();"> Alert Again </a></li>
+                        <li id='selectview' ><a href="#" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        
+                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+
+                        <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                         
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                        
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+
                     </ul>
                 </div>
-             </div>
-
+             </div>          
+     
     
     
 </div>
