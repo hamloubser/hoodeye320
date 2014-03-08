@@ -45,18 +45,7 @@
                 <a href="#about" data-icon="info" class="ui-btn-right">about</a>
                 <h1 id="appheader">Hoodeye</h1>
             </div>
-             <div data-role="content">
-                  
-<div data-role='fieldcontain'> 
-  <label for='vendor'>Some Select Menu, using jQM styles</label> 
-  <select data-native-menu="false" name='stringselect' id='stringselect' > 
-    <option data-placeholder='true'>Choose one...</option> 
-    <option data-addoption='true' value='0'>Add New...</option> 
-    <option value='Example Vendor'>Example Vendor</option> 
-    <option value='Another Example Vendor'>Another Example Vendor</option> 
-  </select> 
-</div>
-               
+             <div data-role="content">               
                  
                  
 <div class="ui-grid-a" id="menupage">
@@ -115,7 +104,15 @@ View Alerts
  <div data-role="footer"  data-position="fixed" id="homefooter">		
                   <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li><a href="#loginpage" data-icon="search">Login</a></li>
+                        <li>
+                        <select data-native-menu="false" name='stringselect' id='stringselect' > 
+                            <option data-placeholder='true'>Choose View...</option> 
+                            <option value='List Notice'> <a href="#eventcontentpage">List Notice</a></option> 
+                            <option value='List Alerts'>List Alerts</option> 
+                            <option value='Map'> <a href="#eventlistpage">Map</a></option> 
+                          </select> 
+                        
+                        </li>
      
                         <li><a href="#mysettingspage" data-icon="gear" > Accounts </a></li>
                         
@@ -352,7 +349,7 @@ View Alerts
    <div data-role="content">
       
        <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
-      
+             <a href="#loginpage"   data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
        <a href="#logoutpage"  data-icon="arrow-l" class="ui-btn-Left">Logout</a><br> <br> <br>
 
 
