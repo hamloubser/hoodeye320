@@ -82,30 +82,33 @@ function onDeviceReady() {
          alert("dont tuch me on my button!");
      });
 
-	$(document).delegate('#opendialog', 'click', function() {
-  // NOTE: The selector can be whatever you like, so long as it is an HTML element.
-  //       If you prefer, it can be a member of the current page, or an anonymous div
-  //       like shown. 
-  //      alert("opendialog called");
-		  $(this).simpledialog2({
-    mode: 'blank',
-    headerText: 'Some Stuff',
-    headerClose: true,
-    blankContent : 
-              
-          " <div data-role='fieldcontain'> <select data-native-menu="false" > "+
-           " <option value='Content'>Content</option>  "+
-            " <option value='Map'>Map</option>  "+
-              "  <option value='Feed'>Feed</option>  "+
-          "  </select> </div> "
-             
-                          
-              
-//     "<ul data-role='listview'><li>Content</li><li>Map</li><li>Items</li></ul>"+//
-      // NOTE: the use of rel="close" causes this button to close the dialog.
-//     "<a rel='close' data-role='button' href='#'>Close</a>"
-      })
-    })
+$(document).delegate('#stringselect', 'change', function(e) {
+  var self = this;
+  $(self+':selected:not([data-placeholder])').each(function(){
+    if ( $(this).attr('data-addoption') ) {
+      $(self).simpledialog({
+        'mode' : 'string',
+        'prompt' : 'Add New Option',
+        'useDialogForceFalse' : true,
+        'buttons' : {
+          'Yes, Add' : {
+            click: function () { 
+              thisopt = $(self).attr('data-string');
+              $('<option value="'+thisopt+'" selected="selected">'+thisopt+'</option>').appendTo($(self));
+              $(self).selectmenu('refresh', true);
+              return true; }
+          },
+          'Cancel' : {
+            click: function () { $(self).selectmenu('open'); },
+            icon: "delete"
+          }
+        }
+      });
+    }
+  });
+});
+    
+    
 //   alert("Delegates done");
 }
 
