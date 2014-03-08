@@ -85,26 +85,7 @@ function onDeviceReady() {
 $(document).delegate('#stringselect', 'change', function(e) {
   var self = this;
   $(self+':selected:not([data-placeholder])').each(function(){
-    if ( $(this).attr('data-addoption') ) {
-      $(self).simpledialog({
-        'mode' : 'string',
-        'prompt' : 'Add New Option',
-        'useDialogForceFalse' : true,
-        'buttons' : {
-          'Yes, Add' : {
-            click: function () { 
-              thisopt = $(self).attr('data-string');
-              $('<option value="'+thisopt+'" selected="selected">'+thisopt+'</option>').appendTo($(self));
-              $(self).selectmenu('refresh', true);
-              return true; }
-          },
-          'Cancel' : {
-            click: function () { $(self).selectmenu('open'); },
-            icon: "delete"
-          }
-        }
-      });
-    }
+
   });
 });
     
