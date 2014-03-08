@@ -80,12 +80,13 @@ function onDeviceReady() {
     });    
      $(document).delegate('#simplealert', 'click', function() {
          alert("dont tuch me on my button!");
+         
      });
 
 $(document).delegate('#stringselect', 'change', function(e) {
   var self = this;
   $(self+':selected:not([data-placeholder])').each(function(){
-
+alert("selected");
   });
 });
     
