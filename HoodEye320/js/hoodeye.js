@@ -114,7 +114,7 @@ function whoami() {
 
 function updateHomeTitle() {
     // Update app header.
-    newtitle = current_user.username + " in " + current_community.name;
+    newtitle = current_user.username+" in " + current_community.name;
     debugmsg("Setting title to "+newtitle);
     $("#appheader").html(newtitle);
 }
