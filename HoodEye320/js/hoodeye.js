@@ -438,6 +438,7 @@ function listeventscontent() {
  
    var params = 'community_id=' + current_community._id;
   $("#eventcontentlisttitle").html(current_community.name);
+     $("#eventtypelisttitle").html(current_community.name);
    return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
       
        var items_html ;

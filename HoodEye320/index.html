@@ -37,7 +37,11 @@
 
 
  <body> 
-        
+   
+
+
+
+    
 <!-- homepage -->
 
         <div data-role="page" id="home" >
@@ -58,63 +62,38 @@
         
              <div data-role="content">            
                  
-     
-          <div class="ui-grid-a" id="menupage">
 
-
-            <div class="ui-block-a" style="text-align: center;">
-                    <div style="text-align: center;">
-                <a href="#panicpage">
-                        <img id="img3" style="width: 50px; height: 50px;" src="images/imgpanic.png">
-                </a>
-                    </div>
-
-            </div>
-
-            <div class="ui-block-b" style="text-align: center;">
-                    <div style="text-align: center;">
-                 <a href="#eventcontentpage">
-                        <img id="img5" style="width: 50px; height: 50px;" src="images/imgcontent.png">
-                </a>
-                    </div>
-
-            </div>
-            <div class="ui-block-c" style="text-align: center;">
-                    <div style="text-align: center;">
-                     <a href="#eventlistpage">
-                        <img id="img6" style="width: 50px; height: 50px;" src="images/imgmap.png">
-                    </a>
-                    </div>
-          
-             </div>
-                            
-   </div>
-    <div data-role="content">
-  <div>
-      <h3> Revolutionary crime-reporting, safety and security application </h3> 
-     Hoodeye is a trusted tool for crime prevention and personal security and is
-designed to keep you and your family safe, should a threat arise.
-
-Hoodeye will give you and your loved ones peace of mind and a sense of security knowing that you have a discrete method of reporting crimes with the ability to capture GPS embedded images, video, audio, and custom descriptions.
-
-In an emergency situation, a customizable "Panic button" allows Hoodeye users the ability to send multiple, GPS-tagged distress messages to a list of emergency contacts and family members with the single push of a button.
-
-Additional features include a “Safety box” loaded with essential safety tools like a flashlight, and emergency contact numbers.
-
-We believe that safety and protection should always be close at hand and by utilizing the latest
-in mobile phone technology, Hoodeye makes it possible to achieve safety and security for You and your family as discreetly and intelligently as possible. 
-     
-     
-     
-   </div>
-</div>   
+                <div data-role="content">
+                      <div>
+                          <h3> Revolutionary crime-reporting, safety and security application </h3> <a href="#panicpage"> <img id="img3" style="width: 80px; height: 80px;" src="images/imgpanic.png">  </a>
+                         Hoodeye is a trusted tool for crime prevention and personal security and is
+                    designed to keep you and your family safe, should a threat arise.
+                    
+                    Hoodeye will give you and your loved ones peace of mind and a sense of security knowing that you have a discrete method of reporting crimes with the ability to capture GPS embedded images, video, audio, and custom descriptions.
+                    
+                    In an emergency situation, a customizable "Panic button" allows Hoodeye users the ability to send multiple, GPS-tagged distress messages to a list of emergency contacts and family members with the single push of a button.
+                    
+                    Additional features include a “Safety box” loaded with essential safety tools like a flashlight, and emergency contact numbers.
+                    
+                    We believe that safety and protection should always be close at hand and by utilizing the latest
+                    in mobile phone technology, Hoodeye makes it possible to achieve safety and security for You and your family as discreetly and intelligently as possible. 
+                         
+                       </div>
+            </div>   
             
-  </div>     
+  	</div>     
 
  <div data-role="footer"  data-position="fixed" id="homefooter">		
-                  <div data-role="navbar" data-iconpos="left">
+                       <div  id="popupBasic" data-role="popup"data-position-to="origin" data-transition="slideup">
+							<ul> 
+                                <li > <a href="#eventcontentpage">  <img style="width: 60px; height: 60px;" src="images/imgcontent.png"> </a></li>
+                              
+								 <li ><a href="#eventlistpage"><img id="img6" style="width: 50px; height: 50px;" src="images/imgmap.png"> </a>   </li>
+                             </ul>
+						</div> 
+        <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li id='selectview' ><a href="#popupBasic" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
                         <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
@@ -128,10 +107,18 @@ in mobile phone technology, Hoodeye makes it possible to achieve safety and secu
 <!-- Event entry page -->
       
 <div data-role="page" data-transition="slideup" id="reportpage">
-   <div data-role="header">
-     <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
-       <h1>reportpage</h1>
-   </div>
+   <div data-role="header" data-position="fixed">
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                    	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+     					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
+                 
+                </div>
+            
+            </div>
    <div data-role="content">
                  
      <form id = "EventForm" onsubmit="return submitEvent();">
@@ -171,13 +158,19 @@ in mobile phone technology, Hoodeye makes it possible to achieve safety and secu
 <!-- eventcontentpage Notices-->
              
 <div data-role="page" id="eventcontentpage">
-   <div data-role="header">
-        
-        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
-       
-     <h1  id ="eventcontentlisttitle" > Content </h1>
-   </div>
-  
+    <div data-role="header" data-position="fixed">
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                    	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+     					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
+                 
+                </div>
+              <h1  id ="eventcontentlisttitle" > Content </h1> 
+            </div>
+    
   <div data-role="main" class="ui-content" id="eventcontent">
     
      <ul data-role="listview" data-inset="true" id="eventcontentlist">
@@ -258,12 +251,18 @@ in mobile phone technology, Hoodeye makes it possible to achieve safety and secu
 <!-- Select event type for community page -->
       
 <div data-role="page" id="communityeventpage">
-   <div data-role="header">
-       
-        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-       
-      <h1> Alert Type </h1>
-   </div>
+   <div data-role="header" data-position="fixed">
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                    	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+     					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
+          <h1  id ="eventtypelisttitle" > event types </h1>        
+                </div>
+     </div>
+    
    <div data-role="content">
      <label for="communityeventlist" class="select" >  Category </label>  
      <ul data-role="listview"   id="communityeventlist" >    
@@ -288,12 +287,18 @@ in mobile phone technology, Hoodeye makes it possible to achieve safety and secu
 <!-- Select community page -->
 
 <div data-role="page" id="selectcommunitypage">
-   <div data-role="header">
-       
-        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-       
-      <h1>Community </h1>
-   </div>
+  <div data-role="header" data-position="fixed">
+
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                    	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+     					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
+                 
+                </div>
+     </div>
    <div data-role="content">
      <label for="mycommunities"><h2>Available Communities</h2></label>  
           <ul data-role="listview"   id="mycommunities"   >    
@@ -323,11 +328,18 @@ in mobile phone technology, Hoodeye makes it possible to achieve safety and secu
 <!-- Event/Alert report on map -->
     
 <div data-role="page" id="eventlistpage">
-   <div data-role="header">
-       
-        <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a> <a onclick="getLocation(); return false" data-icon="search" class="ui-btn-right">Locate</a>
-       
-      <h1 id="eventlisttitle"> Alerts </h1>
+  <div data-role="header" data-position="fixed">
+
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                    	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+     					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
+                 </div> 
+               
+         <h1 id="eventlisttitle"> Alerts </h1>
    </div>
     
    <div data-role="content">
