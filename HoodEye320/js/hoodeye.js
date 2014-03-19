@@ -22,6 +22,15 @@ var newtitle;
 var hoodeye_last_position;
 var manmarker_position = 0;
 
+function status(msg) {
+    $("#popupStatus").html(msg);
+    $("#popupStatus").popup("open");
+    setTimeout(function(){
+              $("#popupStatus").popup("close");
+            }, 1000);
+    $("#popupStatus").html("Chillin...");
+}
+
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
     return $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
@@ -31,7 +40,8 @@ function debugmsg(msg) {
 
 // PhoneGap is ready
 function onDeviceReady() {
-//    alert("Delegates starting");
+    alert("Delegates starting");
+    status("Test status");
     
     captureApp = new captureApp();
     captureApp.run();
@@ -93,7 +103,7 @@ $(document).delegate('#selectview', 'click', function() {
 });
     
     
-//   alert("Delegates done");
+//   status("Delegates done");
 }
 
 function whoami() {
@@ -125,6 +135,7 @@ function try_auto_login() {
         if (result.status === 1) {
           current_user = result.user;
           assigncommunity_byid(default_community_id);
+          status("AutoLogin successful");
         }
       });
     }
@@ -136,12 +147,14 @@ function submitLogin() {
 
     return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
         if (result.status === 1) {
+          status(result.message);
           localStorage.login_username=username;
           localStorage.login_password=password;
           current_user = result.user;
           assigncommunity_byid(default_community_id);
           return true;
         } else {
+            alert(result.message);
           return false;
         }
     });
@@ -153,11 +166,12 @@ function submitRegister() {
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
         if (result.status === 0) {
-            $("#registerstatus").val("");
+            alert(result.message);
         } else {
           localStorage.login_username = $("#reg_username").val();
           localStorage.login_password = $("#reg_password").val();
           current_user = result.user;
+          alert(result.message);
         }
     });
    
@@ -167,6 +181,7 @@ function submitRegister() {
 
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
+      status(result.message);
       current_community = { name: "No Community"};
       current_user = anonymous_user;
       whoami();
