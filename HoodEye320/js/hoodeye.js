@@ -5,12 +5,12 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 //-----------------------
 var currentintype ;
-var current_community = { name: "No Community"};
+var current_community = { name: "unset"};
 var community_list;
 var intype_list ;
 var captureApp;
 var anonymous_user = { username: "Guest" };
-var current_user = anonymous_user;
+var current_user = { username: "NoUser" };
 
 var locations = [] ;
 var public_community_id = "52f5ec9daef933ee6997218a";
@@ -22,13 +22,15 @@ var newtitle;
 var hoodeye_last_position;
 var manmarker_position = 0;
 
-function status(msg) {
-    $("#popupStatus").html(msg);
-    $("#popupStatus").popup("open");
+function showstatus(msg) {
+    $("#popupStatus").html("<p>"+msg+"</p>")
+    // open with timeout because of browser issues, apparently
+    setTimeout(function(){
+              $("#popupStatus").popup("open");
+            }, 100);
     setTimeout(function(){
               $("#popupStatus").popup("close");
-            }, 1000);
-    $("#popupStatus").html("Chillin...");
+            }, 2000);
 }
 
 function debugmsg(msg) {
@@ -40,16 +42,10 @@ function debugmsg(msg) {
 
 // PhoneGap is ready
 function onDeviceReady() {
-    alert("Delegates starting");
-    status("Test status");
     
     captureApp = new captureApp();
     captureApp.run();
 
-    // Get my user detail and default community and assign it
-    try_auto_login();
-    whoami();
-    debugmsg("Default community assigned:" + current_community.name);
     
     $(document).delegate('#loginpage','pageshow',function(){
         debugmsg("Showing #loginpage");
@@ -89,55 +85,70 @@ function onDeviceReady() {
         //navigator.splashscreen.hide();
     });    
      $(document).delegate('#simplealert', 'click', function() {
-         alert("dont tuch me on my button!");
+         alert("dont touch me on my button!");
          
      });
 
-$(document).delegate('#selectview', 'click', function() {
+    $(document).delegate('#selectview', 'click', function() {
 // ---- Still to add menu options dynamically
               //            <select data-native-menu="false" name='selectview' id='selectview' > 
               //             <li>  <a href="#eventcontentpage">List Notice </a>    </li>
               //             <li>  <a href="#eventcontentpage">List Alerts </a>    </li>
              //              <li>  <a  href="#eventlistpage">Map</a>    </li> 
              //            </select> 
-});
+    });
     
     
-//   status("Delegates done");
+    // Now do some initialization things
+    $("#popupStatus").popup();
+    // Get my user detail and default community and assign it
+    try_auto_login();        
 }
 
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
-        var isnewuser = current_user.name == user_info.name;
+        var isnewuser = current_user.username == user_info.username;
         debugmsg("whoami isnewuser: "+isnewuser);
         
         current_user = user_info;
-        if (isnewuser) {
-          if (current_user.username == 'Guest') {
-            assigncommunity_byid(public_community_id);
-          } else {
-            assigncommunity_byid(default_community_id);  
-          }
+        if (current_community.name == 'unset' || isnewuser) {
+          assigncommunity_byid(current_user.default_community_id || public_community_id);
         }
     });
 }
 
+/* function get_nickname_for_community(community) {
+    var nick = current_user.default_nickname || current_user.username;
+    var memberships = $.grep(current_user.communities, function(hood){ return hood._id == community.community_id; });
+    if (memberships) {
+        nick = memberships[0].nickname || current_user.default_nickname || current_user.username;
+    }
+    return nick;
+}*/
+
 function updateHomeTitle() {
     // Update app header.
-    newtitle = current_user.username+" in " + current_community.name;
+    var newtitle;
+    var nick = '';
+        //get_nickname_for_community(current_community);
+    newtitle = current_user.username + " in " + current_community.name + " as " + nick; 
     debugmsg("Setting title to "+newtitle);
-    $("#appheader").html(newtitle);
+    $("#appheader").text(newtitle);
 }
 
 function try_auto_login() {
     if (localStorage.login_password) {
       $.get('http://dev.hoodeye.com:4242/api/login?username=' + localStorage.login_username + '&password=' + localStorage.login_password,function(result) {
+        // Show message only if login worked  
         if (result.status === 1) {
-          current_user = result.user;
-          assigncommunity_byid(default_community_id);
-          status("AutoLogin successful");
+          showstatus(result.message);
         }
+        // Always do a whoami after a login attempt;
+        whoami();
       });
+    } else {
+        // No login attempt, but use whoami to init Guest user
+        whoami();
     }
 }
 
@@ -145,18 +156,16 @@ function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
 
-    return $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
+    $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
         if (result.status === 1) {
-          status(result.message);
+          showstatus(result.message);
           localStorage.login_username=username;
           localStorage.login_password=password;
-          current_user = result.user;
-          assigncommunity_byid(default_community_id);
-          return true;
         } else {
-            alert(result.message);
-          return false;
+          alert(result.message);
         }
+        // A failed login attempt could log us out from current user, so always check who I am
+        whoami();
     });
 }
 
@@ -165,28 +174,21 @@ function submitRegister() {
     var password = encodeURIComponent($("#reg_password").val());
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
-        if (result.status === 0) {
-            alert(result.message);
-        } else {
+        if (result.status === 1) {
           localStorage.login_username = $("#reg_username").val();
           localStorage.login_password = $("#reg_password").val();
-          current_user = result.user;
-          alert(result.message);
         }
+        alert(result.message);
+        whoami();
     });
-   
-    return false;
-    
 }
 
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
       status(result.message);
-      current_community = { name: "No Community"};
-      current_user = anonymous_user;
+      current_community = { name: "unset"};
       whoami();
     });
-    return false;
 }
   
 function submitJoincommunity() {
