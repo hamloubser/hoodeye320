@@ -27,11 +27,27 @@ function showstatus(msg) {
     // open with timeout because of browser issues, apparently
     setTimeout(function(){
               $("#popupStatus").popup("open");
+       // navigator.notification.beep(1);
+        navigator.notification.vibrate(2);
             }, 100);
     setTimeout(function(){
               $("#popupStatus").popup("close");
             }, 2000);
 }
+
+function showviewmenu(viewmenu) {
+    $("#selectview").html(viewmenu)
+    // open with timeout because of browser issues, apparently
+    setTimeout(function(){
+              $("#selectview").popup("open");
+       // navigator.notification.beep(1);
+      //  navigator.notification.vibrate(2);
+            }, 100);
+    setTimeout(function(){
+              $("#selectview").popup("close");
+            }, 5000);
+}
+
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
@@ -101,6 +117,8 @@ function onDeviceReady() {
     
     // Now do some initialization things
     $("#popupStatus").popup();
+    
+   
     // Get my user detail and default community and assign it
     try_auto_login();        
 }
