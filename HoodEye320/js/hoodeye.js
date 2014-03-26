@@ -105,20 +105,12 @@ function onDeviceReady() {
          
      });
 
-    $(document).delegate('#selectview', 'click', function() {
-// ---- Still to add menu options dynamically
-              //            <select data-native-menu="false" name='selectview' id='selectview' > 
-              //             <li>  <a href="#eventcontentpage">List Notice </a>    </li>
-              //             <li>  <a href="#eventcontentpage">List Alerts </a>    </li>
-             //              <li>  <a  href="#eventlistpage">Map</a>    </li> 
-             //            </select> 
-    });
-    
+ set_html_to_layout("#viewmenu","viewmenu","popup");
     
     // Now do some initialization things
     $("#popupStatus").popup();
     
-   
+    set_html_to_layout("#welcometext","msgAnton","msg");
     // Get my user detail and default community and assign it
     try_auto_login();        
 }
