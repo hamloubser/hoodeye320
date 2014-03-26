@@ -105,11 +105,11 @@ function onDeviceReady() {
          
      });
 
- set_html_to_layout("#viewmenu","viewmenu","popup");
-    
+  
     // Now do some initialization things
     $("#popupStatus").popup();
-    
+    set_html_to_layout("#viewmenu","viewmenu","popup");
+    set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
     set_html_to_layout("#welcometext","msgAnton","msg");
     // Get my user detail and default community and assign it
     try_auto_login();        
@@ -382,6 +382,7 @@ function assigncommunity(community) {
     updateHomeTitle();
     //debugmsg("Going for listcommunityeventtypes");
     //listcommunityeventtypes();
+     listcommunityeventtypes();
 }
 
 function assignintype (key) {

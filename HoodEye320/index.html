@@ -60,7 +60,7 @@
 
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -77,13 +77,18 @@
             
 
  <div data-role="footer"  data-position="fixed" id="homefooter">		
-                       <div  id="viewmenu" data-role="popup"data-position-to="window" data-transition="slideup">
+                       <div  id="viewmenu" data-role="popup" data-position-to="window" data-transition="slideup">
 							loading ...
 						</div> 
+     
+     					 <div  id="communityeventpopup" data-role="popup" data-position-to="window" data-transition="slideup">
+							loading ...
+						</div>
+     
         <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#popupBasic" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                        <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#communityeventpopup" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
                     </ul>
@@ -106,7 +111,7 @@
    <div data-role="header" data-position="fixed">
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -157,7 +162,7 @@
     <div data-role="header" data-position="fixed">
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -178,7 +183,7 @@
      <div data-role="footer"  data-position="fixed" id="eventcontentpagefooter">		
                   <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
                         <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
@@ -250,7 +255,7 @@
    <div data-role="header" data-position="fixed">
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -261,7 +266,7 @@
     
    <div data-role="content">
      <label for="communityeventlist" class="select" >  Category </label>  
-     <ul data-role="listview"   id="communityeventlist" >    
+     <ul data-role="listview"   id="communityeventlistOLD" >    
       
      </ul>
    </div>
@@ -269,7 +274,7 @@
        <div data-role="footer"  data-position="fixed" id="communityeventpagefooter">		
                   <div data-role="navbar" data-iconpos="left">
                    <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
                         <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
@@ -287,7 +292,7 @@
 
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -306,7 +311,7 @@
        <div data-role="footer"  data-position="fixed" id="selectcommunitypagefooter">		
                   <div data-role="navbar" data-iconpos="left">
                   <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
                         <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
@@ -328,7 +333,7 @@
 
                 <div data-role="navbar" data-iconpos="left">
                     <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
                         <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                     	<li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
      					<li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
@@ -351,7 +356,7 @@
        <div data-role="footer"  data-position="fixed" id="eventlistpagefooter">		
                   <div data-role="navbar" data-iconpos="left">
                    <ul> 
-                        <li id='selectview' ><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
                         <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
