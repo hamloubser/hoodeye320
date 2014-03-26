@@ -135,6 +135,12 @@ function whoami() {
     });
 }
 
+function set_html_to_layout(html_id,layout_name,layout_type) {
+    $.get('http://dev.hoodeye.com:4242/api/layout?name='+layout_name+'&type='+layout_type,function(html) {
+       $(html_id).html(html);
+    });
+}
+
 /* function get_nickname_for_community(community) {
     var nick = current_user.default_nickname || current_user.username;
     var memberships = $.grep(current_user.communities, function(hood){ return hood._id == community.community_id; });
