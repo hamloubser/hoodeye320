@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>Hood Eye</title>
-		<meta charset="utf-8">
+        <meta charset="utf-8"/>
 		<meta name=viewport content="user-scalable=no,width=device-width" />
         
         <link href="styles/main.css" rel="stylesheet" type="text/css" />
@@ -75,36 +75,41 @@
                      
             </div>   
             
-
+     					
+            
  <div data-role="footer"  data-position="fixed" id="homefooter">		
-                       <div  id="viewmenu" data-role="popup" data-position-to="window" data-transition="slideup">
+                        <!-- viewmenu popup --> 
+     					<div  id="viewmenu" data-role="popup" data-position-to="window" data-transition="slideup">
 							loading ...
 						</div> 
-     
-     					 <div  id="communityeventpopup" data-role="popup" data-position-to="window" data-transition="slideup">
-							<ul id="communityeventlist" > <li> hello </li> 
-                             </ul>
-						</div>
+                         <!-- communityeventlist popup --> 
+                        <div data-role="popup" id="communityeventpopup"   data-position-to="window" data-transition="slideup">
+                             loading ...		
+                        </div>
+
      
         <div data-role="navbar" data-iconpos="left">
                     <ul> 
                         <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpopup" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                        <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                         <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
                     </ul>
                 </div>
              </div>           
-            
+
             
 </div>     
      
 <!-- Status popup -->
-<div data-role="popup" id="popupStatus" class="ui-content" data-position-to="window" data-transition="fade">
+<div data-role="popup" id="popupStatus" data-position-to="window" data-transition="fade">
     <p>
   	  This is a popup with no status!       
     </p>
 </div>     
+     
+  
+               
      
 <!-- Event entry page -->
       

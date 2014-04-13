@@ -83,7 +83,7 @@ function onDeviceReady() {
 
     $(document).delegate('#communityeventpage','pagebeforeshow',function(){
        debugmsg("Showing  #communityeventpage");
-       listcommunityeventtypes();
+       
     });
     
     $(document).delegate('#eventlistpage','pageshow',function(){
@@ -93,11 +93,13 @@ function onDeviceReady() {
         getLocation();
        
         listeventLocations() ;
+        
     });
 
     $(document).delegate('#eventcontentpage','pageshow',function(){
         getLocation();
         listeventscontent();
+        
         //navigator.splashscreen.hide();
     });    
      $(document).delegate('#simplealert', 'click', function() {
@@ -112,7 +114,11 @@ function onDeviceReady() {
     set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
     set_html_to_layout("#welcometext","msgAnton","msg");
     // Get my user detail and default community and assign it
-    try_auto_login();        
+    try_auto_login();  
+   
+    //populate initiallist
+    listcommunityeventtypes();
+    $("#communityeventlist").html(options).listview('refresh');
 }
 
 function whoami() {
@@ -383,6 +389,7 @@ function assigncommunity(community) {
     //debugmsg("Going for listcommunityeventtypes");
     //listcommunityeventtypes();
      listcommunityeventtypes();
+     $("#communityeventlist").html(options).listview('refresh');
 }
 
 function assignintype (key) {
