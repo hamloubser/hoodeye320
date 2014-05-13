@@ -25,7 +25,7 @@ var manmarker_position = 0;
 var common_markup;
 
 function showstatus(msg) {
-    $("#popupStatus").html("<p>"+msg+"</p>")
+    $("#popupStatus").html("<p>"+msg+"</p>");
     // open with timeout because of browser issues, apparently
     setTimeout(function(){
               $("#popupStatus").popup("open");
@@ -38,7 +38,7 @@ function showstatus(msg) {
 }
 
 function showviewmenu(viewmenu) {
-    $("#selectview").html(viewmenu)
+    $("#selectview").html(viewmenu);
     // open with timeout because of browser issues, apparently
     setTimeout(function(){
               $("#selectview").popup("open");
@@ -61,16 +61,15 @@ function debugmsg(msg) {
 // PhoneGap is ready
 function onDeviceReady() {
     
-    common_markup['header'] =  $('#nav_template :jqmData(role="header")').clone();
-    common_markup['footer'] =  $('#nav_template :jqmData(role="footer")').clone();
+    common_markup.header =  $('#nav_template :jqmData(role="header")').clone();
+    common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
     
     //     $(':jqmData(role="page")').prepend(common_markup['header']).append(common_markup['footer']).page().trigger('pagecreate');
  
     $('[data-role=page]').on('pageshow', function (event, ui) {
         debugmsg("Adding header to " + event.target.id);
-        	
         if (event.target.id != 'nav_template') {
-            $("#" + event.target.id).prepend(common_markup['header']).append(common_markup['footer']);
+            $("#" + event.target.id).prepend(common_markup.header).append(common_markup.footer);
             $("#" + event.target.id).find("[data-role=navbar]").navbar();
         }
     });
@@ -96,10 +95,9 @@ function onDeviceReady() {
        debugmsg("Showing #joincommunitypage");
 	   updateAvailableCommunities();
     });
-
+    
     $(document).delegate('#communityeventpage','pagebeforeshow',function(){
-       debugmsg("Showing  #communityeventpage");
-       
+        debugmsg("Showing  #communityeventpage");
     });
     
     $(document).delegate('#eventlistpage','pageshow',function(){
@@ -345,8 +343,6 @@ function onGeolocationSuccess_old(position) {
         };
       })(marker, i));
      }
-
-    
 }
 
 
@@ -591,13 +587,11 @@ function listeventLocations() {
             $("#eventlisttitle").html("Alert at Man" );
  	    
        
-        		});
-      
-
-    //----- ---------------------------------------------------  
-         var marker;
+        });
        
-    for (i = 0; i < event_locations.length; i++) {  
+    //----- ---------------------------------------------------  
+       var marker;
+       for (i = 0; i < event_locations.length; i++) {  
       marker = new google.maps.Marker({
         position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
         animation : google.maps.Animation.DROP,  
@@ -618,9 +612,7 @@ function listeventLocations() {
    });
 }
 
-      
-
- function submitEvent() {
+function submitEvent() {
        
      getLocation(function() {
   
@@ -635,7 +627,7 @@ function listeventLocations() {
             $("#eventcommunity").val(current_community._id) ;
             $("#eventintype").val(currentintype.label) ;
          $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
-   
+         
         // add timestamp 
         var currentTime = new Date();
         $("#create_time").val(currentTime.toISOString());
