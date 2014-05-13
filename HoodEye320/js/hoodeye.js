@@ -92,8 +92,8 @@ function onDeviceReady() {
     }); 
     
     $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
-       debugmsg("Showing #joincommunitypage");
-	   updateAvailableCommunities();
+        debugmsg("Showing #joincommunitypage");
+        updateAvailableCommunities();
     });
     
     $(document).delegate('#communityeventpage','pagebeforeshow',function(){
@@ -585,8 +585,8 @@ function listeventLocations() {
          manmarker_position = manmarker.getPosition();
          
             $("#eventlisttitle").html("Alert at Man" );
- 	    
-       
+            
+            
         });
        
     //----- ---------------------------------------------------  
@@ -620,7 +620,7 @@ function submitEvent() {
        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
           // if the manmarker is moved use its location.     
-           if ( manmarker_position != 0  ) {
+         if ( manmarker_position != 0  ) {
                    $("#event_latitude").val(manmarkeer_position.lat().toString());
                    $("#event_longitude").val(manmarker_position.lng().toString());
                          }
