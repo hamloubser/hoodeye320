@@ -22,7 +22,7 @@ var newtitle;
 var hoodeye_last_position;
 var manmarker_position = 0;
 
-var common_markup;
+var common_markup = {};
 
 function showstatus(msg) {
     $("#popupStatus").html("<p>"+msg+"</p>");
@@ -65,14 +65,15 @@ function onDeviceReady() {
     common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
     
     //     $(':jqmData(role="page")').prepend(common_markup['header']).append(common_markup['footer']).page().trigger('pagecreate');
+    debugmsg("Hallo");
  
-    $('[data-role=page]').on('pageshow', function (event, ui) {
+    /* $('[data-role=page]').on('pageshow', function (event, ui) {
         debugmsg("Adding header to " + event.target.id);
         if (event.target.id != 'nav_template') {
             $("#" + event.target.id).prepend(common_markup.header).append(common_markup.footer);
             $("#" + event.target.id).find("[data-role=navbar]").navbar();
         }
-    });
+    });*/ 
 
     captureApp = new captureApp();
     captureApp.run();
@@ -620,7 +621,7 @@ function submitEvent() {
        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
           // if the manmarker is moved use its location.     
-         if ( manmarker_position != 0  ) {
+         if ( manmarker_position !== 0  ) {
                    $("#event_latitude").val(manmarkeer_position.lat().toString());
                    $("#event_longitude").val(manmarker_position.lng().toString());
                          }
