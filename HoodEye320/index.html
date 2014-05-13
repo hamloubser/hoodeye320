@@ -31,7 +31,7 @@
         <script src="js/hoodeye.js" type="text/javascript"></script>
         
         <style>
-            .appheader {
+            .appheaderxxx {
                 display: inline;
             }
             .ui-header .ui-title {
@@ -45,16 +45,14 @@
     
     <body> 
         
-        
-        
         <!-- homepage -->
         
         <div data-role="page" id="home" >
-            
-            <div id="welcometext" data-role="content">            
-                Welcome to Hoodeye.
-            </div>   
-            
+            <div data-role="content">            
+                <div id="welcometext">
+                    <h1>Loading Hoodeye....</h1>
+                </div>   
+            </div>
         </div>  
         
         <!-- viewmenu popup --> 
@@ -214,27 +212,32 @@
         </div>
         
         <div data-role="page" id="nav_template" >
-            <div data-role="header" data-position="fixed">
-                <h6 class="appheader" style="text-align: left;" >Welcome to Hoodeye</h6>
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
+            <div id="header_template">
+                <div data-role="header" data-position="fixed">
+                    <h6 class="appheader" style="text-align: left;" >Welcome to Hoodeye</h6>
+                    <div data-role="navbar" data-iconpos="left">
+                        <ul> 
+                            <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                            <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                            <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                            <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
             
-            <div data-role="footer"  data-position="fixed">	
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
+            <div id="footer_template">
+                <div data-role="footer"  data-position="fixed">	
+                    <div data-role="navbar" data-iconpos="left">
+                        <ul> 
+                            <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                            <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                            <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                            <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
+                        </ul>
+                    </div>
+                </div>           
             </div>           
         </div>  
         

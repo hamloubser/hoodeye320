@@ -61,19 +61,12 @@ function debugmsg(msg) {
 // PhoneGap is ready
 function onDeviceReady() {
     
-    common_markup.header =  $('#nav_template :jqmData(role="header")').clone();
-    common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
+    //common_markup.header =  $('#nav_template :jqmData(role="header")').clone();
+    //common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
+    common_markup.header =  $('#header_template').html();
+    common_markup.footer =  $('#footer_template').html();
+
     
-    //     $(':jqmData(role="page")').prepend(common_markup['header']).append(common_markup['footer']).page().trigger('pagecreate');
-    debugmsg("Hallo");
- 
-    /* $('[data-role=page]').on('pageshow', function (event, ui) {
-        debugmsg("Adding header to " + event.target.id);
-        if (event.target.id != 'nav_template') {
-            $("#" + event.target.id).prepend(common_markup.header).append(common_markup.footer);
-            $("#" + event.target.id).find("[data-role=navbar]").navbar();
-        }
-    });*/ 
 
     captureApp = new captureApp();
     captureApp.run();
@@ -128,13 +121,23 @@ function onDeviceReady() {
     set_html_to_layout("#viewmenu","viewmenu","popup");
     set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
     set_html_to_layout("#welcometext","msgAnton","msg");
+    
+    
+    $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
+   
+    
     // Get my user detail and default community and assign it
     try_auto_login();  
    
     //populate initiallist
     listcommunityeventtypes();
     $("#communityeventlist").html(options).listview('refresh');
+    
+    // And refresh the home page height
+
+    $.mobile.resetActivePageHeight();
 }
+
 
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
@@ -155,23 +158,19 @@ function set_html_to_layout(html_id,layout_name,layout_type) {
     });
 }
 
-/* function get_nickname_for_community(community) {
-    var nick = current_user.default_nickname || current_user.username;
-    var memberships = $.grep(current_user.communities, function(hood){ return hood._id == community.community_id; });
-    if (memberships) {
-        nick = memberships[0].nickname || current_user.default_nickname || current_user.username;
-    }
-    return nick;
-}*/
 
 function updateHomeTitle() {
     // Update app header.
     var newtitle;
-    var nick = '';
-        //get_nickname_for_community(current_community);
-    newtitle = current_user.username + " in " + current_community.name + " as " + nick; 
+    var nick;
+    if(typeof variable_here === 'undefined') {
+        nick = current_user.default_nickname;
+    } else {	
+        nick = current_community.nickname;
+    }
+    newtitle = current_user.username + " in " + current_community.name + " as " + nick;
     debugmsg("Setting title to "+newtitle);
-    $("#appheader").text(newtitle);
+    $(".appheader").text(newtitle);
 }
 
 function try_auto_login() {
