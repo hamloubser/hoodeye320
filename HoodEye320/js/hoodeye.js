@@ -22,6 +22,8 @@ var newtitle;
 var hoodeye_last_position;
 var manmarker_position = 0;
 
+var common_markup;
+
 function showstatus(msg) {
     $("#popupStatus").html("<p>"+msg+"</p>")
     // open with timeout because of browser issues, apparently
@@ -59,9 +61,23 @@ function debugmsg(msg) {
 // PhoneGap is ready
 function onDeviceReady() {
     
+    common_markup['header'] =  $('#nav_template :jqmData(role="header")').clone();
+    common_markup['footer'] =  $('#nav_template :jqmData(role="footer")').clone();
+    
+    //     $(':jqmData(role="page")').prepend(common_markup['header']).append(common_markup['footer']).page().trigger('pagecreate');
+ 
+    $('[data-role=page]').on('pageshow', function (event, ui) {
+        debugmsg("Adding header to " + event.target.id);
+        	
+        if (event.target.id != 'nav_template') {
+            $("#" + event.target.id).prepend(common_markup['header']).append(common_markup['footer']);
+            $("#" + event.target.id).find("[data-role=navbar]").navbar();
+        }
+    });
+
     captureApp = new captureApp();
     captureApp.run();
-
+    
     
     $(document).delegate('#loginpage','pageshow',function(){
         debugmsg("Showing #loginpage");

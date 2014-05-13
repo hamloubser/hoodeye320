@@ -44,39 +44,16 @@
     </head>
 
     <body> 
+        <!-- template page for header and footer navigation -->
+        
+        
    
         <!-- homepage -->
         
         <div data-role="page" id="home" >
             
-            <div data-role="header" data-position="fixed">
-                <h6 id="appheader" style="text-align: left;" >Welcome to Hoodeye</h6>
-                
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                </div>
-                
-            </div>
-            
             <div id="welcometext" data-role="content">            
             </div>   
-            
-            <div data-role="footer"  data-position="fixed" id="homefooter">	
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
-            </div>           
-            
             
         </div>  
      	
@@ -99,18 +76,6 @@
         <!-- Event entry page -->
         
         <div data-role="page" data-transition="slideup" id="reportpage">
-            <div data-role="header" data-position="fixed">
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                    
-                </div>
-                
-            </div>
             <div data-role="content">
                 
                 <form id = "EventForm" onsubmit="return submitEvent();">
@@ -150,91 +115,9 @@
         <!-- eventcontentpage Notices-->
         
         <div data-role="page" id="eventcontentpage">
-            <div data-role="header" data-position="fixed">
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                    
-                </div>
-                <h1  id ="eventcontentlisttitle" > Content </h1> 
-            </div>
-            
             <div data-role="main" class="ui-content" id="eventcontent">
-                
                 <ul data-role="listview" data-inset="true" id="eventcontentlist">
-                    
                 </ul>
-            </div>
-            
-            
-            <div data-role="footer"  data-position="fixed" id="eventcontentpagefooter">		
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
-            </div>     
-        </div>
-        
-        
-        
-        
-        
-        
-        <!-- Panic page -->
-        
-        <div data-role="page" data-transition="slideup" id="panicpage">
-            <div data-role="header">
-                <a href="#home"  data-icon="back" class="ui-btn-Left">home</a>
-                <h1>Panic</h1>
-            </div>
-            <div data-role="content">
-                
-                <form action="">
-                    <div data-role="fieldcontain">
-                        <label for="textinput1">
-                            panic
-                        </label>
-                        <input name="panic" id="textinput1" type="text" placeholder="help me - "
-                               value="help me - ">
-                    </div>
-                    
-                    <fieldset data-role="controlgroup" data-type="vertical">
-                        <legend>
-                            Choose:
-                        </legend>
-                        <input name="contactfamily" id="checkbox1" type="checkbox">
-                        <label for="checkbox1">
-                            my family
-                        </label>
-                        <input name="contactfriends" id="checkbox2" type="checkbox">
-                        <label for="checkbox2">
-                            my friends
-                        </label>
-                        <input name="contactmedical" id="checkbox3" type="checkbox">
-                        <label for="checkbox3">
-                            my medical contacts
-                        </label>
-                    </fieldset>
-                    
-                    <a href="sms:0823774883">Send SMS</a>
-                    
-                    
-                    
-                    <input id="panic_event_latitude" type="text" name='lat'  val='-'>
-                    <input id="panic_event_longitude" type="text" name='long'  val='-'>
-                    
-                    
-                </form>                    
-                
-                
             </div>
         </div>
         
@@ -243,153 +126,45 @@
         <!-- Select event type for community page -->
         
         <div data-role="page" id="communityeventpage">
-            <div data-role="header" data-position="fixed">
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                    <h1  id ="eventtypelisttitle" > event types </h1>        
-                </div>
-            </div>
-            
             <div data-role="content">
                 <label for="communityeventlist" class="select" >  Category </label>  
                 <ul data-role="listview"   id="communityeventlistOLD" >    
                     
                 </ul>
             </div>
-            
-            <div data-role="footer"  data-position="fixed" id="communityeventpagefooter">		
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
-            </div>          
-            
         </div>        
         
         
         <!-- Select community page -->
         
         <div data-role="page" id="selectcommunitypage">
-            <div data-role="header" data-position="fixed">
-                
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                    
-                </div>
-            </div>
             <div data-role="content">
                 <label for="mycommunities"><h2>Available Communities</h2></label>  
                 <ul data-role="listview"   id="mycommunities"   >    
                     <li>Waiting for server...</li>
                 </ul>
             </div>   
-            
-            
-            <div data-role="footer"  data-position="fixed" id="selectcommunitypagefooter">		
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
-            </div>          
-            
-            
         </div>
-        
-        
-        
-        
         
         <!-- Event/Alert report on map -->
         
         <div data-role="page" id="eventlistpage">
-            <div data-role="header" data-position="fixed">
-                
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
-                    </ul>
-                </div> 
-                
-                <h1 id="eventlisttitle"> Alerts </h1>
-            </div>
-            
             <div data-role="content">
-                
-                
-                <b>Waiting for server</b>
-                
-                
-                
             </div>
-            
-            
-            <div data-role="footer"  data-position="fixed" id="eventlistpagefooter">		
-                <div data-role="navbar" data-iconpos="left">
-                    <ul> 
-                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                        <li><a href="#communityeventpage" >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
-                    </ul>
-                </div>
-            </div>          
-            
-            
-            
         </div>
-        
-        
-        
         
         <!-- My settings page -->
         
         <div data-role="page" id="mysettingspage">
-            <div data-role="header">
-                
-                <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                
-                <h1> My Account </h1>
-            </div>
             <div data-role="content">
-                
                 <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
-                
-                
                 <a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a>
-                
             </div>
         </div>       
         
         <!-- Login form -->
         
         <div data-role="page" id="loginpage">
-            <div data-role="header">
-                
-                <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                <a href="#registerpage" data-icon="arrow-l" class="ui-btn-Left">New Account</a>
-                <h1>Sign into your account</h1>
-            </div>
             <div data-role="content">
                 <form name="loginForm" id="loginForm"  onsubmit="return submitLogin();">
                     <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br>
@@ -403,33 +178,16 @@
         <!-- Logout form -->
         
         <div data-role="page" id="logoutpage">
-            <div data-role="header">
-                
-                <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                <a href="#registerpage" data-icon="arrow-l" class="ui-btn-Left">New Account</a>
-                <a href="#loginpage" data-icon="arrow-l" class="ui-btn-Left">Login</a>
-                
-                <a href="#logoutpage"  data-icon="arrow-l" class="ui-btn-Left">Logout</a><br> <br> <br>
-                
-                <h1>Logout</h1>
-            </div>
             <div data-role="content">
                 <form name="logoutForm" id="logoutForm"  onsubmit="return submitLogout();">
                     <input name="submit" value="Logout" type="submit">
                 </form>
-                
             </div>
         </div>       
         
         <!-- Register form-->
         
         <div data-role="page" id="registerpage">
-            <div data-role="header">
-                
-                <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                <a href="#loginpage" data-icon="arrow-l" class="ui-btn-Left">Login</a>
-                <h1>Register a new account</h1>
-            </div>
             <div data-role="content">
                 <div id="registerstatus"></div>
                 <form name="registerform" id="registerform"  onsubmit="return submitRegister();">
@@ -443,11 +201,6 @@
         
         <!-- joincommunity -->
         <div data-role="page" id="joincommunitypage">
-            <div data-role="header">
-                
-                <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                <h1>Join a community</h1>
-            </div>
             <div data-role="content">
                 <form name="joincommunityform" id="joincommunityform"  onsubmit="return submitJoincommunity();">
                     <label for="community">Community</label> 
@@ -457,22 +210,35 @@
                     <input type="text" name="nickname" id="join_nickname"/> <br>
                     <input name="submit" value="Join Community" type="submit">
                 </form>
-            </div>       
-            
-            
-            <!-- about -->
-            
-            <div data-role="page" id="about">
-                <div data-role="header">
-                    
-                    <a href="#home" data-icon="arrow-l" class="ui-btn-Left">home</a>
-                    <h1> About this App</h1>
-                    
+            </div>
+        </div>
+        
+        <div data-role="page" id="nav_template" >
+            <div data-role="header" data-position="fixed">
+                <h6 class="appheader" style="text-align: left;" >Welcome to Hoodeye</h6>
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
+                        <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                        <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                        <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    </ul>
                 </div>
-                
-            </div>        
-        </div> 
+            </div>
+            
+            <div data-role="footer"  data-position="fixed">	
+                <div data-role="navbar" data-iconpos="left">
+                    <ul> 
+                        <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
+                        <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
+                        <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
+                    </ul>
+                </div>
+            </div>           
+        </div>  
+        
+
         
     </body>
-    
 </html>
