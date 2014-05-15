@@ -123,7 +123,9 @@ function onDeviceReady() {
     set_html_to_layout("#welcometext","msgAnton","msg");
     
     
-    $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
+    // $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
+    $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer);
+    $(':jqmData(role="page")').page().enhanceWithin();
     
     
     // Get my user detail and default community and assign it
