@@ -130,24 +130,40 @@ function onDeviceReady() {
     
     // Get my user detail and default community and assign it
     try_auto_login();  
+    $("#usermenupopup").popup();
     
     //populate initiallist
     listcommunityeventtypes();
     $("#communityeventlist").html(options).listview('refresh');
     
     // And refresh the home page height
-    
-    $.mobile.resetActivePageHeight();
+    //$.mobile.resetActivePageHeight();
 }
 
 
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
         var isnewuser = current_user.username == user_info.username;
-        debugmsg("whoami isnewuser: "+isnewuser);
+        debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
         
         current_user = user_info;
+        
+        // If logged in, change the usermenu options
+        $("#usermenupopup").popup("destroy");
+
+        if (user_info.username != "Guest") {
+            $("#usermenuoptions").html('<li><a href="#mysettingspage" data-theme="c">My Profile</a></li>'+
+                '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
+            debugmsg("Setting usermenu to profile/logout");
+        } else {
+            $("#usermenuoptions").html('<li><a href="#registerpage" data-theme="c">Register</a></li>'+
+                '<li><a href="#loginpage" data-theme="c">Login</a></li>');
+            debugmsg("Setting usermenu to login/register");
+        }
+        $("#usermenupopup").popup();
+
         if (current_community.name == 'unset' || isnewuser) {
+            
             assigncommunity_byid(current_user.default_community_id || public_community_id);
         }
     });
@@ -227,6 +243,8 @@ function submitLogout() {
         status(result.message);
         current_community = { name: "unset"};
         whoami();
+        $.mobile.changePage("#home");
+        
     });
 }
 
