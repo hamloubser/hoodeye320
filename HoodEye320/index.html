@@ -53,6 +53,14 @@
             </div>
         </div>  
         
+        <!-- usermenu popup -->
+        <div id="usermenupopup" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
+            <ul id="usermenuoptions" data-role="listview" data-inset="true" data-theme="a">
+                <li><a href="#registerpage" data-theme="c">Register</a></li>
+                <li><a href="#loginpage" data-theme="c">Login</a></li>
+            </ul>
+        </div> 
+        
         <!-- viewmenu popup --> 
         <div  id="viewmenu" data-role="popup" data-theme="b" data-position-to="window" data-transition="slideup">
             loading ...
@@ -149,12 +157,23 @@
             </div>
         </div>
         
+        <!-- My profile in current community page -->
+        
+        <div data-role="page" id="communityprofilepage" data-theme="b" >
+            <div class="ui-content" role="main">
+                <h2>
+                    Community profiles has not yet been implemented....
+                </h2>
+            </div>
+        </div>
+        
         <!-- My settings page -->
         
         <div data-role="page" id="mysettingspage" data-theme="b">
             <div class="ui-content" role="main">
-                <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
-                <a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a>
+                <h2>
+                    Displaying your user profile and settings will go here.
+                </h2>
             </div>
         </div>       
         
@@ -216,9 +235,9 @@
                     <div data-role="navbar" data-iconpos="left">
                         <ul> 
                             <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                            <li><a href="#selectcommunitypage" > 	<img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                            <li><a href="#loginpage"  >  			<img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                            <li><a href="#mysettingspage" > <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                            <li><a href="#selectcommunitypage" > <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                            <li><a href="#communityprofilepage"> <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
+                            <li><a href="#usermenupopup" data-rel="popup"> <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -230,7 +249,8 @@
                     <div data-role="navbar" data-iconpos="left">
                         <ul> 
                             <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                            <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                            <li><a href="#communityeventpage">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
+                            <!-- <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li> -->
                             <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                             <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
                         </ul>
