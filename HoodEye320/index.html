@@ -45,8 +45,8 @@
         
         <!-- homepage -->
         
-        <div data-role="page" id="home" data-theme="b">
-            <div class="ui-content" role="main">            
+        <div data-role="page" id="home" >
+            <div data-role="content">            
                 <div id="welcometext">
                     <h1>Loading Hoodeye....</h1>
                 </div>   
@@ -54,16 +54,16 @@
         </div>  
         
         <!-- viewmenu popup --> 
-        <div  id="viewmenu" data-role="popup" data-theme="b" data-position-to="window" data-transition="slideup">
+        <div  id="viewmenu" data-role="popup" data-position-to="window" data-transition="slideup">
             loading ...
         </div> 
         <!-- communityeventlist popup --> 
-        <div data-role="popup" id="communityeventpopup" data-theme="b"  data-position-to="window" data-transition="slideup">
+        <div data-role="popup" id="communityeventpopup"   data-position-to="window" data-transition="slideup">
             loading ...		
         </div>
         
         <!-- Status popup -->
-        <div data-role="popup" id="popupStatus" data-theme="b" data-position-to="window" data-transition="fade">
+        <div data-role="popup" id="popupStatus" data-position-to="window" data-transition="fade">
             <p>
                 This is a popup with no status!       
             </p>
@@ -71,8 +71,8 @@
         
         <!-- Event entry page -->
         
-        <div data-role="page" data-transition="slideup" id="reportpage" data-theme="b" >
-            <div class="ui-content" role="main">
+        <div data-role="page" data-transition="slideup" id="reportpage">
+            <div data-role="content">
                 
                 <form id = "EventForm" onsubmit="return submitEvent();">
                     <div data-role="fieldcontain">
@@ -110,7 +110,7 @@
         
         <!-- eventcontentpage Notices-->
         
-        <div data-role="page" id="eventcontentpage" data-theme="b">
+        <div data-role="page" id="eventcontentpage">
             <div data-role="main" class="ui-content" id="eventcontent">
                 <ul data-role="listview" data-inset="true" id="eventcontentlist">
                 </ul>
@@ -121,8 +121,8 @@
         
         <!-- Select event type for community page -->
         
-        <div data-role="page" id="communityeventpage" data-theme="b">
-            <div class="ui-content" role="main">
+        <div data-role="page" id="communityeventpage">
+            <div data-role="content">
                 <label for="communityeventlist" class="select" >  Category </label>  
                 <ul data-role="listview"   id="communityeventlistOLD" >    
                     
@@ -133,8 +133,8 @@
         
         <!-- Select community page -->
         
-        <div data-role="page" id="selectcommunitypage" data-theme="b" > 
-            <div class="ui-content" role="main">
+        <div data-role="page" id="selectcommunitypage">
+            <div data-role="content">
                 <label for="mycommunities"><h2>Available Communities</h2></label>  
                 <ul data-role="listview"   id="mycommunities"   >    
                     <li>Waiting for server...</li>
@@ -144,15 +144,15 @@
         
         <!-- Event/Alert report on map -->
         
-        <div data-role="page" id="eventlistpage" data-theme="b" >
-            <div class="ui-content" role="main">
+        <div data-role="page" id="eventlistpage">
+            <div data-role="content">
             </div>
         </div>
         
         <!-- My settings page -->
         
-        <div data-role="page" id="mysettingspage" data-theme="b">
-            <div class="ui-content" role="main">
+        <div data-role="page" id="mysettingspage">
+            <div data-role="content">
                 <a href="#registerpage"  data-icon="arrow-l" class="ui-btn-Left">Register</a><br> <br> <br><br> <br>
                 <a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a>
             </div>
@@ -160,8 +160,8 @@
         
         <!-- Login form -->
         
-        <div data-role="page" id="loginpage" data-theme="b" >
-            <div class="ui-content" role="main">
+        <div data-role="page" id="loginpage">
+            <div data-role="content">
                 <form name="loginForm" id="loginForm"  onsubmit="return submitLogin();">
                     <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br>
                     <label for="password">Password</label> <input type="password" name="password" id="login_password"/> <br>
@@ -173,8 +173,8 @@
         
         <!-- Logout form -->
         
-        <div data-role="page" id="logoutpage" data-theme="b">
-            <div class="ui-content" role="main">
+        <div data-role="page" id="logoutpage">
+            <div data-role="content">
                 <form name="logoutForm" id="logoutForm"  onsubmit="return submitLogout();">
                     <input name="submit" value="Logout" type="submit">
                 </form>
@@ -183,8 +183,8 @@
         
         <!-- Register form-->
         
-        <div data-role="page" id="registerpage" data-theme="b">
-            <div class="ui-content" role="main">
+        <div data-role="page" id="registerpage">
+            <div data-role="content">
                 <div id="registerstatus"></div>
                 <form name="registerform" id="registerform"  onsubmit="return submitRegister();">
                     <label for="username">UserName</label><input type="text" name="username" id="reg_username" /> <br>
@@ -196,8 +196,8 @@
         </div>       
         
         <!-- joincommunity -->
-        <div data-role="page" id="joincommunitypage" data-theme="b">
-            <div class="ui-content" role="main">
+        <div data-role="page" id="joincommunitypage">
+            <div data-role="content">
                 <form name="joincommunityform" id="joincommunityform"  onsubmit="return submitJoincommunity();">
                     <label for="community">Community</label> 
                     <select type="select" name="community" id="join_community"> 
