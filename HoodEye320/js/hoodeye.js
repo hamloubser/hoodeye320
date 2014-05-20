@@ -35,7 +35,7 @@ function showstatus(msg) {
     setTimeout(function(){
         $("#popupStatus").popup("open");
         // navigator.notification.beep(1);
-        navigator.notification.vibrate(2);
+        //navigator.notification.vibrate(2);
     }, 100);
     setTimeout(function(){
         $("#popupStatus").popup("close");
@@ -65,6 +65,13 @@ function debugmsg(msg) {
 
 // PhoneGap is ready
 function onDeviceReady() {
+
+    // use credentials on all ajax calls, required for in-browser, may not be required for Cordova
+    $(document).ajaxSend(function (event, xhr, settings) {
+      settings.xhrFields = {
+          withCredentials: true
+      };
+    });
     
     //common_markup.header =  $('#nav_template :jqmData(role="header")').clone();
     //common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
@@ -143,7 +150,8 @@ function onDeviceReady() {
     
     // Get my user detail and default community and assign it
     try_auto_login();  
-    $("#usermenupopup").popup();
+    //$("#usermenupopup").popup();
+    $(':jqmData(role="popup")').popup();
     
     //populate initiallist
     //listcommunityeventtypes();
@@ -179,6 +187,7 @@ function whoami() {
             
             assigncommunity_byid(current_user.default_community_id || public_community_id);
         }
+        updateHomeTitle();
     });
 }
 
@@ -194,14 +203,14 @@ function updateHomeTitle() {
     // Update app header.
     var newtitle;
     var nick;
-    if(typeof variable_here === 'undefined') {
+    if(typeof current_community.nickname === 'undefined') {
         nick = current_user.default_nickname;
     } else {	
         nick = current_community.nickname;
     }
     newtitle = current_user.username + " in " + current_community.name + " as " + nick;
     debugmsg("Setting title to "+newtitle);
-    $(".appheader").text(newtitle);
+    $('.appheader').html(newtitle);
 }
 
 function try_auto_login() {
@@ -229,11 +238,13 @@ function submitLogin() {
             showstatus(result.message);
             localStorage.login_username=username;
             localStorage.login_password=password;
+            whoami();
+            $.mobile.pageContainer.pagecontainer("change", "#selectcommunitypage", {transition: "flow"});
         } else {
             alert(result.message);
+            // A failed login attempt could log us out from current user, so always check who I am
+            whoami();
         }
-        // A failed login attempt could log us out from current user, so always check who I am
-        whoami();
     });
 }
 
@@ -243,21 +254,23 @@ function submitRegister() {
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
     $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
         if (result.status === 1) {
-            localStorage.login_username = $("#reg_username").val();
-            localStorage.login_password = $("#reg_password").val();
+            showstatus(result.message);
+            localStorage.login_username = username;
+            localStorage.login_password = password;
+            whoami();
+            $.mobile.pageContainer.pagecontainer("change", "#selectcommunitypage", {transition: "flow"});
+        } else {
+          alert(result.message);
         }
-        alert(result.message);
-        whoami();
     });
 }
 
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
-        status(result.message);
+        showstatus(result.message);
         current_community = { name: "unset"};
         whoami();
-        $.mobile.changePage("#home");
-        
+        $.mobile.pageContainer.pagecontainer("change", "#loginpage", {transition: "flow"});
     });
 }
 
