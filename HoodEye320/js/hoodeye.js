@@ -5,9 +5,7 @@
 if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
   document.addEventListener("deviceready", onDeviceReady, false);
 } else {
-  document.ready(function() {
-    onDeviceReady(); //this is the browser
-  });
+  $(document).ready(onDeviceReady);
 }
 
 //-----------------------
@@ -139,8 +137,8 @@ function onDeviceReady() {
     try_auto_login();  
     
     //populate initiallist
-    listcommunityeventtypes();
-    $("#communityeventlist").html(options).listview('refresh');
+    //listcommunityeventtypes();
+    //$("#communityeventlist").html(options).listview('refresh');
     
     // And refresh the home page height
     
@@ -411,7 +409,7 @@ function assigncommunity(community) {
     //debugmsg("Going for listcommunityeventtypes");
     //listcommunityeventtypes();
     listcommunityeventtypes();
-    $("#communityeventlist").html(options).listview('refresh');
+    //$("#communityeventlist").html(options).listview('refresh');
 }
 
 function assignintype (key) {
@@ -490,7 +488,8 @@ function listcommunityeventtypes() {
         
     });
     
-    $("#communityeventlist").html(options).listview('refresh');
+    $("#communityeventlist").html(options);
+    //.listview('refresh');
     
     
 }
