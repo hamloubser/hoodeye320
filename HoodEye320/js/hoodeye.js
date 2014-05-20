@@ -14,7 +14,7 @@ var current_community = { name: "unset"};
 var community_list;
 var intype_list ;
 var captureApp;
-var anonymous_user = { username: "Guest" };
+var anonymous_user = { username: "Guest", default_nickname: "Guest" };
 var current_user = { username: "NoUser" };
 
 var locations = [] ;
@@ -41,20 +41,6 @@ function showstatus(msg) {
         $("#popupStatus").popup("close");
     }, 2000);
 }
-
-function showviewmenu(viewmenu) {
-    $("#selectview").html(viewmenu);
-    // open with timeout because of browser issues, apparently
-    setTimeout(function(){
-        $("#selectview").popup("open");
-        // navigator.notification.beep(1);
-        //  navigator.notification.vibrate(2);
-    }, 100);
-    setTimeout(function(){
-        $("#selectview").popup("close");
-    }, 5000);
-}
-
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
@@ -92,11 +78,6 @@ function onDeviceReady() {
         }
     });
     
-    $(document).delegate('#selectcommunitypage','pagebeforeshow',function(){
-        debugmsg("Showing #selectcommunitypage");
-        mycommunities();
-    }); 
-    
     $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
         debugmsg("Showing #joincommunitypage");
         updateAvailableCommunities();
@@ -105,6 +86,11 @@ function onDeviceReady() {
     $(document).delegate('#communityeventpage','pagebeforeshow',function(){
         debugmsg("Showing  #communityeventpage");
     });
+
+    $(document).delegate('#addeventpage','pagebeforeshow',function(){
+        debugmsg("Showing  #addeventpage");
+    });
+ 
     
     $(document).delegate('#eventlistpage','pageshow',function(){
         // listevents();
@@ -139,19 +125,18 @@ function onDeviceReady() {
     // Now do some initialization things
     $("#popupStatus").popup();
     set_html_to_layout("#viewmenu","viewmenu","popup");
-    set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
+    //set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
     set_html_to_layout("#welcometext","msgAnton","msg");
     
     
     // $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
     $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer);
     $(':jqmData(role="page")').page().enhanceWithin();
+    $(':jqmData(role="popup")').popup();
     
     
     // Get my user detail and default community and assign it
     try_auto_login();  
-    //$("#usermenupopup").popup();
-    $(':jqmData(role="popup")').popup();
     
     //populate initiallist
     //listcommunityeventtypes();
@@ -169,10 +154,19 @@ function whoami() {
         
         current_user = user_info;
         
-        // If logged in, change the usermenu options
-        $("#usermenupopup").popup("destroy");
+        if (current_community.name == 'unset' || isnewuser) {
+            
+            assigncommunity_byid(current_user.default_community_id || public_community_id);
+        }
+        updateHomeTitle();
+        fix_user_menu();
+        mycommunities();
+    });
+}
 
-        if (user_info.username != "Guest") {
+function fix_user_menu() {
+        // If logged in, change the usermenu options
+        if (current_user.username != "Guest") {
             $("#usermenuoptions").html('<li><a href="#mysettingspage" data-theme="c">My Profile</a></li>'+
                 '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
             debugmsg("Setting usermenu to profile/logout");
@@ -182,13 +176,6 @@ function whoami() {
             debugmsg("Setting usermenu to login/register");
         }
         $("#usermenupopup").popup();
-
-        if (current_community.name == 'unset' || isnewuser) {
-            
-            assigncommunity_byid(current_user.default_community_id || public_community_id);
-        }
-        updateHomeTitle();
-    });
 }
 
 function set_html_to_layout(html_id,layout_name,layout_type) {
@@ -218,7 +205,7 @@ function try_auto_login() {
         $.get('http://dev.hoodeye.com:4242/api/login?username=' + localStorage.login_username + '&password=' + localStorage.login_password,function(result) {
             // Show message only if login worked  
             if (result.status === 1) {
-                showstatus(result.message);
+              showstatus(result.message);
             }
             // Always do a whoami after a login attempt;
             whoami();
@@ -260,7 +247,8 @@ function submitRegister() {
             whoami();
             $.mobile.pageContainer.pagecontainer("change", "#selectcommunitypage", {transition: "flow"});
         } else {
-          alert(result.message);
+          whoami();
+          showstatus(result.message);
         }
     });
 }
@@ -446,7 +434,6 @@ function assigncommunity(community) {
     $("#eventcommunity").val(current_community._id);
     updateHomeTitle();
     //debugmsg("Going for listcommunityeventtypes");
-    //listcommunityeventtypes();
     listcommunityeventtypes();
     //$("#communityeventlist").html(options).listview('refresh');
 }
@@ -454,16 +441,18 @@ function assigncommunity(community) {
 function assignintype (key) {
     currentintype = intype_list[key] ;
     debugmsg("Assigning intype to "+currentintype.name);
-    var content = $("#reportpage div:jqmData(role=content)");
+    var content = $("#addeventpage div:jqmData(role=content)");
     $.get('input-types/'+currentintype.name+'.html',
           function(html) { 
               content.html(html); 
               debugmsg("loaded input-types/"+currentintype.name+".html");
+              $("#addeventpage").enhanceWithin();
           })
     .fail(function() { 
         $.get('input-types/default.html', function(def_html){ 
             content.html(def_html); 
             debugmsg("loaded default input the for "+currentintype.name);
+            $("#addeventpage").enhanceWithin();
         });
     });
 }
@@ -518,18 +507,21 @@ function listcommunityeventtypes() {
     intype_list = current_community.intypes;
     
     var items = [];
-    var options;
+    var options = '';
     
     $.each(current_community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label);
         
-        options += '<li><a onClick="assignintype('+key+')" href="#reportpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
+        options += '<li><a onClick="assignintype('+key+')" href="#addeventpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
         
     });
     
     $("#communityeventlist").html(options);
-    //.listview('refresh');
-    
+    $("#communityeventlist").listview('refresh');
+    $("#communityeventpopuplist").html(options);
+    $("#communityeventpopuplist").listview();
+    $("#communityeventpopuplist").listview('refresh');
+    //$("#communityeventpopup").enhanceWithin();
     
 }
 

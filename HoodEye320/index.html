@@ -62,12 +62,14 @@
         </div> 
         
         <!-- viewmenu popup --> 
-        <div  id="viewmenu" data-role="popup" data-theme="b" data-position-to="window" data-transition="slideup">
+        <div  id="viewmenu" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
             loading ...
         </div> 
         <!-- communityeventlist popup --> 
-        <div data-role="popup" id="communityeventpopup" data-theme="b"  data-position-to="window" data-transition="slideup">
-            loading ...		
+        <div data-role="popup" id="communityeventpopup" data-theme="b"  data-position-to="origin" data-transition="slideup">
+           <ul data-role="listview"   id="communityeventpopuplist" >    
+             <li> Test </li>
+           </ul>
         </div>
         
         <!-- Status popup -->
@@ -79,8 +81,8 @@
         
         <!-- Event entry page -->
         
-        <div data-role="page" data-transition="slideup" id="reportpage" data-theme="b" >
-            <div class="ui-content" role="main">
+        <div data-role="page" data-transition="slideup" id="addeventpage" data-theme="b" >
+            <div data-role="content">
                 
                 <form id = "EventForm">
                     <div data-role="fieldcontain">
@@ -131,8 +133,8 @@
         
         <div data-role="page" id="communityeventpage" data-theme="b">
             <div class="ui-content" role="main">
-                <label for="communityeventlist" class="select" >  Category </label>  
-                <ul data-role="listview"   id="communityeventlistOLD" >    
+                <label for="communityeventlist" class="select" > <h2> What type of Event would you like to submit? </h2> </label>  
+                <ul data-role="listview"   id="communityeventlist" >    
                     
                 </ul>
             </div>
@@ -249,8 +251,8 @@
                     <div data-role="navbar" data-iconpos="left">
                         <ul> 
                             <li><a href="#viewmenu" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                            <li><a href="#communityeventpage">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                            <!-- <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li> -->
+                            <!-- <li><a href="#communityeventpage">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>-->
+                            <li><a href="#communityeventpopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
                             <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
                             <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
                         </ul>
