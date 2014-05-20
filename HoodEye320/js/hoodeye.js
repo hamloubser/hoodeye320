@@ -119,6 +119,14 @@ function onDeviceReady() {
         alert("dont touch me on my button!");
         
     });
+
+
+    // page form submit bindings
+    $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
+    $('#loginForm').bind("submit",function(event) { event.preventDefault(); return submitLogin(); });
+    $('#logoutForm').bind("submit",function(event) { event.preventDefault(); return submitLogout(); });
+    $('#registerForm').bind("submit",function(event) { event.preventDefault(); return submitRegister(); });
+    $('#joincommunityForm').bind("submit",function(event) { event.preventDefault(); return submitJoincommunity(); });
     
     
     // Now do some initialization things

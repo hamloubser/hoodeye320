@@ -82,7 +82,7 @@
         <div data-role="page" data-transition="slideup" id="reportpage" data-theme="b" >
             <div class="ui-content" role="main">
                 
-                <form id = "EventForm" onsubmit="return submitEvent();">
+                <form id = "EventForm">
                     <div data-role="fieldcontain">
                         <label for="comment">Comment  </label>
                         <textarea name="detail" id="detail" type="text" placeholder=""> </textarea>
@@ -181,7 +181,7 @@
         
         <div data-role="page" id="loginpage" data-theme="b" >
             <div class="ui-content" role="main">
-                <form name="loginForm" id="loginForm"  onsubmit="return submitLogin();">
+                <form name="loginForm" id="loginForm">
                     <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br>
                     <label for="password">Password</label> <input type="password" name="password" id="login_password"/> <br>
                     <input name="submit" value="Login" type="submit">
@@ -194,7 +194,7 @@
         
         <div data-role="page" id="logoutpage" data-theme="b">
             <div class="ui-content" role="main">
-                <form name="logoutForm" id="logoutForm"  onsubmit="return submitLogout();">
+                <form name="logoutForm" id="logoutForm">
                     <input name="submit" value="Logout" type="submit">
                 </form>
             </div>
@@ -205,7 +205,7 @@
         <div data-role="page" id="registerpage" data-theme="b">
             <div class="ui-content" role="main">
                 <div id="registerstatus"></div>
-                <form name="registerform" id="registerform"  onsubmit="return submitRegister();">
+                <form name="registerForm" id="registerForm">
                     <label for="username">UserName</label><input type="text" name="username" id="reg_username" /> <br>
                     <label for="password">Password</label> <input type="password" name="password" id="reg_password"/> <br>
                     <label for="password_verify">Verify Password</label> <input type="password" name="password_verify" id="reg_password_verify"/> <br>
@@ -217,7 +217,7 @@
         <!-- joincommunity -->
         <div data-role="page" id="joincommunitypage" data-theme="b">
             <div class="ui-content" role="main">
-                <form name="joincommunityform" id="joincommunityform"  onsubmit="return submitJoincommunity();">
+                <form name="joincommunityForm" id="joincommunityForm">
                     <label for="community">Community</label> 
                     <select type="select" name="community" id="join_community"> 
                     </select><br>
