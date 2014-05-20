@@ -1,7 +1,14 @@
 // JavaScript Document
-// Wait for PhoneGap to load
-document.addEventListener("deviceready", onDeviceReady, false);
-
+//
+//
+// On phone, wait for PhoneGap to load, in browser, use document.ready()
+if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+  document.addEventListener("deviceready", onDeviceReady, false);
+} else {
+  document.ready(function() {
+    onDeviceReady(); //this is the browser
+  });
+}
 
 //-----------------------
 var currentintype ;
