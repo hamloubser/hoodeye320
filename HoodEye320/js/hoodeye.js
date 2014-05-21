@@ -89,12 +89,13 @@ function onDeviceReady() {
         getLocation();
         refresh_viewportMap() ;
     });
-    
-    $(document).delegate('#eventcontentpage','pageshow',function(){
+
+    $(document).delegate('#viewportListpage','pageshow',function(){
+        debugmsg("pageshow on #viewportListpage");       
         getLocation();
         refresh_viewportList() ;
-    });    
-
+    });
+    
     // page form submit bindings
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
     $('#loginForm').bind("submit",function(event) { event.preventDefault(); return submitLogin(); });
@@ -288,7 +289,9 @@ function getLocation(on_success) {
         hoodeye_last_position = position;
         debugmsg("Got location:");       
         debugmsg(JSON.stringify(hoodeye_last_position));       
-        on_success();
+        if (on_success && typeof(on_success) == "function") {
+          on_success();
+        }
     },onGeolocationError);
 }
 
@@ -432,17 +435,18 @@ function refresh_viewportList() {
         
         var count = 0;
         $.each(data, function(key, event) { 
-            items_html += '<li ><a href="#"> '+event.intype+' </a> '
-                            + event.user.username
-                            + '<span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '
-                            + event.detail+'</b></p> <p class="ui-li-aside"> - '
-                            + event.create_time+'</p> </li> ';
+            items_html += '<li >'+event.intype+': '
+                            + event.detail + "( reported by "
+                            + event.user.username + " at "
+                            + event.create_time+')</li> ';
             count += 1;
         });
         if (count === 0) {
             items_html = "<li>No Events found.</li>";
         }
-        $("#viewportListcontent").html(markup.header+items_html+markup.footer).listview('refresh');
+        $("#viewportListcontent").html(markup.header+items_html+markup.footer);
+        $("#viewportListcontent").listview();
+        $("#viewportListcontent").listview('refresh');
     });
 }
 
@@ -488,10 +492,10 @@ function refresh_viewportMap() {
             center : latlng, 
             mapTypeId : google.maps.MapTypeId.ROADMAP 
         };
-        var $content = $("#viewportListcontent");
+        var $content = $("#viewportMapcontent");
         $content.height (screen.height - 50);
         var map = new google.maps.Map ($content[0], options);
-        $.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
+        //$.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
         var infowindow = new google.maps.InfoWindow();
         
         
