@@ -2,25 +2,31 @@
 //
 //
 // On phone, wait for PhoneGap to load, in browser, use document.ready()
+var isphone = true;
 if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
   document.addEventListener("deviceready", onDeviceReady, false);
 } else {
   $(document).ready(onDeviceReady);
+  isphone = false;
+  var device = {
+     name: 'Browser',
+     uuid: 'AAAAAAAAAAAAAAAAA',
+     platform: 'Browser',
+     version: '0.0',
+  };
 }
 
 //-----------------------
-var current;
+var current = {};
 current.community = { name: "unset"};
+current.user = { username: "NoUser" };
 var community_list;
-var intype_list ;
 var captureApp;
 var anonymous_user = { username: "Guest", default_nickname: "Guest" };
-current.user = { username: "NoUser" };
 
 var locations = [] ;
 var public_community_id = "52f5ec9daef933ee6997218a";
 var default_community_id = "52f5ec9daef933ee6997218a";
-var newtitle;
 
 
 //adw: global variable for last position, until we know how to do it better
@@ -29,16 +35,16 @@ var manmarker_position = 0;
 
 
 function showstatus(msg) {
-    $("#popupStatus").html("<p>"+msg+"</p>");
+    $("#statuspopup").html("<p>"+msg+"</p>");
     // open with timeout because of browser issues, apparently
     setTimeout(function(){
-        $("#popupStatus").popup("open");
+        $("#statuspopup").popup("open");
         // navigator.notification.beep(1);
-        //navigator.notification.vibrate(2);
+        if (isphone) { navigator.notification.vibrate(2) };
     }, 100);
     setTimeout(function(){
-        $("#popupStatus").popup("close");
-    }, 2000);
+        $("#statuspopup").popup("close");
+    }, 3000);
 }
 
 function debugmsg(msg) {
@@ -58,15 +64,11 @@ function onDeviceReady() {
       };
     });
     
-    
-    
-    
-    captureApp = new captureApp();
-    captureApp.run();
-    
+    // TODO: This has to be integrated into loading the addevent forms
+    //captureApp = new captureApp();
+    //captureApp.run();
     
     $(document).delegate('#loginpage','pageshow',function(){
-        debugmsg("Showing #loginpage");
         if (localStorage.login_username) {
             $("#login_username").val(localStorage.login_username);
             $("#login_password").val(localStorage.login_password);
@@ -74,45 +76,29 @@ function onDeviceReady() {
     });
     
     $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
-        debugmsg("Showing #joincommunitypage");
         updateAvailableCommunities();
     });
-    
-    $(document).delegate('#communityeventpage','pagebeforeshow',function(){
-        debugmsg("Showing  #communityeventpage");
-    });
 
-    $(document).delegate('#addeventpage','pagebeforeshow',function(){
-        debugmsg("Showing  #addeventpage");
+    $(document).delegate('#addeventformpage','pagebeforeshow',function(){
+        getLocation();
     });
  
     
-    $(document).delegate('#eventlistpage','pageshow',function(){
-        // listevents();
-        debugmsg("pageshow on #eventlistpage");       
-        
+    $(document).delegate('#viewportMappage','pageshow',function(){
+        debugmsg("pageshow on #viewportMappage");       
         getLocation();
-        
-        listeventLocations() ;
-        
+        refresh_viewportMap() ;
     });
     
     $(document).delegate('#eventcontentpage','pageshow',function(){
         getLocation();
-        listeventscontent();
-        
-        //navigator.splashscreen.hide();
+        refresh_viewportList() ;
     });    
-    $(document).delegate('#simplealert', 'click', function() {
-        alert("dont touch me on my button!");
-        
-    });
-
 
     // page form submit bindings
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
     $('#loginForm').bind("submit",function(event) { event.preventDefault(); return submitLogin(); });
-    $('#logoutForm').bind("submit",function(event) { event.preventDefault(); return submitLogout(); });
+    $('#logoutForm').bind("submit",function(event) { event.preventDefault(); return submitLogout(event); });
     $('#registerForm').bind("submit",function(event) { event.preventDefault(); return submitRegister(); });
     $('#joincommunityForm').bind("submit",function(event) { event.preventDefault(); return submitJoincommunity(); });
     
@@ -121,27 +107,21 @@ function onDeviceReady() {
     $(':jqmData(role="popup")').popup();
     set_html_to_layout("#welcometext","msgAnton","msg");
     // This should happen as part of switching community
-  set_html_to_layout("#viewmenu","viewmenu","popup");
+    // for now back in index.html
+    //set_html_to_layout("#viewmenupopup","viewmenu","popup");
 
     // Apply common navigation markup to pages
     var common_markup = {};
     common_markup.header =  $('#header_template').html();
     common_markup.footer =  $('#footer_template').html();
     
-    // $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
     $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer);
     $(':jqmData(role="page")').page().enhanceWithin();
     
-    
     // Get my user detail and default community and assign it
     try_auto_login();  
-    
-    //populate initiallist
-    //listcommunityeventtypes();
-    //$("#communityeventlist").html(options).listview('refresh');
-    
-    // And refresh the home page height
-    //$.mobile.resetActivePageHeight();
+    // And get our current location and save
+    getLocation();
 }
 
 
@@ -165,7 +145,7 @@ function whoami() {
 function fix_user_menu() {
         // If logged in, change the usermenu options
         if (current.user.username != "Guest") {
-            $("#usermenuoptions").html('<li><a href="#mysettingspage" data-theme="c">My Profile</a></li>'+
+            $("#usermenuoptions").html('<li><a href="#userprofilepage" data-theme="c">Private Profile</a></li>'+
                 '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
             debugmsg("Setting usermenu to profile/logout");
         } else {
@@ -224,7 +204,7 @@ function submitLogin() {
             localStorage.login_username=username;
             localStorage.login_password=password;
             whoami();
-            $.mobile.pageContainer.pagecontainer("change", "#selectcommunitypage", {transition: "flow"});
+            $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
@@ -243,7 +223,7 @@ function submitRegister() {
             localStorage.login_username = username;
             localStorage.login_password = password;
             whoami();
-            $.mobile.pageContainer.pagecontainer("change", "#selectcommunitypage", {transition: "flow"});
+            $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
         } else {
           whoami();
           showstatus(result.message);
@@ -251,7 +231,8 @@ function submitRegister() {
     });
 }
 
-function submitLogout() {
+function submitLogout(event) {
+    debugmsg(event);
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
         showstatus(result.message);
         current.community = { name: "unset"};
@@ -268,11 +249,38 @@ function submitJoincommunity() {
     debugmsg(submitdata);
     $.post('http://dev.hoodeye.com:4242/api/membership',submitdata,function(result) {
         // Should show success/fail feedback
+        debugmsg("Result from memberhip submit:");
+        debugmsg(result);
         whoami();
-        $.mobile.changePage("#selectcommunitypage");
+        $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
     });
     return false;
 }
+
+
+function submitEvent() {
+    
+        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
+        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
+        // if the manmarker is moved use its location.     
+        if ( manmarker_position !== 0  ) {
+            $("#event_latitude").val(manmarkeer_position.lat().toString());
+            $("#event_longitude").val(manmarker_position.lng().toString());
+        }
+        $("#eventcommunity").val(current.community._id) ;
+        $("#eventintype").val(current.intype.label) ;
+        $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
+        
+        // add timestamp 
+        var currentTime = new Date();
+        $("#create_time").val(currentTime.toISOString());
+        showstatus("Saving event to server...");
+        $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
+                {
+                    showstatus(response);
+                }});
+}
+
 
 
 function getLocation(on_success) {
@@ -284,125 +292,10 @@ function getLocation(on_success) {
     },onGeolocationError);
 }
 
-function onGeolocationSuccess(position) {
-    hoodeye_last_position = position;
-}
 
 function onGeolocationError(error) {
-    debugmsg("getLocation gave an error");
-    $("#myLocation").html("<span class='err'>" + error.message + "</span>");
-}
-
-
-function onGeolocationSuccess_old(position) {
-    
-    $("#panic_event_latitude").val(hoodeye_last_position.coords.latitude);
-    $("#panic_event_longitude").val(hoodeye_last_position.coords.longitude);
-    
-    
-    
-    // Use Google API to get the location data for the current coordinates
-    var geocoder = new google.maps.Geocoder();
-    var latlngtmp = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    geocoder.geocode({ "latLng": latlngtmp }, function (results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-            if ((results.length > 1) && results[1]) {
-                $("#myLocation").html(results[1].formatted_address);
-                $("#myLocation1").html(results[1].formatted_address);
-            }
-        }
-    });
-    
-    // Use Google API to get a map of the current location
-    // http://maps.googleapis.com/maps/api/staticmap?size=280x300&maptype=hybrid&zoom=16&markers=size:mid%7Ccolor:red%7C42.375022,-71.273729&sensor=true
-    //var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?size=300x200&maptype=street&zoom=13&sensor=true&markers=size:mid%7Ccolor:red%7C' + latlng + latlngalert ;
-    //                       var lat = hoodeye_last_position.coords.latitude;
-    //                       var long = hoodeye_last_position.coords.longitude;
-    //
-    //              $('#map_canvas').gmap().bind('init', function(ev, map) {
-    //              $('#map_canvas').gmap('addMarker', {'position': ''+lat+','+long+'', 'bounds': true}).click(function() {
-    //              $('#map_canvas').gmap('openInfoWindow', {'content': 'Hello World!'}, this);
-    //                              });
-    //                      });
-    
-    //  -----------good  
-    // var latlngalert = "|-26.11305892469931,27.984621|-26.113058924691,27.984620891537|-26.1130589249,27.984620892"
-    //   var latlngalert = ""
-    //   var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?size=300x200&maptype=street&zoom=13&sensor=true&markers=size:mid%7Ccolor:red%7C' + latlng + latlngalert ;
-    //   var mapImg = '<img src="' + googleApis_map_Url + '" />';
-    //   $("#map_canvas").html(mapImg);
-    
-    
-    //------------hear follows a cool map
-    
-    var lat = hoodeye_last_position.coords.latitude;
-    var long = hoodeye_last_position.coords.longitude;
-    
-    //  var locations  ;
-    //  locations = listevents() ;
-    locations.push(['1 you are here', lat,long,1] );     // works
-    // locations.push(['ilze', -26.113057,27.984621 , 2])   ;  // need to loop this.
-    
-    var latlng = new google.maps.LatLng (lat, long);
-    var options = { 
-        zoom : 15, 
-        center : latlng, 
-        mapTypeId : google.maps.MapTypeId.ROADMAP 
-    };
-    var $content = $("#pagemap div:jqmData(role=content)");
-    $content.height (screen.height - 50);
-    var map = new google.maps.Map ($content[0], options);
-    $.mobile.changePage ($("#pagemap"));
-    
-    
-    var infowindow = new google.maps.InfoWindow();
-    
-    var marker, i;
-    
-    for (i = 0; i < locations.length; i++) {  
-        marker = new google.maps.Marker({
-            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-            animation : google.maps.Animation.DROP,  
-            map: map
-        });
-        
-        //adw: jshint says: Don't make functions within a loop.
-        //this may lead to issues?
-        google.maps.event.addListener(marker, 'click', (function(marker, i) {
-            return function() {
-                infowindow.setContent(locations[i][0]);
-                infowindow.open(map, marker);
-            };
-        })(marker, i));
-    }
-}
-
-
-
-
-
-
-
-//=======================Get Community from hoodeye=======================//
-//adw: this isn't being called from anywhere, can we remove it?
-function listCommunities() {
-    var mydevice =  device.uuid;
-    var lat = hoodeye_last_position.coords.latitude;
-    var long = hoodeye_last_position.coords.longitude;
-    
-    
-    $.get('http://dev.hoodeye.com:4242/api/community?device='+mydevice+'&lat='+lat+'&long='+long, function(data) {
-        
-        var items = [];
-        var options;
-        $.each(data, function(key, community) { 
-            items.push(community.name);
-            options += '<option value="'+community._id+'">'+community.name+'</option>';
-        });
-        $("#community_index").html(items.join('<br/>'));
-        $("#event_community").html(options);
-        
-    });
+    showstatus("Could not get the current location");
+    //hoodeye_last_position = TODO;
 }
 
 
@@ -431,26 +324,31 @@ function assigncommunity(community) {
     // Update submitted community id for reportig events
     $("#eventcommunity").val(current.community._id);
     updateHomeTitle();
-    //debugmsg("Going for listcommunityeventtypes");
-    listcommunityeventtypes();
-    //$("#communityeventlist").html(options).listview('refresh');
+    //debugmsg("Going for make_selecteventlist");
+    make_selecteventlist();
+    //$("#selecteventlist").html(options).listview('refresh');
+    //TODO: make this a setting from the community
+    $.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
 }
 
-function assignintype (key) {
-    current.intype = intype_list[key] ;
-    debugmsg("Assigning intype to "+current.intype.name);
-    var content = $("#addeventpage div:jqmData(role=content)");
-    $.get('input-types/'+current.intype.name+'.html',
+function load_addeventform (key) {
+    current.intype = current.community.intypes[key] ;
+    debugmsg("Loading addevent form for"+current.intype.name);
+    var content = $("#addeventformpage div:jqmData(role=content)");
+    var filename = current.intype.name.replace(" ","_");
+    $.get('input-types/'+filename+'.html',
           function(html) { 
-              content.html(html); 
-              debugmsg("loaded input-types/"+current.intype.name+".html");
-              $("#addeventpage").enhanceWithin();
+              $("#addeventformcontent").html(html); 
+              debugmsg("loaded input-types/"+filename+".html");
+              $("#addeventformpage").enhanceWithin();
+              $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
           })
     .fail(function() { 
         $.get('input-types/default.html', function(def_html){ 
-            content.html(def_html); 
+            $("#addeventformcontent").html(def_html); 
             debugmsg("loaded default input the for "+current.intype.name);
-            $("#addeventpage").enhanceWithin();
+            $("#addeventformpage").enhanceWithin();
+            $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
         });
     });
 }
@@ -462,8 +360,8 @@ function mycommunities() {
     $.each(community_list, function(key, community) { 
         //debugmsg("Adding to communitylist:" + community.name);
         options += '<li ><a onClick="assigncommunity_from_list('+key+
-            ')" href="#home" data-split-theme="b" > <h3> '+
-            community.name+'</h3>(as '+getNickname4Community(community.name)+')</a></li>';
+            ')" href="#home" data-split-theme="b" > '+
+            community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
     });
     if (current.user.username == 'Guest') {
         options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';           
@@ -499,61 +397,53 @@ function updateAvailableCommunities() {
 
 
 
-function listcommunityeventtypes() {
-    
-    
-    intype_list = current.community.intypes;
+function make_selecteventlist() {
     
     var items = [];
     var options = '';
+    debugmsg("Intypes:" + JSON.stringify(current.community.intypes));
     
     $.each(current.community.intypes, function(key, intype) { 
-        debugmsg("Adding intype: "+intype.label);
+        debugmsg("Adding intype: "+intype.label+" with key"+key);
         
-        options += '<li><a onClick="assignintype('+key+')" href="#addeventpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
+        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="c" > '+intype.label+'</a></li>';
         
     });
     
-    $("#communityeventlist").html(options);
-    $("#communityeventlist").listview('refresh');
-    $("#communityeventpopuplist").html(options);
-    $("#communityeventpopuplist").listview();
-    $("#communityeventpopuplist").listview('refresh');
-    //$("#communityeventpopup").enhanceWithin();
-    
+    //$("#selecteventlist").html(options);
+    //$("#selecteventlist").listview('refresh');
+    $("#selecteventpopuplist").html(options);
+    $("#selecteventpopuplist").listview();
+    $("#selecteventpopuplist").listview('refresh');
 }
 
 
 
-function listeventscontent() {
-    
+function refresh_viewportList() {
     var params = 'community_id=' + current.community._id;
-    $("#eventcontentlisttitle").html(current.community.name);
-    $("#eventtypelisttitle").html(current.community.name);
-    return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
+    $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
         
-        var items_html ;
+        var items_html = "";
+        var markup = {
+          header: '<h3>' + current.community.name + ': Recent events</h3>' + 
+                   '<ul data-role="listview" data-inset="true">',
+          footer: '</ul>',
+        }
         
         var count = 0;
         $.each(data, function(key, event) { 
-            items_html += '<li ><a href="#"> '+event.intype+' </a> '+event.user.username+'<span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '+event.detail+'</b></p> <p class="ui-li-aside"> - '+event.create_time+'</p> </li> ';
-            
-            
+            items_html += '<li ><a href="#"> '+event.intype+' </a> '
+                            + event.user.username
+                            + '<span class="ui-li-count"> 2</span></li> <li> </br ><p><b> '
+                            + event.detail+'</b></p> <p class="ui-li-aside"> - '
+                            + event.create_time+'</p> </li> ';
             count += 1;
         });
         if (count === 0) {
             items_html = "<li>No Events found.</li>";
-            
         }
-        
-        
-        
-        $("#eventcontentlist").html(items_html).listview('refresh');
-        
-        
-        
+        $("#viewportListcontent").html(markup.header+items_html+markup.footer).listview('refresh');
     });
-    
 }
 
 
@@ -561,7 +451,7 @@ function listeventscontent() {
 //------------------try to get cool map with locations   
 
 
-function listeventLocations() {
+function refresh_viewportMap() {
     var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
     var event_locations = [];
@@ -598,10 +488,10 @@ function listeventLocations() {
             center : latlng, 
             mapTypeId : google.maps.MapTypeId.ROADMAP 
         };
-        var $content = $("#eventlistpage div:jqmData(role=content)");
+        var $content = $("#viewportListcontent");
         $content.height (screen.height - 50);
         var map = new google.maps.Map ($content[0], options);
-        $.mobile.changePage ($("#eventlistpage"));
+        $.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
         var infowindow = new google.maps.InfoWindow();
         
         
@@ -648,33 +538,6 @@ function listeventLocations() {
         }
     });
 }
-
-function submitEvent() {
-    
-    getLocation(function() {
-        
-        
-        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
-        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
-        // if the manmarker is moved use its location.     
-        if ( manmarker_position !== 0  ) {
-            $("#event_latitude").val(manmarkeer_position.lat().toString());
-            $("#event_longitude").val(manmarker_position.lng().toString());
-        }
-        $("#eventcommunity").val(current.community._id) ;
-        $("#eventintype").val(current.intype.label) ;
-        $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
-        
-        // add timestamp 
-        var currentTime = new Date();
-        $("#create_time").val(currentTime.toISOString());
-        $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
-                {
-                    $('#result').html(response);
-                }});
-    });
-}
-
 
 
 
