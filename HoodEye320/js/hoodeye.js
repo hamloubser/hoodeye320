@@ -475,7 +475,7 @@ function refresh_viewportMap() {
             
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
-                event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> @ "+event.create_time, event.lat , event.long , i]) ;
+                event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>  <B> "+ event.detail + "</B><br/> @ "+event.create_time, event.lat , event.long , i]) ;
             }
         } else {
             debugmsg("Hallo0");
