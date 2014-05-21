@@ -1,3 +1,5 @@
 */bin
 */obj
 *.user-settings.xml
+Hoodeye320/cordova.js
+Hoodeye320/localhost-windows/node_modules
