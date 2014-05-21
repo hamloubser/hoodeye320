@@ -1,9 +1,5 @@
     <form id = "EventForm">
-          <label for="name">Owl Eye Comment</label>
-          <input type="text" name="detail"  id="detail">
-          <p>Owl Type:</p>
-        <div data-role="controlgroup">
-        
+          
                <input name='community_id' id="eventcommunity" type="hidden" value='-no community id-'>
           <input name='intype' id="eventintype" type="hidden" value='testing'>
           <input name='device_id' id="eventdevicedetails" type="hidden" value='-no device details - '>
@@ -13,17 +9,18 @@
           <input id="camera_image" type="hidden" name='camera_image'  val='-'>                      
       
             
-             <fieldset data-role="controlgroup" data-type="Vertical">
-        <legend>Horizontal:</legend>
-        <input name="detail" id="detail-h-2a" type="checkbox" value="One">
-        <label for="checkbox-h-2a">One</label>
-        <input name="detail" id="detail-h-2b" type="checkbox" value="Two">
-        <label for="detail-h-2b">Two</label>
-        <input name="detail" id="detail-h-2c" type="checkbox" value="Three">
-        <label for="detail-h-2c">Three</label>
+    <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>What issue</legend>
+        <input name="detail" id="radio-choice-h-2a" type="radio" checked="checked" value="Person">
+        <label for="radio-choice-h-2a">Person</label>
+        <input name="detail" id="radio-choice-h-2b" type="radio" value="Car">
+        <label for="radio-choice-h-2b">Car</label>
+        <input name="detail" id="radio-choice-h-2c" type="radio" value="other">
+        <label for="radio-choice-h-2c">Other</label>
     </fieldset>
-        </div>	
-    <br><br><br><br>
+
+
+    <br><br>
         
       <input type="submit" data-inline="true" value="Submit">
      
