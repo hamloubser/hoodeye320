@@ -286,8 +286,8 @@ function submitEvent() {
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
         hoodeye_last_position = position;
-        //debugmsg("Got location:");       
-        //debugmsg(hoodeye_last_position);       
+        debugmsg("Got location:");       
+        debugmsg(JSON.stringify(hoodeye_last_position));       
         on_success();
     },onGeolocationError);
 }
