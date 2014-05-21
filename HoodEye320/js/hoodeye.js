@@ -32,7 +32,7 @@ var default_community_id = "52f5ec9daef933ee6997218a";
 //adw: global variable for last position, until we know how to do it better
 var hoodeye_last_position;
 var manmarker_position = 0;
-
+var ismapsetup = false;
 
 function showstatus(msg) {
     $("#statuspopup").html("<p>"+msg+"</p>");
@@ -68,6 +68,7 @@ function onDeviceReady() {
     //captureApp = new captureApp();
     //captureApp.run();
     
+    getLocation(setup_viewportMap);
     $(document).delegate('#loginpage','pageshow',function(){
         if (localStorage.login_username) {
             $("#login_username").val(localStorage.login_username);
@@ -86,13 +87,16 @@ function onDeviceReady() {
     
     $(document).delegate('#viewportMappage','pageshow',function(){
         debugmsg("pageshow on #viewportMappage");       
-        getLocation();
-        refresh_viewportMap() ;
+        refresh_viewportMap();
+        /* if (ismapsetup) { 
+          refresh_viewportMap();
+        } else {
+          getLocation(setup_viewportMap);
+        } */
     });
 
     $(document).delegate('#viewportListpage','pageshow',function(){
         debugmsg("pageshow on #viewportListpage");       
-        getLocation();
         refresh_viewportList() ;
     });
     
@@ -122,8 +126,6 @@ function onDeviceReady() {
     
     // Get my user detail and default community and assign it
     try_auto_login();  
-    // And get our current location and save
-    getLocation();
 }
 
 
@@ -460,8 +462,25 @@ function refresh_viewportList() {
 
 //------------------try to get cool map with locations   
 
+var viewportMap;
+function setup_viewportMap() {
+    var latlng = new google.maps.LatLng (hoodeye_last_position.coords.latitude, hoodeye_last_position.coords.longitude);
+        var options = {
+            zoom : 15,
+            center : latlng,
+            mapTypeId : google.maps.MapTypeId.ROADMAP
+        };
+        var content = $("#viewportMapcontent");
+        viewportMap = new google.maps.Map(content[0], options);
+}
+ 
 
 function refresh_viewportMap() {
+    // Resize the map as things have changed since init
+    var content = $("#viewportMapcontent");
+    content.height(screen.height - 30);
+    google.maps.event.trigger(viewportMap, 'resize');
+
     var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
     var event_locations = [];
@@ -477,53 +496,32 @@ function refresh_viewportMap() {
         var event;
         var i;
         if (data.length > 0) {
-            debugmsg("Hallo1");
-            
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
                 event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>  <B> "+ event.detail + "</B><br/> @ "+event.create_time, event.lat , event.long , i]) ;
             }
         } else {
-            debugmsg("Hallo0");
             event_locations.push(['Nothing Near', lat,long,1] );
         }
-        // var googleApis_map_Url = 'http://maps.googleapis.com/maps/api/staticmap?center='+lat+','+long+'&size=300x200&maptype=street&zoom=11&sensor=true&markers=size:mid%7Ccolor:red%7C' +  latlngalert ;
-        //  var mapImg = '<src="' + googleApis_map_Url + '" />';
-        //   $("#map_canvas_events").html(mapImg);       
         debugmsg("Number of events: "+event_locations.length);
         //  return event_locations;
-        var latlng = new google.maps.LatLng (lat, long);
-        var options = { 
-            zoom : 15, 
-            center : latlng, 
-            mapTypeId : google.maps.MapTypeId.ROADMAP 
-        };
-        var $content = $("#viewportMapcontent");
-        $content.height (screen.height - 50);
-        var map = new google.maps.Map ($content[0], options);
-        //$.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
         var infowindow = new google.maps.InfoWindow();
         
         
         //----- Trying to add a moveable marker to upgate location
         var manmarker ;
         
-        
         manmarker = new google.maps.Marker({
             position: new google.maps.LatLng(lat, long),
             animation : google.maps.Animation.DROP,  
             draggable: true,
             icon: 'images/imgman.png', 
-            map: map
+            map: viewportMap
         });
         // try to get the position of the manmarker
         google.maps.event.addListener(manmarker, 'dragend',  function() {
             //      var pos = manmarker.getPosition();
             manmarker_position = manmarker.getPosition();
-            
-            $("#eventlisttitle").html("Alert at Man" );
-            
-            
         });
         
         //----- ---------------------------------------------------  
@@ -534,7 +532,7 @@ function refresh_viewportMap() {
                 animation : google.maps.Animation.DROP,  
                 //  draggable: true,
                 //   icon: 'images/here.png', 
-                map: map
+                map: viewportMap
             });
             
             //adw: jshint says: Don't make functions within a loop.
@@ -542,7 +540,7 @@ function refresh_viewportMap() {
             google.maps.event.addListener(marker, 'click', (function(marker, i) {
                 return function() {
                     infowindow.setContent(event_locations[i][0]);
-                    infowindow.open(map, marker);
+                    infowindow.open(viewportMap, marker);
                 };
             })(marker, i));
         }
