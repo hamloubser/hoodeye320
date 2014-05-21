@@ -2,6 +2,6 @@
   "name" : "HoodEyeClientServer",
   "version" : "0.0.1",
   "dependencies" : {
-    "express" : "4.x",
+    "express" : "4.x"
   }
 }
