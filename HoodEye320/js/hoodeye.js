@@ -268,7 +268,7 @@ function submitEvent() {
         $("#event_longitude").val(hoodeye_last_position.coords.longitude);
         // if the manmarker is moved use its location.     
         if ( manmarker_position !== 0  ) {
-            $("#event_latitude").val(manmarkeer_position.lat().toString());
+            $("#event_latitude").val(manmarker_position.lat().toString());
             $("#event_longitude").val(manmarker_position.lng().toString());
         }
         $("#eventcommunity").val(current.community._id) ;
