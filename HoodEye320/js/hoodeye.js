@@ -9,13 +9,13 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 }
 
 //-----------------------
-var currentintype ;
-var current_community = { name: "unset"};
+var current;
+current.community = { name: "unset"};
 var community_list;
 var intype_list ;
 var captureApp;
 var anonymous_user = { username: "Guest", default_nickname: "Guest" };
-var current_user = { username: "NoUser" };
+current.user = { username: "NoUser" };
 
 var locations = [] ;
 var public_community_id = "52f5ec9daef933ee6997218a";
@@ -27,7 +27,6 @@ var newtitle;
 var hoodeye_last_position;
 var manmarker_position = 0;
 
-var common_markup = {};
 
 function showstatus(msg) {
     $("#popupStatus").html("<p>"+msg+"</p>");
@@ -59,10 +58,6 @@ function onDeviceReady() {
       };
     });
     
-    //common_markup.header =  $('#nav_template :jqmData(role="header")').clone();
-    //common_markup.footer =  $('#nav_template :jqmData(role="footer")').clone();
-    common_markup.header =  $('#header_template').html();
-    common_markup.footer =  $('#footer_template').html();
     
     
     
@@ -123,16 +118,19 @@ function onDeviceReady() {
     
     
     // Now do some initialization things
-    $("#popupStatus").popup();
-    set_html_to_layout("#viewmenu","viewmenu","popup");
-    //set_html_to_layout("#communityeventpopup","communityeventpopup","popup");  
+    $(':jqmData(role="popup")').popup();
     set_html_to_layout("#welcometext","msgAnton","msg");
-    
+    // This should happen as part of switching community
+  set_html_to_layout("#viewmenu","viewmenu","popup");
+
+    // Apply common navigation markup to pages
+    var common_markup = {};
+    common_markup.header =  $('#header_template').html();
+    common_markup.footer =  $('#footer_template').html();
     
     // $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer).page().trigger('pagecreate');
     $(':jqmData(role="page")').prepend(common_markup.header).append(common_markup.footer);
     $(':jqmData(role="page")').page().enhanceWithin();
-    $(':jqmData(role="popup")').popup();
     
     
     // Get my user detail and default community and assign it
@@ -149,14 +147,14 @@ function onDeviceReady() {
 
 function whoami() {
     $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
-        var isnewuser = current_user.username == user_info.username;
+        var isnewuser = current.user.username == user_info.username;
         debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
         
-        current_user = user_info;
+        current.user = user_info;
         
-        if (current_community.name == 'unset' || isnewuser) {
+        if (current.community.name == 'unset' || isnewuser) {
             
-            assigncommunity_byid(current_user.default_community_id || public_community_id);
+            assigncommunity_byid(current.user.default_community_id || public_community_id);
         }
         updateHomeTitle();
         fix_user_menu();
@@ -166,7 +164,7 @@ function whoami() {
 
 function fix_user_menu() {
         // If logged in, change the usermenu options
-        if (current_user.username != "Guest") {
+        if (current.user.username != "Guest") {
             $("#usermenuoptions").html('<li><a href="#mysettingspage" data-theme="c">My Profile</a></li>'+
                 '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
             debugmsg("Setting usermenu to profile/logout");
@@ -190,12 +188,12 @@ function updateHomeTitle() {
     // Update app header.
     var newtitle;
     var nick;
-    if(typeof current_community.nickname === 'undefined') {
-        nick = current_user.default_nickname;
-    } else {	
-        nick = current_community.nickname;
+    if(typeof current.community.nickname === 'undefined') {
+        nick = current.user.default_nickname;
+    } else {  
+        nick = current.community.nickname;
     }
-    newtitle = current_user.username + " in " + current_community.name + " as " + nick;
+    newtitle = current.user.username + " in " + current.community.name + " as " + nick;
     debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
 }
@@ -256,7 +254,7 @@ function submitRegister() {
 function submitLogout() {
     $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
         showstatus(result.message);
-        current_community = { name: "unset"};
+        current.community = { name: "unset"};
         whoami();
         $.mobile.pageContainer.pagecontainer("change", "#loginpage", {transition: "flow"});
     });
@@ -414,7 +412,7 @@ function assigncommunity_from_list (key) {
 }
 
 function assigncommunity_byid(community_id) {
-    var newhood_list = $.grep(current_user.communities, function(hood){ return hood._id == community_id; });
+    var newhood_list = $.grep(current.user.communities, function(hood){ return hood._id == community_id; });
     newhood = newhood_list[0];
     
     if (newhood) {
@@ -422,16 +420,16 @@ function assigncommunity_byid(community_id) {
         assigncommunity(newhood);
     } else {
         //TODO: this could be more elegant
-        //debugmsg("assigncommunity_byid found none, using "+current_user.communities[0].name);
-        assigncommunity(current_user.communities[0]);
+        //debugmsg("assigncommunity_byid found none, using "+current.user.communities[0].name);
+        assigncommunity(current.user.communities[0]);
     }
 }
 
 function assigncommunity(community) {
-    current_community = community;
-    debugmsg("assigncommunity setting current_community to "+current_community.name);
+    current.community = community;
+    debugmsg("assigncommunity setting current.community to "+current.community.name);
     // Update submitted community id for reportig events
-    $("#eventcommunity").val(current_community._id);
+    $("#eventcommunity").val(current.community._id);
     updateHomeTitle();
     //debugmsg("Going for listcommunityeventtypes");
     listcommunityeventtypes();
@@ -439,26 +437,26 @@ function assigncommunity(community) {
 }
 
 function assignintype (key) {
-    currentintype = intype_list[key] ;
-    debugmsg("Assigning intype to "+currentintype.name);
+    current.intype = intype_list[key] ;
+    debugmsg("Assigning intype to "+current.intype.name);
     var content = $("#addeventpage div:jqmData(role=content)");
-    $.get('input-types/'+currentintype.name+'.html',
+    $.get('input-types/'+current.intype.name+'.html',
           function(html) { 
               content.html(html); 
-              debugmsg("loaded input-types/"+currentintype.name+".html");
+              debugmsg("loaded input-types/"+current.intype.name+".html");
               $("#addeventpage").enhanceWithin();
           })
     .fail(function() { 
         $.get('input-types/default.html', function(def_html){ 
             content.html(def_html); 
-            debugmsg("loaded default input the for "+currentintype.name);
+            debugmsg("loaded default input the for "+current.intype.name);
             $("#addeventpage").enhanceWithin();
         });
     });
 }
 
 function mycommunities() {
-    community_list = current_user.communities;
+    community_list = current.user.communities;
     
     var options = '';
     $.each(community_list, function(key, community) { 
@@ -467,7 +465,7 @@ function mycommunities() {
             ')" href="#home" data-split-theme="b" > <h3> '+
             community.name+'</h3>(as '+getNickname4Community(community.name)+')</a></li>';
     });
-    if (current_user.username == 'Guest') {
+    if (current.user.username == 'Guest') {
         options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';           
     }  else {
         options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
@@ -476,8 +474,8 @@ function mycommunities() {
 }
 
 function getNickname4Community(community_name) {
-    var nick = current_user.default_nickname;
-    $.each(current_user.memberships,function(idx,membership) {
+    var nick = current.user.default_nickname;
+    $.each(current.user.memberships,function(idx,membership) {
         if (membership.community_name == community_name) {
             nick = membership.nickname;
             return false;
@@ -489,7 +487,7 @@ function getNickname4Community(community_name) {
 function updateAvailableCommunities() {
     var options = '';
     $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
-        $("#join_nickname").val(current_user.default_nickname);
+        $("#join_nickname").val(current.user.default_nickname);
         //debugmsg(community_names);
         $.each(community_names,function(key,community_name) {
             options += '<option value='+community_name+'> '+community_name+'</option>';
@@ -504,12 +502,12 @@ function updateAvailableCommunities() {
 function listcommunityeventtypes() {
     
     
-    intype_list = current_community.intypes;
+    intype_list = current.community.intypes;
     
     var items = [];
     var options = '';
     
-    $.each(current_community.intypes, function(key, intype) { 
+    $.each(current.community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label);
         
         options += '<li><a onClick="assignintype('+key+')" href="#addeventpage" data-split-theme="c" > <h3> '+intype.label+'</h3></a></li>';
@@ -529,9 +527,9 @@ function listcommunityeventtypes() {
 
 function listeventscontent() {
     
-    var params = 'community_id=' + current_community._id;
-    $("#eventcontentlisttitle").html(current_community.name);
-    $("#eventtypelisttitle").html(current_community.name);
+    var params = 'community_id=' + current.community._id;
+    $("#eventcontentlisttitle").html(current.community.name);
+    $("#eventtypelisttitle").html(current.community.name);
     return $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
         
         var items_html ;
@@ -567,8 +565,8 @@ function listeventLocations() {
     var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
     var event_locations = [];
-    var params = 'community_id=' + current_community._id;
-    $("#eventlisttitle").html(current_community.name);
+    var params = 'community_id=' + current.community._id;
+    $("#eventlisttitle").html(current.community.name);
     debugmsg("In listeventLocations");
     $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
         debugmsg("Got Events:" + data.length);
@@ -663,8 +661,8 @@ function submitEvent() {
             $("#event_latitude").val(manmarkeer_position.lat().toString());
             $("#event_longitude").val(manmarker_position.lng().toString());
         }
-        $("#eventcommunity").val(current_community._id) ;
-        $("#eventintype").val(currentintype.label) ;
+        $("#eventcommunity").val(current.community._id) ;
+        $("#eventintype").val(current.intype.label) ;
         $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
         
         // add timestamp 
@@ -706,5 +704,6 @@ function sayHelloReset() {
     sayHelloTextElem.style.display = 'none';
     sayHelloInputElem.style.display = 'block';
 }
+
 
 
