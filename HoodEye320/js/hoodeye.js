@@ -106,6 +106,7 @@ function onDeviceReady() {
     
     // Now do some initialization things
     $(':jqmData(role="popup")').popup();
+    $(':jqmData(role="listview")').listview();
     set_html_to_layout("#welcometext","msgAnton","msg");
     // This should happen as part of switching community
     // for now back in index.html
@@ -331,7 +332,7 @@ function assigncommunity(community) {
     make_selecteventlist();
     //$("#selecteventlist").html(options).listview('refresh');
     //TODO: make this a setting from the community
-    $.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
+    //$.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
 }
 
 function load_addeventform (key) {
@@ -360,18 +361,23 @@ function mycommunities() {
     community_list = current.user.communities;
     
     var options = '';
+    options += '<li data-role="list-divider">Switch active community</li>';           
     $.each(community_list, function(key, community) { 
         //debugmsg("Adding to communitylist:" + community.name);
         options += '<li ><a onClick="assigncommunity_from_list('+key+
             ')" href="#home" data-split-theme="b" > '+
             community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
     });
+    options += '<li data-role="list-divider">Actions</li>';           
     if (current.user.username == 'Guest') {
         options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';           
     }  else {
         options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
     }
-    $("#mycommunities").html(options).listview('refresh');
+    //$("#mycommunities").html(options).listview('refresh');
+    $("#mycommunitiespopup").html(options);
+    $("#mycommunitiespopup").listview();
+    $("#mycommunitiespopup").listview('refresh');
 }
 
 function getNickname4Community(community_name) {
