@@ -71,7 +71,8 @@
         
         <!-- viewmenu popup --> 
         <div  id="viewmenupopup" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
-          <ul>
+           <h4>View:</h4>
+          <ul data-role="listview" id="viewportpopuplist">
             <li ><a href="#viewportListpage">  <img style="width: 60px; height: 60px;" src="images/imgcontent.png">Alerts</a></li>
             <li ><a href="#viewportMappage"><img style="width: 50px; height: 50px;" src="images/imgmap.png">Map</a></li>
           </ul>
@@ -79,6 +80,7 @@
 
         <!-- Select event type menu - popup version -->
         <div id="selecteventpopup" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
+           <h4>Add a new:</h4>
            <ul data-role="listview"   id="selecteventpopuplist" >    
              <li> Initializing..... </li>
            </ul>
@@ -93,6 +95,15 @@
                 </ul>
             </div>
         </div>        
+
+        <!-- Switch community menu popup -->
+        <div data-role="popup" id="switchcommunitypopup" data-theme="b" > 
+                <ul data-role="listview"   id="mycommunitiespopup"   >    
+                    <li>Waiting for server...</li>
+                </ul>
+            </div>   
+        </div>
+
 
         <!-- Switch community menu page -->
         
@@ -213,7 +224,8 @@
                     <div data-role="navbar" data-iconpos="left">
                         <ul> 
                             <li><a href="#home" >  <img style="width: 40px; height: 40px;" src="images/eye.png"> </a></li>
-                            <li><a href="#switchcommunitypage" > <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
+                            <!-- <li><a href="#switchcommunitypage" > <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li> -->
+                            <li><a href="#switchcommunitypopup" data-rel="popup"> <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
                             <li><a href="#communityprofilepage"> <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
                             <li><a href="#usermenupopup" data-rel="popup"> <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
                         </ul>
