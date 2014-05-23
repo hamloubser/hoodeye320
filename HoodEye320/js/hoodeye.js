@@ -498,7 +498,7 @@ function refresh_viewportMap() {
         if (data.length > 0) {
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
-                event_locations.push([ "<Body> <h1>"+event.intype  + "</h1><br/>  <img src='images/imgman.png'  alt='image in infowindow'>  <B> "+ event.detail + "</B><br/> @ "+event.create_time+"</body>", event.lat , event.long, i]) ;
+                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+"</i>", event.lat , event.long, i]) ;
             }
         } else {
             event_locations.push(['Nothing Near', lat,long,1] );
