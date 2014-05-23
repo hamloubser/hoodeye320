@@ -17,6 +17,7 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 }
 
 //-----------------------
+var server_address = "http://dev.hoodeye.com:4242";
 var current = {};
 current.community = { name: "unset"};
 current.user = { username: "NoUser" };
@@ -49,7 +50,7 @@ function showstatus(msg) {
 
 function debugmsg(msg) {
     var encmsg = encodeURIComponent(msg);
-    return $.get('http://dev.hoodeye.com:4242/api/debugmsg?msg='+encmsg,function(result) {
+    $.get(server_address+'/api/debugmsg?msg='+encmsg,function(result) {
         return result;
     });
 }
@@ -130,7 +131,7 @@ function onDeviceReady() {
 
 
 function whoami() {
-    $.get('http://dev.hoodeye.com:4242/api/whoami',function(user_info) {
+    $.get(server_address+'/api/whoami',function(user_info) {
         var isnewuser = current.user.username == user_info.username;
         debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
         
@@ -161,7 +162,7 @@ function fix_user_menu() {
 }
 
 function set_html_to_layout(html_id,layout_name,layout_type) {
-    $.get('http://dev.hoodeye.com:4242/api/layout?name='+layout_name+'&type='+layout_type,function(html) {
+    $.get(server_address+'/api/layout?name='+layout_name+'&type='+layout_type,function(html) {
         $(html_id).html(html);
         // $(html_id).html(html).listview('refresh');
     });
@@ -184,7 +185,13 @@ function updateHomeTitle() {
 
 function try_auto_login() {
     if (localStorage.login_password) {
-        $.get('http://dev.hoodeye.com:4242/api/login?username=' + localStorage.login_username + '&password=' + localStorage.login_password,function(result) {
+
+      var submitdata = {
+        username: localStorage.login_username,
+        password: localStorage.login_password,
+      };
+
+      $.post(server_address+'/api/login',submitdata,function(result) {
             // Show message only if login worked  
             if (result.status === 1) {
               showstatus(result.message);
@@ -199,10 +206,16 @@ function try_auto_login() {
 }
 
 function submitLogin() {
+    var submitdata = {
+      username: encodeURIComponent($("#login_username").val()),
+      password: encodeURIComponent($("#login_password").val()),
+    };
+
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
     
-    $.get('http://dev.hoodeye.com:4242/api/login?username=' + username + '&password=' + password,function(result) {
+    //$.get('/api/login?username=' + username + '&password=' + password,function(result) {
+    $.post(server_address+'/api/login',submitdata,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
             localStorage.login_username=username;
@@ -221,7 +234,7 @@ function submitRegister() {
     var username = encodeURIComponent($("#reg_username").val());
     var password = encodeURIComponent($("#reg_password").val());
     var password_verify = encodeURIComponent($("#reg_password_verify").val());
-    $.get('http://dev.hoodeye.com:4242/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
+    $.get(server_address+'/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
             localStorage.login_username = username;
@@ -237,7 +250,7 @@ function submitRegister() {
 
 function submitLogout(event) {
     debugmsg(event);
-    $.get('http://dev.hoodeye.com:4242/api/logout',function(result) {
+    $.get(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.community = { name: "unset"};
         whoami();
@@ -251,7 +264,7 @@ function submitJoincommunity() {
         nickname:  $("#join_nickname").val(),
     };
     debugmsg(submitdata);
-    $.post('http://dev.hoodeye.com:4242/api/membership',submitdata,function(result) {
+    $.post(server_address+'/api/membership',submitdata,function(result) {
         // Should show success/fail feedback
         debugmsg("Result from memberhip submit:");
         debugmsg(result);
@@ -279,7 +292,7 @@ function submitEvent() {
         var currentTime = new Date();
         $("#create_time").val(currentTime.toISOString());
         showstatus("Saving event to server...");
-        $.ajax({type:'POST', url: 'http://dev.hoodeye.com:4242/api/event', data:$('#EventForm').serialize(), success: function(response)
+        $.ajax({type:'POST', url: server_address+'/api/event', data:$('#EventForm').serialize(), success: function(response)
                 {
                     showstatus(response);
                 }});
@@ -395,7 +408,7 @@ function getNickname4Community(community_name) {
 
 function updateAvailableCommunities() {
     var options = '';
-    $.get('http://dev.hoodeye.com:4242/api/hood/available', function(community_names) {
+    $.get(server_address+'/api/hood/available', function(community_names) {
         $("#join_nickname").val(current.user.default_nickname);
         //debugmsg(community_names);
         $.each(community_names,function(key,community_name) {
@@ -432,7 +445,7 @@ function make_selecteventlist() {
 
 function refresh_viewportList() {
     var params = 'community_id=' + current.community._id;
-    $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
+    $.get(server_address+'/api/event?'+params,function(data) {
         
         var items_html = "";
         var markup = {
@@ -487,7 +500,7 @@ function refresh_viewportMap() {
     var params = 'community_id=' + current.community._id;
     $("#eventlisttitle").html(current.community.name);
     debugmsg("In listeventLocations");
-    $.get('http://dev.hoodeye.com:4242/api/event?'+params,function(data) {
+    $.get(server_address+'/api/event?'+params,function(data) {
         debugmsg("Got Events:" + data.length);
         
         var items_html;
