@@ -281,7 +281,7 @@ function submitEvent() {
         $("#event_longitude").val(hoodeye_last_position.coords.longitude);
         // if the manmarker is moved use its location.     
         if ( manmarker_position !== 0  ) {
-            $("#event_latitude").val(manmarkeer_position.lat().toString());
+            $("#event_latitude").val(manmarker_position.lat().toString());
             $("#event_longitude").val(manmarker_position.lng().toString());
         }
         $("#eventcommunity").val(current.community._id) ;
@@ -511,7 +511,7 @@ function refresh_viewportMap() {
         if (data.length > 0) {
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
-                event_locations.push([ " <B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>  <B> "+ event.detail + "</B><br/> @ "+event.create_time, event.lat , event.long , i]) ;
+                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+"</i>", event.lat , event.long, i]) ;
             }
         } else {
             event_locations.push(['Nothing Near', lat,long,1] );

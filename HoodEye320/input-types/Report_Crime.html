@@ -1,0 +1,28 @@
+    <form id = "EventForm">
+          
+               <input name='community_id' id="eventcommunity" type="hidden" value='-no community id-'>
+          <input name='intype' id="eventintype" type="hidden" value='testing'>
+          <input name='device_id' id="eventdevicedetails" type="hidden" value='-no device details - '>
+          <input id="event_latitude" type="hidden" name='lat'  val='-'>
+          <input id="event_longitude" type="hidden" name='long'  val='-'>
+          <input id="create_time" type="hidden" name='create_time'  val='-'>
+          <input id="camera_image" type="hidden" name='camera_image'  val='-'>                      
+      
+            
+    <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>What kind of Crime was commited? </legend>
+        <input name="detail" id="radio-choice-h-2a" type="radio" checked="checked" value="Property">
+        <label for="radio-choice-h-2a">Property</label>
+        <input name="detail" id="radio-choice-h-2b" type="radio" value="Vehicle">
+        <label for="radio-choice-h-2b">Vehicle</label>
+        <input name="detail" id="radio-choice-h-2c" type="radio" value="Person">
+        <label for="radio-choice-h-2c">Person</label>
+    </fieldset><br>  <P> Use this section to describe all the details</p> <Br>
+<p>Date of Crime</p> <input name="detail" type="date" data-role="date"><Br>
+<label for="comment">Add details  </label>
+             <textarea name="detail" id="detail" type="text" placeholder=""> </textarea>
+			
+ 
+      <input type="submit" data-inline="true" value="Submit">
+     
+    </form>  
