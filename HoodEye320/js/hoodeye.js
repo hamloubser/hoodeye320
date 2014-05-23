@@ -15,9 +15,24 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
      version: '0.0',
   };
 }
+// Cute way to acess query string parameters as qs["some_param"]
+var qs = (function(a) {
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i)
+    {
+        var p=a[i].split('=');
+        if (p.length != 2) continue;
+        b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+})(window.location.search.substr(1).split('&'));
 
 //-----------------------
 var server_address = "http://dev.hoodeye.com:4242";
+if (qs['mode'] == 'dev') {
+  server_address = "http://dev.hoodeye.com:4343";
+}
 var current = {};
 current.community = { name: "unset"};
 current.user = { username: "NoUser" };
@@ -48,11 +63,19 @@ function showstatus(msg) {
     }, 3000);
 }
 
-function debugmsg(msg) {
-    var encmsg = encodeURIComponent(msg);
-    $.get(server_address+'/api/debugmsg?msg='+encmsg,function(result) {
-        return result;
+function debugmsg() {
+    var data = {
+      msg: "",
+    };
+    $.each(arguments, function(idx,thisarg) {
+      if (typeof thisarg === 'object') {
+        data.msg += JSON.stringify(thisarg);
+      } else {
+        data.msg += thisarg;
+      }
+      data.msg += ' ';
     });
+    $.post(server_address+'/api/debugmsg',data);
 }
 
 // PhoneGap is ready
@@ -81,6 +104,12 @@ function onDeviceReady() {
         updateAvailableCommunities();
     });
 
+    $(document).delegate('#communityprofilepage','pagebeforeshow',function(){
+        updatecommunityprofilepage();
+    });
+
+
+
     $(document).delegate('#addeventformpage','pagebeforeshow',function(){
         getLocation();
     });
@@ -102,12 +131,13 @@ function onDeviceReady() {
     });
     
     // page form submit bindings
+    
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
-    $('#loginForm').bind("submit",function(event) { event.preventDefault(); return submitLogin(); });
-    $('#logoutForm').bind("submit",function(event) { event.preventDefault(); return submitLogout(event); });
+    $('#loginForm').bind("submit",function(event) { event.preventDefault(); submitLogin(); });
+    $('#logoutForm').bind("submit",function(event) { event.preventDefault(); submitLogout(); });
     $('#registerForm').bind("submit",function(event) { event.preventDefault(); return submitRegister(); });
     $('#joincommunityForm').bind("submit",function(event) { event.preventDefault(); return submitJoincommunity(); });
-    
+    $('#leavecommunityForm').bind("submit",function(event) { event.preventDefault(); return submitLeavecommunity(); });
     
     // Now do some initialization things
     $(':jqmData(role="popup")').popup();
@@ -126,13 +156,16 @@ function onDeviceReady() {
     $(':jqmData(role="page")').page().enhanceWithin();
     
     // Get my user detail and default community and assign it
-    try_auto_login();  
+    whoami();
+    if (current.user.username == 'Guest') {
+      try_auto_login();  
+    }
 }
 
 
 function whoami() {
     $.get(server_address+'/api/whoami',function(user_info) {
-        var isnewuser = current.user.username == user_info.username;
+        var isnewuser = current.user.username != user_info.username;
         debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
         
         current.user = user_info;
@@ -221,7 +254,6 @@ function submitLogin() {
             localStorage.login_username=username;
             localStorage.login_password=password;
             whoami();
-            $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
@@ -231,16 +263,17 @@ function submitLogin() {
 }
 
 function submitRegister() {
-    var username = encodeURIComponent($("#reg_username").val());
-    var password = encodeURIComponent($("#reg_password").val());
-    var password_verify = encodeURIComponent($("#reg_password_verify").val());
-    $.get(server_address+'/api/register?username=' + username + '&password=' + password + '&password_verify=' + password_verify,function(result) {
+    var submitdata = {
+      username: encodeURIComponent($("#reg_username").val()),
+      password: encodeURIComponent($("#reg_password").val()),
+      password_verify: encodeURIComponent($("#reg_password_verify").val()),
+    }
+    $.post(server_address+'/api/register',submitdata,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
-            localStorage.login_username = username;
-            localStorage.login_password = password;
+            localStorage.login_username = submitdata.sername;
+            localStorage.login_password = submitdata.password;
             whoami();
-            $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
         } else {
           whoami();
           showstatus(result.message);
@@ -248,9 +281,9 @@ function submitRegister() {
     });
 }
 
-function submitLogout(event) {
-    debugmsg(event);
-    $.get(server_address+'/api/logout',function(result) {
+function submitLogout() {
+    //debugmsg(event);
+    $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.community = { name: "unset"};
         whoami();
@@ -265,15 +298,36 @@ function submitJoincommunity() {
     };
     debugmsg(submitdata);
     $.post(server_address+'/api/membership',submitdata,function(result) {
-        // Should show success/fail feedback
-        debugmsg("Result from memberhip submit:");
-        debugmsg(result);
-        whoami();
-        $.mobile.pageContainer.pagecontainer("change", "#switchcommunitypage", {transition: "flow"});
+        if (result.status == 0) {
+          showstatus("Attempt to join " + submitdata.community + " failed: " + result.error);
+        } else {
+          showstatus("Successfully joined " + submitdata.community + " as " + submitdata.nickname);
+          whoami();
+          assigncommunity_byid(result.community_id);
+        }
     });
-    return false;
 }
 
+function submitLeavecommunity() {
+    var membership_list = $.grep(current.user.memberships, function(membership){ return membership.community_id == current.community._id; });
+    membership = membership_list[0];
+    
+    if (membership) {
+      $.ajax({
+        url: server_address+'/api/membership/'+membership._id, 
+        type: 'DELETE',
+        success: function(result) {
+          showstatus("Membership removed for " + current.community.name);
+          whoami();
+          assigncommunity_byid(public_community_id);
+          $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+        },
+      });
+    } else {
+        showstatus("Can not leave public community " + current.community.name);
+        $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+    };
+}
 
 function submitEvent() {
     
@@ -303,8 +357,7 @@ function submitEvent() {
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
         hoodeye_last_position = position;
-        debugmsg("Got location:");       
-        debugmsg(JSON.stringify(hoodeye_last_position));       
+        debugmsg("Got location:",hoodeye_last_position);
         if (on_success && typeof(on_success) == "function") {
           on_success();
         }
@@ -317,11 +370,6 @@ function onGeolocationError(error) {
     //hoodeye_last_position = TODO;
 }
 
-
-
-function assigncommunity_from_list (key) {
-    assigncommunity(community_list[key]);
-}
 
 function assigncommunity_byid(community_id) {
     var newhood_list = $.grep(current.user.communities, function(hood){ return hood._id == community_id; });
@@ -379,20 +427,22 @@ function mycommunities() {
     options += '<li data-role="list-divider">Switch active community</li>';           
     $.each(community_list, function(key, community) { 
         //debugmsg("Adding to communitylist:" + community.name);
-        options += '<li ><a onClick="assigncommunity_from_list('+key+
-            ')" href="#home" data-split-theme="b" > '+
+        //options += '<li ><a onClick="assigncommunity_from_list('+key+
+        //    ')" href="#home" data-split-theme="b" > '+
+        //    community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
+        options += '<li ><a onClick="assigncommunity_byid(\''+community._id+
+            '\')" href="#home" data-split-theme="b" > '+
             community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
     });
     options += '<li data-role="list-divider">Actions</li>';           
     if (current.user.username == 'Guest') {
-        options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';           
+        options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';
     }  else {
         options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
     }
-    //$("#mycommunities").html(options).listview('refresh');
-    $("#mycommunitiespopup").html(options);
-    $("#mycommunitiespopup").listview();
-    $("#mycommunitiespopup").listview('refresh');
+    $("#switchcommunitylist").html(options);
+    $("#switchcommunitylist").listview();
+    $("#switchcommunitylist").listview('refresh');
 }
 
 function getNickname4Community(community_name) {
@@ -412,20 +462,29 @@ function updateAvailableCommunities() {
         $("#join_nickname").val(current.user.default_nickname);
         //debugmsg(community_names);
         $.each(community_names,function(key,community_name) {
-            options += '<option value='+community_name+'> '+community_name+'</option>';
+            options += '<option value="'+community_name+'"> '+community_name+'</option>';
             //debugmsg('<option value='+community_name+'> '+community_name+'</option>');
         });
         $("#join_community").html(options).selectmenu('refresh');
     });
 }
 
+function updatecommunityprofilepage() {
+  var c = '';
+  c += '<h3>Community: ' + current.community.name + '</h3>';
+  c += 'Known as: ' + getNickname4Community(current.community.name) + '<br/>';
+  c += '<h4>Actions:</h4>';
+  c += '<a href="#leavecommunity">Leave community</a><br/>';
+   
+  $("#communityprofilecontent").html(c);
+}
 
 
 function make_selecteventlist() {
     
     var items = [];
     var options = '';
-    debugmsg("Intypes:" + JSON.stringify(current.community.intypes));
+    debugmsg("Intypes:", current.community.intypes);
     
     $.each(current.community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);

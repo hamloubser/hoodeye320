@@ -87,31 +87,19 @@
 
         <!-- Switch community menu popup -->
         <div data-role="popup" id="switchcommunitypopup" data-theme="b" > 
-                <ul data-role="listview"   id="mycommunitiespopup"   >    
+                <ul data-role="listview"   id="switchcommunitylist"   >    
                     <li>Waiting for server...</li>
                 </ul>
             </div>   
         </div>
 
-
-        <!-- Switch community menu page -->
-        
-        <div data-role="page" id="switchcommunitypage" data-theme="b" > 
-            <div class="ui-content" role="main">
-                <label for="mycommunities"><h2>Switch Community to:</h2></label>  
-                <ul data-role="listview"   id="mycommunities"   >    
-                    <li>Waiting for server...</li>
-                </ul>
-            </div>   
-        </div>
-        
 
         <!-- Pages for forms -->
         
         <!-- My profile in current community page -->
         
         <div data-role="page" id="communityprofilepage" data-theme="b" >
-            <div class="ui-content" role="main">
+            <div id='communityprofilecontent' class="ui-content" role="main">
                 <h2>
                     Community profiles has not yet been implemented....
                 </h2>
@@ -154,10 +142,9 @@
         
         <div data-role="page" id="logoutpage" data-theme="b">
             <div class="ui-content" role="main">
-                <h3> Are you sure you want to log out of HoodEye?
+                <h3> Are you sure you want to log out of HoodEye?</h3>
                 <form name="logoutForm" id="logoutForm">
-                    <input name="submityes" value="Yes" type="submit">
-                    <input name="submitcancel" value="Cancel" type="submit">
+                    <input name="submit" value="Yes" type="submit">
                 </form>
             </div>
         </div>       
@@ -189,6 +176,18 @@
                 </form>
             </div>
         </div>
+
+        <!-- Leave community form -->
+        
+        <div data-role="page" id="leavecommunity" data-theme="b">
+            <div class="ui-content" role="main">
+                <h3> Are you sure you want to leave the current community?</h3>
+                <form name="leavecommunityForm" id="leavecommunityForm">
+                    <input name="submit" value="Yes" type="submit">
+                </form>
+            </div>
+        </div>       
+ 
 
         <!-- Pages for viewports -->
         <!-- Viewport: Map -->
