@@ -509,7 +509,7 @@ function refresh_viewportList() {
         var items_html = "";
         var markup = {
           header: '<h3>' + current.community.name + ': Recent events</h3>' + 
-                   '<ul data-role="listview" data-inset="true">',
+                   '<ul data-role="listview" data-inset="true" >',
           footer: '</ul>',
         }
         
