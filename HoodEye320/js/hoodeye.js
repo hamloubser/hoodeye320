@@ -575,7 +575,12 @@ function refresh_viewportMap() {
         if (data.length > 0) {
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
-                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+"</i>", event.lat , event.long, i]) ;
+                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+
+				"</i>"+
+ //  XXX working on ui concept to edit and event - ;			
+			"<Br> <a href='http://dev.hoodeye.com:4242/api/event?lat="+ 
+				event.lat+"'+><img src='images/edit.png'>EDIT<a> This Event id by latitude ",
+				event.lat , event.long, i]) ;
             }
         } else {
             event_locations.push(['Nothing Near', lat,long,1] );
