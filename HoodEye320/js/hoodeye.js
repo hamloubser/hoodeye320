@@ -607,8 +607,9 @@ function refresh_viewportMap() {
         });
         
         //----- ---------------------------------------------------  
-        var marker;
-        for (i = 0; i < event_locations.length; i++) {  
+        var marker = [];
+        for (i = 0; i < event_locations.length; i++) { 
+		
             marker = new google.maps.Marker({
                 position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
                 animation : google.maps.Animation.DROP,  
@@ -616,7 +617,7 @@ function refresh_viewportMap() {
                 //   icon: 'images/here.png', 
                 map: viewportMap
             });
-            
+        
             //adw: jshint says: Don't make functions within a loop.
             //this may lead to issues?
             google.maps.event.addListener(marker, 'click', (function(marker, i) {
