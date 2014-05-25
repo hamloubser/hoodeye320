@@ -185,13 +185,18 @@ function fix_user_menu() {
         if (current.user.username != "Guest") {
             $("#usermenuoptions").html('<li><a href="#userprofilepage" data-theme="c">Private Profile</a></li>'+
                 '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
+		$("#usermenuoptions").listview();
+		$("#usermenuoptions").listview('refresh');
             debugmsg("Setting usermenu to profile/logout");
         } else {
             $("#usermenuoptions").html('<li><a href="#registerpage" data-theme="c">Register</a></li>'+
                 '<li><a href="#loginpage" data-theme="c">Login</a></li>');
+		$("#usermenuoptions").listview();
+		$("#usermenuoptions").listview('refresh');		
             debugmsg("Setting usermenu to login/register");
         }
         $("#usermenupopup").popup();
+	
 }
 
 function set_html_to_layout(html_id,layout_name,layout_type) {
@@ -489,7 +494,7 @@ function make_selecteventlist() {
     $.each(current.community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);
         
-        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="c" > '+intype.label+'</a></li>';
+        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d" > '+intype.label+'</a></li>';
         
     });
     
