@@ -114,6 +114,9 @@ function onDeviceReady() {
         getLocation();
     });
  
+  $(document).delegate('#editeventformpage','pagebeforeshow',function(){
+        editeventformpage();
+    });
     
     $(document).delegate('#viewportMappage','pageshow',function(){
         debugmsg("pageshow on #viewportMappage");       
@@ -485,6 +488,18 @@ function updatecommunityprofilepage() {
 }
 
 
+function editeventformpage() {
+  var c = '';
+  c += '<h3>Community: ' + current.community.name + '</h3>';
+  c += 'Event: ' +  + '<br/>';
+  c += '<h4>Detail:</h4>';
+
+  c += ' <br/>'+ event.detail + '<br/>';
+   
+  $("#editeventformcontent").html(c);
+}
+
+
 function make_selecteventlist() {
     
     var items = [];
@@ -578,8 +593,7 @@ function refresh_viewportMap() {
                 event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+
 				"</i>"+
  //  XXX working on ui concept to edit and event - ;			
-			"<Br> <a href='http://dev.hoodeye.com:4242/api/event?lat="+ 
-				event.lat+"'+><img src='images/edit.png'>EDIT<a> This Event id by latitude ",
+			"<Br> <a href='#editeventformpage'><img src='images/edit.png'>EDIT<a> This Event id: "+event._id,
 				event.lat , event.long, i]) ;
             }
         } else {
