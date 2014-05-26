@@ -349,7 +349,7 @@ function submitEvent() {
         $("#eventcommunity").val(current.community._id) ;
         $("#eventintype").val(current.intype.label) ;
         // added icon (must be png)  and set status as "new"	
-	    $("#eventintype_icon").val("images/"+current.intype.label+"_icon.png") ;
+	    $("#eventintype_icon").val("images/"+current.intype.name+"_icon.png") ;
 		$("#eventintype_status").val("new") ;
 		
 		
