@@ -541,12 +541,14 @@ function refresh_viewportList() {
         var count = 0;
         $.each(data, function(key, event) { 
             items_html += '<li ><img style="width: 20px; height: 20px;" src='+event.eventintype_icon+'>'
-							+"  "+event.eventintype_status
-							+event.intype+': '
+							+ event.create_time
+							+" Status: "+event.eventintype_status
+							+"  "+event.intype+': '
                             + event.detail + "( reported by "
                             + event.user.username + " at "
-                            + event.create_time+')</li> ';
+                           + ')</li> ';
             count += 1;
+			
         });
         if (count === 0) {
             items_html = "<li>No Events found.</li>";
@@ -571,6 +573,7 @@ function setup_viewportMap() {
         };
         var content = $("#viewportMapcontent");
         viewportMap = new google.maps.Map(content[0], options);
+	
 }
  
 
@@ -651,6 +654,7 @@ function refresh_viewportMap() {
                 };
             })(marker, i));
         }
+		
     });
 }
 
