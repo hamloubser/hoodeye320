@@ -348,6 +348,11 @@ function submitEvent() {
         }
         $("#eventcommunity").val(current.community._id) ;
         $("#eventintype").val(current.intype.label) ;
+        // added icon (must be png)  and set status as "new"	
+	    $("#eventintype_icon").val("images/"+current.intype.label+"_icon.png") ;
+		$("#eventintype_status").val("new") ;
+		
+		
         $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
         
         // add timestamp 
@@ -535,7 +540,7 @@ function refresh_viewportList() {
         
         var count = 0;
         $.each(data, function(key, event) { 
-            items_html += '<li >'+event.intype+': '
+            items_html += '<li ><img style="width: 20px; height: 20px;" src='+event.eventintype_icon+'>'+event.intype+': '
                             + event.detail + "( reported by "
                             + event.user.username + " at "
                             + event.create_time+')</li> ';
@@ -593,7 +598,7 @@ function refresh_viewportMap() {
                 event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+
 				"</i>"+
  //  XXX working on ui concept to edit and event - ;			
-			"<Br> <a href='#editeventformpage'><img src='images/edit.png'>EDIT<a> This Event id: "+event._id,
+			"<Br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT<a> This Event id: "+event._id,
 				event.lat , event.long, i]) ;
             }
         } else {
