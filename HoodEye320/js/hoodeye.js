@@ -540,7 +540,9 @@ function refresh_viewportList() {
         
         var count = 0;
         $.each(data, function(key, event) { 
-            items_html += '<li ><img style="width: 20px; height: 20px;" src='+event.eventintype_icon+'>'+event.intype+': '
+            items_html += '<li ><img style="width: 20px; height: 20px;" src='+event.eventintype_icon+'>'
+							+"  "+event.eventintype_status
+							+event.intype+': '
                             + event.detail + "( reported by "
                             + event.user.username + " at "
                             + event.create_time+')</li> ';
@@ -595,7 +597,10 @@ function refresh_viewportMap() {
         if (data.length > 0) {
             for (i = 0; i < data.length; i++) {  
                 event = data[i]; 
-                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+event.create_time+
+
+                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+
+				event.create_time+
+				"  "+event.eventintype_status+
 				"</i>"+
  //  XXX working on ui concept to edit and event - ;			
 			"<Br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT<a> This Event id: "+event._id,
@@ -628,12 +633,12 @@ function refresh_viewportMap() {
         //----- ---------------------------------------------------  
         var marker = [];
         for (i = 0; i < event_locations.length; i++) { 
-		
+		 event = data[i]; 
             marker = new google.maps.Marker({
                 position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
                 animation : google.maps.Animation.DROP,  
                 //  draggable: true,
-                //   icon: 'images/here.png', 
+                icon: ''+event.eventintype_icon+'', 
                 map: viewportMap
             });
         
