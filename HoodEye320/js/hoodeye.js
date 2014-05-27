@@ -34,9 +34,16 @@ if (qs['mode'] == 'dev') {
   server_address = "http://dev.hoodeye.com:4343";
 }
 var current = {};
-current.community = { name: "unset"};
-current.user = { username: "NoUser" };
-current.communities_to_join = [];
+var current_clean = {
+  active_community: { name: "unset"},
+  user: { username: "NoUser" },
+  intype: '',
+  communities_to_join: [],
+  memberships: [],
+  communities: {},
+};
+var current = current_clean;
+
 var captureApp;
 var anonymous_user = { username: "Guest", default_nickname: "Guest" };
 
@@ -171,14 +178,15 @@ function onDeviceReady() {
 
 function whoami() {
     $.get(server_address+'/api/whoami',function(user_info) {
-        var isnewuser = current.user.username != user_info.username;
+        var isnewuser = current.user.username != user_info.user.username;
         debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
         
-        current.user = user_info;
+        current.user = user_info.user;
+        current.memberships = user_info.memberships;
+        current.communities = user_info.communities;
         
-        if (current.community.name == 'unset' || isnewuser) {
-            
-            assigncommunity_byid(current.user.default_community_id || public_community_id);
+        if (current.active_community.name == 'unset' || isnewuser) {
+            assigncommunity(current.user.default_community_id || public_community_id);
         }
         updateHomeTitle();
         fix_user_menu();
@@ -217,12 +225,12 @@ function updateHomeTitle() {
     // Update app header.
     var newtitle;
     var nick;
-    if(typeof current.community.nickname === 'undefined') {
+    if(typeof current.active_community.nickname === 'undefined') {
         nick = current.user.default_nickname;
     } else {  
-        nick = current.community.nickname;
+        nick = current.active_community.nickname;
     }
-    newtitle = current.user.username + " in " + current.community.name + " as " + nick;
+    newtitle = current.user.username + " in " + current.active_community.name + " as " + nick;
     debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
 }
@@ -296,7 +304,7 @@ function submitLogout() {
     //debugmsg(event);
     $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
-        current.community = { name: "unset"};
+        current.active_community = { name: "unset"};
         whoami();
         $.mobile.pageContainer.pagecontainer("change", "#loginpage", {transition: "flow"});
     });
@@ -316,13 +324,13 @@ function submitJoincommunity() {
         } else {
           showstatus("Successfully joined " + submitdata.community_name + " as " + submitdata.nickname);
           whoami();
-          assigncommunity_byid(community_id);
+          assigncommunity(community_id);
         }
     });
 }
 
 function submitLeavecommunity() {
-    var membership_list = $.grep(current.user.memberships, function(membership){ return membership.community_id == current.community._id; });
+    var membership_list = $.grep(current.memberships, function(membership){ return membership.community_id == current.active_community._id; });
     membership = membership_list[0];
     
     if (membership) {
@@ -330,14 +338,14 @@ function submitLeavecommunity() {
         url: server_address+'/api/membership/'+membership._id, 
         type: 'DELETE',
         success: function(result) {
-          showstatus("Membership removed for " + current.community.name);
+          showstatus("Membership removed for " + current.active_community.name);
           whoami();
-          assigncommunity_byid(public_community_id);
+          assigncommunity(public_community_id);
           $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
         },
       });
     } else {
-        showstatus("Can not leave public community " + current.community.name);
+        showstatus("Can not leave public community " + current.active_community.name);
         $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
     };
 }
@@ -351,7 +359,7 @@ function submitEvent() {
             $("#event_latitude").val(manmarker_position.lat().toString());
             $("#event_longitude").val(manmarker_position.lng().toString());
         }
-        $("#eventcommunity").val(current.community._id) ;
+        $("#eventcommunity").val(current.active_community._id) ;
         $("#eventintype").val(current.intype.label) ;
         // added icon (must be png)  and set status as "new"	
 	    $("#eventintype_icon").val("images/"+current.intype.name+"_icon.png") ;
@@ -389,25 +397,11 @@ function onGeolocationError(error) {
 }
 
 
-function assigncommunity_byid(community_id) {
-    var newhood_list = $.grep(current.user.communities, function(hood){ return hood._id == community_id; });
-    newhood = newhood_list[0];
-    
-    if (newhood) {
-        //debugmsg("assigncommunity_byid found "+newhood.name);
-        assigncommunity(newhood);
-    } else {
-        //TODO: this could be more elegant
-        //debugmsg("assigncommunity_byid found none, using "+current.user.communities[0].name);
-        assigncommunity(current.user.communities[0]);
-    }
-}
-
-function assigncommunity(community) {
-    current.community = community;
-    debugmsg("assigncommunity setting current.community to "+current.community.name);
+function assigncommunity(community_id) {
+    current.active_community = current.communities[community_id];
+    debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
     // Update submitted community id for reportig events
-    $("#eventcommunity").val(current.community._id);
+    $("#eventcommunity").val(current.active_community._id);
     updateHomeTitle();
     //debugmsg("Going for make_selecteventlist");
     make_selecteventlist();
@@ -417,7 +411,7 @@ function assigncommunity(community) {
 }
 
 function load_addeventform (key) {
-    current.intype = current.community.intypes[key] ;
+    current.intype = current.active_community.intypes[key] ;
     debugmsg("Loading addevent form for"+current.intype.name);
     var content = $("#addeventformpage div:jqmData(role=content)");
     var filename = current.intype.name.replace(" ","_");
@@ -442,12 +436,8 @@ function mycommunities() {
     
     var options = '';
     options += '<li data-role="list-divider">Switch active community</li>';           
-    $.each(current.user.communities, function(key, community) { 
-        //debugmsg("Adding to communitylist:" + community.name);
-        //options += '<li ><a onClick="assigncommunity_from_list('+key+
-        //    ')" href="#home" data-split-theme="b" > '+
-        //    community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
-        options += '<li ><a onClick="assigncommunity_byid(\''+community._id+
+    $.each(current.communities, function(key, community) { 
+        options += '<li ><a onClick="assigncommunity(\''+community._id+
             '\')" href="#home" data-split-theme="b" > '+
             community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
     });
@@ -464,7 +454,7 @@ function mycommunities() {
 
 function getNickname4Community(community_name) {
     var nick = current.user.default_nickname;
-    $.each(current.user.memberships,function(idx,membership) {
+    $.each(current.memberships,function(idx,membership) {
         if (membership.community_name == community_name) {
             nick = membership.nickname;
             return false;
@@ -488,8 +478,8 @@ function updateAvailableCommunities() {
 
 function updatecommunityprofilepage() {
   var c = '';
-  c += '<h3>Community: ' + current.community.name + '</h3>';
-  c += 'Known as: ' + getNickname4Community(current.community.name) + '<br/>';
+  c += '<h3>Community: ' + current.active_community.name + '</h3>';
+  c += 'Known as: ' + getNickname4Community(current.active_community.name) + '<br/>';
   c += '<h4>Actions:</h4>';
   c += '<a href="#leavecommunity">Leave community</a><br/>';
    
@@ -499,7 +489,7 @@ function updatecommunityprofilepage() {
 
 function editeventformpage() {
   var c = '';
-  c += '<h3>Community: ' + current.community.name + '</h3>';
+  c += '<h3>Community: ' + current.active_community.name + '</h3>';
   c += 'Event: ' +  + '<br/>';
   c += '<h4>Detail:</h4>';
 
@@ -513,9 +503,9 @@ function make_selecteventlist() {
     
     var items = [];
     var options = '';
-    debugmsg("Intypes:", current.community.intypes);
+    debugmsg("Intypes:", current.active_community.intypes);
     
-    $.each(current.community.intypes, function(key, intype) { 
+    $.each(current.active_community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);
         
         options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d" > '+intype.label+'</a></li>';
@@ -532,12 +522,12 @@ function make_selecteventlist() {
 
 
 function refresh_viewportList() {
-    var params = 'community_id=' + current.community._id;
+    var params = 'community_id=' + current.active_community._id;
     $.get(server_address+'/api/event?'+params,function(data) {
         
         var items_html = "";
         var markup = {
-          header: '<h3>' + current.community.name + ': Recent events</h3>' + 
+          header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
                    '<ul data-role="listview" data-inset="true" >',
           footer: '</ul>',
         }
@@ -590,8 +580,8 @@ function refresh_viewportMap() {
     var lat = hoodeye_last_position.coords.latitude;
     var long = hoodeye_last_position.coords.longitude;
     var event_locations = [];
-    var params = 'community_id=' + current.community._id;
-    $("#eventlisttitle").html(current.community.name);
+    var params = 'community_id=' + current.active_community._id;
+    $("#eventlisttitle").html(current.active_community.name);
     debugmsg("In listeventLocations");
     $.get(server_address+'/api/event?'+params,function(data) {
         debugmsg("Got Events:" + data.length);
