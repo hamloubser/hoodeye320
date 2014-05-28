@@ -179,14 +179,15 @@ function onDeviceReady() {
 function whoami() {
     $.get(server_address+'/api/whoami',function(user_info) {
         var isnewuser = current.user.username != user_info.user.username;
-        debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.username);
+        debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.user.username);
         
         current.user = user_info.user;
         current.memberships = user_info.memberships;
         current.communities = user_info.communities;
         
-        if (current.active_community.name == 'unset' || isnewuser) {
-            assigncommunity(current.user.default_community_id || public_community_id);
+        if (isnewuser) {
+            //assigncommunity(current.user.default_community_id || public_community_id);
+            assigncommunity(public_community_id);
         }
         updateHomeTitle();
         fix_user_menu();
@@ -398,8 +399,13 @@ function onGeolocationError(error) {
 
 
 function assigncommunity(community_id) {
-    current.active_community = current.communities[community_id];
-    debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
+    if (current.communities[community_id]) {
+      current.active_community = current.communities[community_id];
+      debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
+    } else {
+      current.active_community = current.communities[public_community_id];
+      debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
+    }
     // Update submitted community id for reportig events
     $("#eventcommunity").val(current.active_community._id);
     updateHomeTitle();
