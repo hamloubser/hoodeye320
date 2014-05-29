@@ -17,7 +17,7 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 }
 // Cute way to acess query string parameters as qs["some_param"]
 var qs = (function(a) {
-    if (a == "") return {};
+    if (a === "") return {};
     var b = {};
     for (var i = 0; i < a.length; ++i)
     {
@@ -30,7 +30,7 @@ var qs = (function(a) {
 
 //-----------------------
 var server_address = "http://dev.hoodeye.com:4242";
-if (qs['mode'] == 'dev') {
+if (qs.mode == 'dev') {
   server_address = "http://dev.hoodeye.com:4343";
 }
 var current = {};
@@ -39,7 +39,7 @@ var current_clean = {
   user: { username: "NoUser" },
   intype: '',
   communities_to_join: [],
-  memberships: [],
+  memberships: {},
   communities: {},
 };
 var current = current_clean;
@@ -49,7 +49,7 @@ var anonymous_user = { username: "Guest", default_nickname: "Guest" };
 
 var locations = [] ;
 var public_community_id = "52f5ec9daef933ee6997218a";
-var default_community_id = "52f5ec9daef933ee6997218a";
+var default_community_id = public_community_id;
 
 
 //adw: global variable for last position, until we know how to do it better
@@ -63,7 +63,9 @@ function showstatus(msg) {
     setTimeout(function(){
         $("#statuspopup").popup("open");
         // navigator.notification.beep(1);
-        if (isphone) { navigator.notification.vibrate(2) };
+        if (isphone) { 
+          navigator.notification.vibrate(2);
+        }
     }, 100);
     setTimeout(function(){
         $("#statuspopup").popup("close");
@@ -109,7 +111,7 @@ function onDeviceReady() {
     
     $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
         // Update the list of available communities to join
-        updateAvailableCommunities();
+        update_communities_to_join();
         // Set my default nickname on the join form
         $("#join_nickname").val(current.user.default_nickname);
     });
@@ -169,30 +171,63 @@ function onDeviceReady() {
     $(':jqmData(role="page")').page().enhanceWithin();
     
     // Get my user detail and default community and assign it
-    whoami();
+    load_session_user(false);
     if (current.user.username == 'Guest') {
+      // this will always load memberships
       try_auto_login();  
+    } else {
+      load_memberships(current.user.default_community || public_community_id);
+    }
+}
+
+function load_session_user(require_memberships) {
+    $.get(server_address+'/api/whoami?part=user',function(session_user) {
+        var isnewuser = current.user.username != session_user.username;
+        debugmsg("load_session_user isnewuser: "+isnewuser);
+        debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
+        if (isnewuser) {
+          current = current_clean;
+          current.user = session_user;
+          fix_user_menu();
+          // load membershiups and then switch community
+          if(require_memberships) {
+            load_memberships(current.user.default_community || public_community_id);
+          }
+        }
+    });
+}
+
+function try_auto_login() {
+    if (localStorage.login_password) {
+
+      var submitdata = {
+        username: localStorage.login_username,
+        password: localStorage.login_password,
+      };
+
+      $.post(server_address+'/api/login',submitdata,function(result) {
+            // Show message only if login worked  
+            if (result.status === 1) {
+              showstatus(result.message);
+            }
+            // check the session user and load memberships
+            load_session_user(true);
+        });
+    } else {
+        // No login attempt, just load the memberships
+        load_memberships(current.user.default_community || public_community_id);
     }
 }
 
 
-function whoami() {
-    $.get(server_address+'/api/whoami',function(user_info) {
-        var isnewuser = current.user.username != user_info.user.username;
-        debugmsg("whoami isnewuser: "+isnewuser+" username is "+user_info.user.username);
-        
-        current.user = user_info.user;
-        current.memberships = user_info.memberships;
-        current.communities = user_info.communities;
-        
-        if (isnewuser) {
-            //assigncommunity(current.user.default_community_id || public_community_id);
-            assigncommunity(public_community_id);
-        }
-        updateHomeTitle();
-        fix_user_menu();
-        mycommunities();
-    });
+
+
+function load_memberships(new_community_id) {
+  $.get(server_address+'/api/whoami?part=memberships',function(memberships) {
+    current.memberships = memberships;
+    fix_community_switch_menu();
+    switchcommunity(current.user.default_community || public_community_id);
+  });
 }
 
 function fix_user_menu() {
@@ -224,38 +259,9 @@ function set_html_to_layout(html_id,layout_name,layout_type) {
 
 function updateHomeTitle() {
     // Update app header.
-    var newtitle;
-    var nick;
-    if(typeof current.active_community.nickname === 'undefined') {
-        nick = current.user.default_nickname;
-    } else {  
-        nick = current.active_community.nickname;
-    }
-    newtitle = current.user.username + " in " + current.active_community.name + " as " + nick;
+    var newtitle = current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
     debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
-}
-
-function try_auto_login() {
-    if (localStorage.login_password) {
-
-      var submitdata = {
-        username: localStorage.login_username,
-        password: localStorage.login_password,
-      };
-
-      $.post(server_address+'/api/login',submitdata,function(result) {
-            // Show message only if login worked  
-            if (result.status === 1) {
-              showstatus(result.message);
-            }
-            // Always do a whoami after a login attempt;
-            whoami();
-        });
-    } else {
-        // No login attempt, but use whoami to init Guest user
-        whoami();
-    }
 }
 
 function submitLogin() {
@@ -273,11 +279,11 @@ function submitLogin() {
             showstatus(result.message);
             localStorage.login_username=username;
             localStorage.login_password=password;
-            whoami();
+            load_session_user(true);
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
-            whoami();
+            load_session_user(true);
         }
     });
 }
@@ -287,15 +293,15 @@ function submitRegister() {
       username: encodeURIComponent($("#reg_username").val()),
       password: encodeURIComponent($("#reg_password").val()),
       password_verify: encodeURIComponent($("#reg_password_verify").val()),
-    }
+    };
     $.post(server_address+'/api/register',submitdata,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
             localStorage.login_username = submitdata.sername;
             localStorage.login_password = submitdata.password;
-            whoami();
+            load_session_user(true);
         } else {
-          whoami();
+          load_session_user(true);
           showstatus(result.message);
         }
     });
@@ -306,7 +312,7 @@ function submitLogout() {
     $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.active_community = { name: "unset"};
-        whoami();
+        load_session_user(true);
         $.mobile.pageContainer.pagecontainer("change", "#loginpage", {transition: "flow"});
     });
 }
@@ -315,44 +321,141 @@ function submitJoincommunity() {
     var community_id = $("#join_community").val();
     var submitdata = {
         community_id: community_id,
-        community_name: current.communities_to_join[community_id],
+        community_name: current.communities_to_join[community_id].name,
         nickname:  $("#join_nickname").val(),
     };
     debugmsg('submitJoincommunity:',submitdata);
     $.post(server_address+'/api/membership',submitdata,function(result) {
-        if (result.status == 0) {
+        if (result.status === 0) {
           showstatus("Attempt to join " + submitdata.community_name + " failed: " + result.error);
         } else {
           showstatus("Successfully joined " + submitdata.community_name + " as " + submitdata.nickname);
-          whoami();
-          assigncommunity(community_id);
+          load_memberships();
+          switchcommunity(community_id);
         }
     });
 }
 
 function submitLeavecommunity() {
-    var membership_list = $.grep(current.memberships, function(membership){ return membership.community_id == current.active_community._id; });
-    membership = membership_list[0];
+    //var membership_list = $.grep(current.memberships, function(membership){ return membership.community_id == current.active_community._id; });
+    //membership = membership_list[0];
+    var membership = current.memberships[current.active_community._id];
+    var community_id = current.active_community._id;
     
-    if (membership) {
-      $.ajax({
-        url: server_address+'/api/membership/'+membership._id, 
-        type: 'DELETE',
-        success: function(result) {
-          showstatus("Membership removed for " + current.active_community.name);
-          whoami();
-          assigncommunity(public_community_id);
-          $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
-        },
-      });
-    } else {
-        showstatus("Can not leave public community " + current.active_community.name);
+    $.ajax({
+      url: server_address+'/api/membership/'+membership._id, 
+      type: 'DELETE',
+      success: function(result) {
+        showstatus("Membership removed for " + current.active_community.name);
+        delete current.memberships[community_id];
+        delete current.communities[community_id];
+        debugmsg("Memberships now:",current.memberships);
+        fix_community_switch_menu();
+        switchcommunity(public_community_id);
         $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
-    };
+      },
+    });
 }
 
+function switchcommunity(community_id) {
+  if (current.communities[community_id]) {
+      current.active_community = current.communities[community_id];
+      debugmsg("switchcommunity setting current.active_community to "+current.active_community.name);
+      // Set title
+      updateHomeTitle();
+      // Change add event menu
+      make_selecteventlist();
+      //TODO:
+      //change viewport menu
+      //clear non-map viewports
+      //refresh event data for community, update/add map markers etc.
+      //switch off current map markers
+      //switch on map markers for current community
+      //switch viewport to default for the community (or membership to this community)
+      //Clear eventadd form
+      //
+      //For now, keep this here, should move to event submission
+      $("#eventcommunity").val(current.active_community._id);
+  } else {
+     //First load the community data, then try again
+      debugmsg("Loading community data for "+community_id);
+      $.get(server_address+'/api/community/'+community_id,function(cdata) {
+        if (cdata.name) {
+          debugmsg("Community " + community_id + " " + cdata.name + " has a valid membership, switching");
+          current.communities[community_id] = cdata;
+          switchcommunity(community_id);
+        } else {
+          debugmsg("Community " + community_id + " not valid membership");
+          // If we don't have an active community, switch to public community
+          if (!current.active_community._id) {
+            switchcommunity(public_community_id);
+          } 
+          // Otherwise, don't switch community
+          showstatus("Can't switch community, membership not valid");
+        }
+      }).fail(function() {
+        showstatus("Server not availale, not switching community now"); 
+      });
+  }
+}
+
+function fix_community_switch_menu() {
+    var options = '';
+    options += '<li data-role="list-divider">Switch active community</li>';           
+    $.each(current.memberships, function(community_id, membership) { 
+        options += '<li ><a onClick="switchcommunity(\''+community_id+
+            '\')" href="#home" data-split-theme="b" > '+
+            membership.community_name+' (as '+getNickname4Community(community_id)+')</a></li>';
+    });
+    options += '<li data-role="list-divider">Actions</li>';           
+    if (current.user.username == 'Guest') {
+        options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';
+    }  else {
+        options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
+    }
+    $("#switchcommunitylist").html(options);
+    $("#switchcommunitylist").listview();
+    $("#switchcommunitylist").listview('refresh');
+}
+
+function getNickname4Community(community_id) {
+    var cid = community_id || current.active_community._id;
+    return current.memberships[cid].nickname || current.user.default_nickname || current.user.username;
+}
+
+function update_communities_to_join() {
+    var options = '';
+    $.get(server_address+'/api/hood/available', function(communities) {
+        //debugmsg(communities);
+        $.each(communities,function(key,community) {
+            options += '<option value="'+community._id+'"> '+community.name+'</option>';
+            // save the communities mapping id to name
+            current.communities_to_join[community._id] = community;
+        });
+        $("#join_community").html(options).selectmenu('refresh');
+    });
+}
+
+function updatecommunityprofilepage() {
+  var c = '';
+  c += '<h3>Community: ' + current.active_community.name + '</h3>';
+  c += 'Known as: ' + getNickname4Community() + '<br/>';
+  c += '<h4>Actions:</h4>';
+  // Can't leave the Public Community
+  if (current.active_community._id != public_community_id) {
+    c += '<a href="#leavecommunity">Leave community</a><br/>';
+  }
+   
+  $("#communityprofilecontent").html(c);
+}
+
+
+// End of membership and community management section
+//
+// Start of Event and display section
+
+
 function submitEvent() {
-    
         $("#event_latitude").val(hoodeye_last_position.coords.latitude);
         $("#event_longitude").val(hoodeye_last_position.coords.longitude);
         // if the manmarker is moved use its location.     
@@ -398,23 +501,6 @@ function onGeolocationError(error) {
 }
 
 
-function assigncommunity(community_id) {
-    if (current.communities[community_id]) {
-      current.active_community = current.communities[community_id];
-      debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
-    } else {
-      current.active_community = current.communities[public_community_id];
-      debugmsg("assigncommunity setting current.active_community to "+current.active_community.name);
-    }
-    // Update submitted community id for reportig events
-    $("#eventcommunity").val(current.active_community._id);
-    updateHomeTitle();
-    //debugmsg("Going for make_selecteventlist");
-    make_selecteventlist();
-    //$("#selecteventlist").html(options).listview('refresh');
-    //TODO: make this a setting from the community
-    //$.mobile.pageContainer.pagecontainer("change", "#viewportListpage", {transition: "flow"});
-}
 
 function load_addeventform (key) {
     current.intype = current.active_community.intypes[key] ;
@@ -438,65 +524,10 @@ function load_addeventform (key) {
     });
 }
 
-function mycommunities() {
-    
-    var options = '';
-    options += '<li data-role="list-divider">Switch active community</li>';           
-    $.each(current.communities, function(key, community) { 
-        options += '<li ><a onClick="assigncommunity(\''+community._id+
-            '\')" href="#home" data-split-theme="b" > '+
-            community.name+' (as '+getNickname4Community(community.name)+')</a></li>';
-    });
-    options += '<li data-role="list-divider">Actions</li>';           
-    if (current.user.username == 'Guest') {
-        options += '<li ><a href="#loginpage" data-split-theme="c" > <h3>Log in to join communities</h3></a></li>';
-    }  else {
-        options += '<li ><a href="#joincommunitypage" data-split-theme="c" > <h3>Join more communities</h3></a></li>';
-    }
-    $("#switchcommunitylist").html(options);
-    $("#switchcommunitylist").listview();
-    $("#switchcommunitylist").listview('refresh');
-}
-
-function getNickname4Community(community_name) {
-    var nick = current.user.default_nickname;
-    $.each(current.memberships,function(idx,membership) {
-        if (membership.community_name == community_name) {
-            nick = membership.nickname;
-            return false;
-        }
-    });
-    return nick;
-}
-
-function updateAvailableCommunities() {
-    var options = '';
-    $.get(server_address+'/api/hood/available', function(communities) {
-        //debugmsg(communities);
-        $.each(communities,function(key,community) {
-            options += '<option value="'+community._id+'"> '+community.name+'</option>';
-            // save the communities mapping id to name
-            current.communities_to_join[community._id] = community.map;
-        });
-        $("#join_community").html(options).selectmenu('refresh');
-    });
-}
-
-function updatecommunityprofilepage() {
-  var c = '';
-  c += '<h3>Community: ' + current.active_community.name + '</h3>';
-  c += 'Known as: ' + getNickname4Community(current.active_community.name) + '<br/>';
-  c += '<h4>Actions:</h4>';
-  c += '<a href="#leavecommunity">Leave community</a><br/>';
-   
-  $("#communityprofilecontent").html(c);
-}
-
-
 function editeventformpage() {
   var c = '';
   c += '<h3>Community: ' + current.active_community.name + '</h3>';
-  c += 'Event: ' +  + '<br/>';
+  c += 'Event: ' + '<br/>';
   c += '<h4>Detail:</h4>';
 
   c += ' <br/>'+ event.detail + '<br/>';
@@ -536,7 +567,7 @@ function refresh_viewportList() {
           header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
                    '<ul data-role="listview" data-inset="true" >',
           footer: '</ul>',
-        }
+        };
         
         var count = 0;
         $.each(data, function(key, event) { 
