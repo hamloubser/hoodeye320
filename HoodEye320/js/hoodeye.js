@@ -15,6 +15,8 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
      version: '0.0',
   };
 }
+//-----------------------
+var server_address = "http://dev.hoodeye.com:4242";
 // Cute way to acess query string parameters as qs["some_param"]
 var qs = (function(a) {
     if (a === "") return {};
@@ -28,8 +30,7 @@ var qs = (function(a) {
     return b;
 })(window.location.search.substr(1).split('&'));
 
-//-----------------------
-var server_address = "http://dev.hoodeye.com:4242";
+
 if (qs.mode == 'dev') {
   server_address = "http://dev.hoodeye.com:4343";
 }
@@ -41,20 +42,24 @@ var current_clean = {
   communities_to_join: [],
   memberships: {},
   communities: {},
+  community_data: {},
+  // TODO: this should prob be new Position or similar...
+  position: {},
 };
 var current = current_clean;
+var viewportMap;
+var infowindow = new google.maps.InfoWindow();
 
 var captureApp;
-var anonymous_user = { username: "Guest", default_nickname: "Guest" };
 
-var locations = [] ;
-var public_community_id = "52f5ec9daef933ee6997218a";
-var default_community_id = public_community_id;
-
+// Load the public community from localstorage if available
+// This is current definition, use that if no network connection
+var public_community = {
+  _id: "52f5ec9daef933ee6997218a",
+  name: "Public Community"
+};
 
 //adw: global variable for last position, until we know how to do it better
-var hoodeye_last_position;
-var manmarker_position = 0;
 var ismapsetup = false;
 
 function showstatus(msg) {
@@ -87,6 +92,8 @@ function debugmsg() {
     $.post(server_address+'/api/debugmsg',data);
 }
 
+
+
 // PhoneGap is ready
 function onDeviceReady() {
 
@@ -95,6 +102,18 @@ function onDeviceReady() {
       settings.xhrFields = {
           withCredentials: true
       };
+    });
+
+    // Get the latest public community setting
+    //// Get latest version from localStorage if set
+    if (localStorage.public_community) {
+      public_community = localStorage.public_community;
+    }
+
+    $.get(server_address+'/api/public-community',function(community) {
+      // Save the new info as public community and default community
+      public_community = community;
+      localStorage.public_community = community;
     });
     
     // TODO: This has to be integrated into loading the addevent forms
@@ -176,7 +195,7 @@ function onDeviceReady() {
       // this will always load memberships
       try_auto_login();  
     } else {
-      load_memberships(current.user.default_community || public_community_id);
+      load_memberships(current.user.default_community_id || public_community._id);
     }
 }
 
@@ -191,7 +210,7 @@ function load_session_user(require_memberships) {
           fix_user_menu();
           // load membershiups and then switch community
           if(require_memberships) {
-            load_memberships(current.user.default_community || public_community_id);
+            load_memberships(current.user.default_community_id || public_community._id);
           }
         }
     });
@@ -215,7 +234,7 @@ function try_auto_login() {
         });
     } else {
         // No login attempt, just load the memberships
-        load_memberships(current.user.default_community || public_community_id);
+        load_memberships(current.user.default_community_id || public_community._id);
     }
 }
 
@@ -226,33 +245,31 @@ function load_memberships(new_community_id) {
   $.get(server_address+'/api/whoami?part=memberships',function(memberships) {
     current.memberships = memberships;
     fix_community_switch_menu();
-    switchcommunity(current.user.default_community || public_community_id);
+    switchcommunity(current.user.default_community_id || public_community._id);
   });
 }
 
 function fix_user_menu() {
-        // If logged in, change the usermenu options
-        if (current.user.username != "Guest") {
-            $("#usermenuoptions").html('<li><a href="#userprofilepage" data-theme="c">Private Profile</a></li>'+
-                '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
-		$("#usermenuoptions").listview();
-		$("#usermenuoptions").listview('refresh');
-            debugmsg("Setting usermenu to profile/logout");
-        } else {
-            $("#usermenuoptions").html('<li><a href="#registerpage" data-theme="c">Register</a></li>'+
-                '<li><a href="#loginpage" data-theme="c">Login</a></li>');
-		$("#usermenuoptions").listview();
-		$("#usermenuoptions").listview('refresh');		
-            debugmsg("Setting usermenu to login/register");
-        }
-        $("#usermenupopup").popup();
-	
+  // If logged in, change the usermenu options
+  if (current.user.username != "Guest") {
+    $("#usermenuoptions").html('<li><a href="#userprofilepage" data-theme="c">Private Profile</a></li>'+
+        '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
+    $("#usermenuoptions").listview();
+    $("#usermenuoptions").listview('refresh');
+    debugmsg("Setting usermenu to profile/logout");
+  } else {
+    $("#usermenuoptions").html('<li><a href="#registerpage" data-theme="c">Register</a></li>'+
+        '<li><a href="#loginpage" data-theme="c">Login</a></li>');
+    $("#usermenuoptions").listview();
+    $("#usermenuoptions").listview('refresh');		
+    debugmsg("Setting usermenu to login/register");
+  }
+  $("#usermenupopup").popup();
 }
 
 function set_html_to_layout(html_id,layout_name,layout_type) {
     $.get(server_address+'/api/layout?name='+layout_name+'&type='+layout_type,function(html) {
         $(html_id).html(html);
-        // $(html_id).html(html).listview('refresh');
     });
 }
 
@@ -351,7 +368,7 @@ function submitLeavecommunity() {
         delete current.communities[community_id];
         debugmsg("Memberships now:",current.memberships);
         fix_community_switch_menu();
-        switchcommunity(public_community_id);
+        switchcommunity(public_community._id);
         $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
       },
     });
@@ -366,9 +383,11 @@ function switchcommunity(community_id) {
       // Change add event menu
       make_selecteventlist();
       //TODO:
+      //refresh event data for community
+      refresh_eventstreams(community_id);
       //change viewport menu
       //clear non-map viewports
-      //refresh event data for community, update/add map markers etc.
+      //update/add event map markers etc.
       //switch off current map markers
       //switch on map markers for current community
       //switch viewport to default for the community (or membership to this community)
@@ -388,7 +407,7 @@ function switchcommunity(community_id) {
           debugmsg("Community " + community_id + " not valid membership");
           // If we don't have an active community, switch to public community
           if (!current.active_community._id) {
-            switchcommunity(public_community_id);
+            switchcommunity(public_community._id);
           } 
           // Otherwise, don't switch community
           showstatus("Can't switch community, membership not valid");
@@ -442,7 +461,7 @@ function updatecommunityprofilepage() {
   c += 'Known as: ' + getNickname4Community() + '<br/>';
   c += '<h4>Actions:</h4>';
   // Can't leave the Public Community
-  if (current.active_community._id != public_community_id) {
+  if (current.active_community._id != public_community._id) {
     c += '<a href="#leavecommunity">Leave community</a><br/>';
   }
    
@@ -456,38 +475,51 @@ function updatecommunityprofilepage() {
 
 
 function submitEvent() {
-        $("#event_latitude").val(hoodeye_last_position.coords.latitude);
-        $("#event_longitude").val(hoodeye_last_position.coords.longitude);
-        // if the manmarker is moved use its location.     
-        if ( manmarker_position !== 0  ) {
-            $("#event_latitude").val(manmarker_position.lat().toString());
-            $("#event_longitude").val(manmarker_position.lng().toString());
-        }
-        $("#eventcommunity").val(current.active_community._id) ;
-        $("#eventintype").val(current.intype.label) ;
-        // added icon (must be png)  and set status as "new"	
-	    $("#eventintype_icon").val("images/"+current.intype.name+"_icon.png") ;
-		$("#eventintype_status").val("new") ;
-		
-		
-        $("#eventdevicedetails").val("devicename : " + device.name + " deviceId: " + device.uuid + " deviceOs: " + device.platform + " deviceosversion : " + device.version) ;
-        
-        // add timestamp 
-        var currentTime = new Date();
-        $("#create_time").val(currentTime.toISOString());
-        showstatus("Saving event to server...");
-        $.ajax({type:'POST', url: server_address+'/api/event', data:$('#EventForm').serialize(), success: function(response)
-                {
-                    showstatus(response);
-                }});
+    var currentTime = new Date();
+    
+    //This uses jquery.formparams.js
+    var event_data = $('#EventForm').formParams();
+
+    // Standard event data
+    
+    event_data.intype = current.intype.name;
+    event_data.intype_label = current.intype.label;
+    event_data.community_id = current.active_community._id;
+    event_data.community_name = current.active_community.name;
+    event_data.membership_id = current.memberships[current.active_community._id]._id;
+    event_data.user_id_submitted = current.user._id;
+    event_data.nickname = getNickname4Community(current.active_community._id);
+    event_data.status = "new";
+    event_data.create_time = currentTime.toISOString();
+
+    // GPS + device info
+    event_data.position = current.position;
+    event_data.lat = current.position.coords.latitude;
+    event_data.long = current.position.coords.latitude;
+    event_data.device = device;
+
+    // if the manmarker is moved use its location.     
+    //if ( current.manmarker !== 0  ) {
+    //  event_data.event_latitude = current.manmarker.lat().toString();
+    //  event_data.event_longitude = current.manmarker.lng().toString();
+    //}
+    
+    showstatus("Saving event to server...");
+    $.ajax({type:'POST', 
+      url: server_address+'/api/event', 
+      data: event_data, 
+      success: function(response) { 
+        showstatus(response); 
+      },
+    });
 }
 
 
 
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
-        hoodeye_last_position = position;
-        debugmsg("Got location:",hoodeye_last_position);
+        current.position = position;
+        debugmsg("Got location:",current.position);
         if (on_success && typeof(on_success) == "function") {
           on_success();
         }
@@ -497,7 +529,7 @@ function getLocation(on_success) {
 
 function onGeolocationError(error) {
     showstatus("Could not get the current location");
-    //hoodeye_last_position = TODO;
+    //current.position = TODO;
 }
 
 
@@ -529,19 +561,15 @@ function editeventformpage() {
   c += '<h3>Community: ' + current.active_community.name + '</h3>';
   c += 'Event: ' + '<br/>';
   c += '<h4>Detail:</h4>';
-
   c += ' <br/>'+ event.detail + '<br/>';
-   
   $("#editeventformcontent").html(c);
 }
 
 
 function make_selecteventlist() {
-    
     var items = [];
     var options = '';
     debugmsg("Intypes:", current.active_community.intypes);
-    
     $.each(current.active_community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);
         
@@ -557,21 +585,45 @@ function make_selecteventlist() {
 }
 
 
+// We can make this fancy later, but we don't have to store an icon name for each event
+function get_event_icon(event) {
+    var basename = event.intype;
+    basename = basename.replace(" ","_");
+    return "images/"+basename+"_icon.png";
+}
+
+function refresh_eventstreams(community_id) {
+   // Check if we have data
+   if (typeof current.community_data[community_id] !== 'object') {
+     current.community_data[community_id] = {};
+     load_eventstreams(community_id);
+   }
+}
+
+// load event streams for community
+function load_eventstreams(community_id) {
+  //TODO: for now, load the newest 50 events into a stream called "all"
+  var params = 'community_id=' + current.active_community._id;
+  $.get(server_address+'/api/event?'+params,function(events) {
+    current.community_data[community_id].all = events;
+    $.each(events,function(index,event) {
+      event_add_marker(event);
+    });
+  });
+}
 
 function refresh_viewportList() {
-    var params = 'community_id=' + current.active_community._id;
-    $.get(server_address+'/api/event?'+params,function(data) {
-        
-        var items_html = "";
-        var markup = {
-          header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
-                   '<ul data-role="listview" data-inset="true" >',
-          footer: '</ul>',
-        };
-        
-        var count = 0;
-        $.each(data, function(key, event) { 
-            items_html += '<li ><img style="width: 20px; height: 20px;" src='+event.eventintype_icon+'>'
+    refresh_eventstreams(current.active_community._id);
+    var items_html = "";
+    var markup = {
+      header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
+              '<ul data-role="listview" data-inset="true" >',
+      footer: '</ul>',
+    };
+ 
+    var count = 0;
+    $.each(current.community_data[current.active_community._id].all,function(key,event) {
+            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
 							+ event.create_time
 							+" Status: "+event.eventintype_status
 							+"  "+event.intype+': '
@@ -579,75 +631,74 @@ function refresh_viewportList() {
                             + event.user.username + " at "
                            + ')</li> ';
             count += 1;
-			
-        });
-        if (count === 0) {
-            items_html = "<li>No Events found.</li>";
-        }
-        $("#viewportListcontent").html(markup.header+items_html+markup.footer);
-        $("#viewportListcontent").listview();
-        $("#viewportListcontent").listview('refresh');
     });
+    if (count === 0) {
+      items_html = "<li>No Events found.</li>";
+    }
+    $("#viewportListcontent").html(markup.header+items_html+markup.footer);
+    $("#viewportListcontent").listview();
+    $("#viewportListcontent").listview('refresh');
 }
 
 
 
 //------------------try to get cool map with locations   
 
-var viewportMap;
 function setup_viewportMap() {
-    var latlng = new google.maps.LatLng (hoodeye_last_position.coords.latitude, hoodeye_last_position.coords.longitude);
-        var options = {
-            zoom : 15,
-            center : latlng,
-            mapTypeId : google.maps.MapTypeId.ROADMAP
-        };
-        var content = $("#viewportMapcontent");
-        viewportMap = new google.maps.Map(content[0], options);
-	
+  var latlng = new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude);
+  var options = {
+       zoom : 15,
+       center : latlng,
+       mapTypeId : google.maps.MapTypeId.ROADMAP
+  };
+  var content = $("#viewportMapcontent");
+  viewportMap = new google.maps.Map(content[0], options);
 }
  
+function event_add_marker(event) {
+  debugmsg("adding marker for event:",event._id);
+  event_mapinfo = "<b>"+event.intype  
+    + "</b><br/>  <img src='images/here.png'  alt='image in infowindow'>   "
+    + event.detail + "<br/> <i>@ "
+    + event.create_time + "  "
+    +event.eventintype_status + "</i>"
+    //  XXX working on ui concept to edit and event - ;			
+    + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" + 
+    + "This Event id: " +event._id;
+
+  marker = new google.maps.Marker({
+    position: new google.maps.LatLng(event.lat, event.long),
+    animation : google.maps.Animation.DROP,  
+    //  draggable: true,
+    icon: get_event_icon(event), 
+  });
+  event.event_mapinfo = event_mapinfo;
+  event.marker = marker;
+}
+
 
 function refresh_viewportMap() {
+    // Load/update the event data
+    refresh_eventstreams(current.active_community._id);
+
     // Resize the map as things have changed since init
     var content = $("#viewportMapcontent");
     content.height(screen.height - 30);
     google.maps.event.trigger(viewportMap, 'resize');
 
-    var lat = hoodeye_last_position.coords.latitude;
-    var long = hoodeye_last_position.coords.longitude;
-    var event_locations = [];
-    var params = 'community_id=' + current.active_community._id;
-    $("#eventlisttitle").html(current.active_community.name);
-    debugmsg("In listeventLocations");
-    $.get(server_address+'/api/event?'+params,function(data) {
-        debugmsg("Got Events:" + data.length);
-        
-        var items_html;
-        var latlngalert;       
-        var count = 0;
-        var event;
-        var i;
-        if (data.length > 0) {
-            for (i = 0; i < data.length; i++) {  
-                event = data[i]; 
+    debugmsg("In refresh_viewportMap");
+    // Switch the map for each of the current markers to viewportMap
+    $.each(current.community_data[current.active_community._id].all,function(key,event) {
+      event.marker.setMap(viewportMap);
+      google.maps.event.addListener(event.marker, 'click', function() {
+        infowindow.setContent(event.event_mapinfo);
+        infowindow.open(event.marker.map, event.marker);
+      });
+    });
+}
 
-                event_locations.push([ "<B>"+event.intype  + "</B><br/>  <img src='images/here.png'  alt='image in infowindow'>   "+ event.detail + "<br/> <i>@ "+
-				event.create_time+
-				"  "+event.eventintype_status+
-				"</i>"+
- //  XXX working on ui concept to edit and event - ;			
-			"<Br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT<a> This Event id: "+event._id,
-				event.lat , event.long, i]) ;
-            }
-        } else {
-            event_locations.push(['Nothing Near', lat,long,1] );
-        }
-        debugmsg("Number of events: "+event_locations.length);
-        //  return event_locations;
-        var infowindow = new google.maps.InfoWindow();
-        
-        
+
+function manmarker_get_position(do_after_drag) {
         //----- Trying to add a moveable marker to upgate location
         var manmarker ;
         
@@ -661,36 +712,11 @@ function refresh_viewportMap() {
         // try to get the position of the manmarker
         google.maps.event.addListener(manmarker, 'dragend',  function() {
             //      var pos = manmarker.getPosition();
-            manmarker_position = manmarker.getPosition();
+            current.manmarker = manmarker.getPosition();
+            do_after_drag();
         });
-        
-        //----- ---------------------------------------------------  
-        var marker = [];
-        for (i = 0; i < event_locations.length; i++) { 
-		 event = data[i]; 
-            marker = new google.maps.Marker({
-                position: new google.maps.LatLng(event_locations[i][1], event_locations[i][2]),
-                animation : google.maps.Animation.DROP,  
-                //  draggable: true,
-                icon: ''+event.eventintype_icon+'', 
-                map: viewportMap
-            });
-        
-            //adw: jshint says: Don't make functions within a loop.
-            //this may lead to issues?
-            google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                return function() {
-                    infowindow.setContent(event_locations[i][0]);
-                    infowindow.open(viewportMap, marker);
-                };
-            })(marker, i));
-        }
-		
-    });
+
 }
-
-
-
 
 
 
