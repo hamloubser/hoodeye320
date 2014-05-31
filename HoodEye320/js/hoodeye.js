@@ -47,9 +47,6 @@ var current_clean = {
   position: {},
 };
 var current = current_clean;
-var viewportMap;
-var infowindow = new google.maps.InfoWindow();
-
 var captureApp;
 
 // Load the public community from localstorage if available
@@ -59,8 +56,74 @@ var public_community = {
   name: "Public Community"
 };
 
-//adw: global variable for last position, until we know how to do it better
+var viewportMap;
+var infowindow = new google.maps.InfoWindow();
 var ismapsetup = false;
+
+// For now, the default 2 viewports: viewport_map and viewport_list, will make this dynamic later
+var viewport_map = {
+  name: 'Default map viewport',
+  clear: function() {
+     if (typeof viewportMap === 'object') {
+      viewportMap.clearMarkers();
+     }
+  },
+  setup: function() {
+    // Map setup is done on system load
+  },
+  newevent: function(event) {
+    event_add_marker(event);
+  },
+  showevents: function(events) {
+    // Switch the map for each of the current markers to viewportMap
+    $.each(events,function(key,event) {
+      event.marker.setMap(viewportMap);
+      google.maps.event.addListener(event.marker, 'click', function() {
+        infowindow.setContent(event.event_mapinfo);
+        infowindow.open(event.marker.map, event.marker);
+      });
+    });
+  },
+};
+
+
+var viewport_list = {
+  name: 'Default list viewport',
+  clear: function() {
+    $("#viewportListcontent").html("<h2>Switching community...</h2>");
+  },
+  setup: function() {
+    // static listview setup
+    var markup = {
+      header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
+              '<ul id="viewport_eventlist" data-role="listview" data-inset="true" >',
+      footer: '</ul>',
+    };
+    $("#viewportListcontent").html(markup.header+markup.footer);
+    $("#viewportListcontent").listview();
+  },
+  newevent: function(event) {
+    // Nothing to do for listview
+  },
+  showevents: function(events) {
+    // Listview
+    var items_html ='';
+    $.each(events,function(key,event) {
+            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
+							+ event.create_time
+							+" Status: "+event.eventintype_status
+							+"  "+event.intype+': '
+                            + event.detail + "( reported by "
+                            + event.user.username + " at "
+                           + ')</li> ';
+    });
+    $("#viewport_eventlist").prepend(items_html);
+    $("#viewportListcontent").listview('refresh');
+  },
+};
+
+
+
 
 function showstatus(msg) {
     $("#statuspopup").html("<p>"+msg+"</p>");
@@ -120,7 +183,7 @@ function onDeviceReady() {
     //captureApp = new captureApp();
     //captureApp.run();
     
-    getLocation(setup_viewportMap);
+    getLocation(init_viewportMap);
     $(document).delegate('#loginpage','pageshow',function(){
         if (localStorage.login_username) {
             $("#login_username").val(localStorage.login_username);
@@ -151,17 +214,23 @@ function onDeviceReady() {
     
     $(document).delegate('#viewportMappage','pageshow',function(){
         debugmsg("pageshow on #viewportMappage");       
-        refresh_viewportMap();
-        /* if (ismapsetup) { 
-          refresh_viewportMap();
-        } else {
-          getLocation(setup_viewportMap);
-        } */
+        // Resize map so screen things work, needs work!!
+        var content = $("#viewportMapcontent");
+        content.height(screen.height - 30);
+        google.maps.event.trigger(viewportMap, 'resize');
+
+        // Immediately show any loaded events
+        viewport_map.showevents(current.community_data[current.active_community._id].all);
+        // then check for new events and show them once loaded
+        refresh_eventstreams(viewport_map.showevents);
     });
 
     $(document).delegate('#viewportListpage','pageshow',function(){
         debugmsg("pageshow on #viewportListpage");       
-        refresh_viewportList() ;
+        // Immediately show any loaded events
+        viewport_list.showevents(current.community_data[current.active_community._id].all);
+        // then check for new events and show them once loaded
+        refresh_eventstreams(viewport_list.showevents);
     });
     
     // page form submit bindings
@@ -177,9 +246,6 @@ function onDeviceReady() {
     $(':jqmData(role="popup")').popup();
     $(':jqmData(role="listview")').listview();
     set_html_to_layout("#welcometext","msgAnton","msg");
-    // This should happen as part of switching community
-    // for now back in index.html
-    //set_html_to_layout("#viewmenupopup","viewmenu","popup");
 
     // Apply common navigation markup to pages
     var common_markup = {};
@@ -376,19 +442,27 @@ function submitLeavecommunity() {
 
 function switchcommunity(community_id) {
   if (current.communities[community_id]) {
+      // If we had an active community, clean up after it
+      if (typeof current.active_community === 'object') {
+        viewports_do('clear');
+      }
       current.active_community = current.communities[community_id];
       debugmsg("switchcommunity setting current.active_community to "+current.active_community.name);
+      // Initialise data object if its not set
+      if (typeof current.community_data[community_id] !== 'object') {
+       current.community_data[community_id] = {
+          all: [],
+       };
+      }
       // Set title
       updateHomeTitle();
       // Change add event menu
       make_selecteventlist();
       //TODO:
-      //refresh event data for community
-      refresh_eventstreams(community_id);
       //change viewport menu
-      //clear non-map viewports
-      //update/add event map markers etc.
-      //switch off current map markers
+      viewports_do('setup');
+      //refresh event data for community
+      refresh_eventstreams();
       //switch on map markers for current community
       //switch viewport to default for the community (or membership to this community)
       //Clear eventadd form
@@ -592,59 +666,52 @@ function get_event_icon(event) {
     return "images/"+basename+"_icon.png";
 }
 
-function refresh_eventstreams(community_id) {
-   // Check if we have data
-   if (typeof current.community_data[community_id] !== 'object') {
-     current.community_data[community_id] = {};
-     load_eventstreams(community_id);
+// on_new_events will be called if there are new events with the array of new events including their markers
+function refresh_eventstreams(on_new_events) {
+   var community_id = current.active_community._id;
+   showstatus("Refreshing events for " + current.communities[community_id].name);
+   debugmsg("Refreshing events for " + current.communities[community_id].name);
+   // Now load the new events
+   var params = 'community_id=' + community_id;
+   if (current.community_data[community_id].all.length === 0) {
+     debugmsg("No events found, loading all");
+   } else {
+     var last_event_id = current.community_data[community_id].all[0]._id;
+     params += '&since=' + last_event_id;
+     debugmsg("Last event loaded: " + last_event_id +" loading new events");
+     debugmsg('Current events loaded: ' + current.community_data[community_id].all.length);
    }
+
+   $.get(server_address+'/api/event?'+params,function(events) {
+       debugmsg('New events loaded: ' + events.length);
+       // Add map markers for any new events
+       $.each(events,function(index,event) {
+         viewports_do('newevent',event);
+       });
+       current.community_data[community_id].all = events.concat(current.community_data[community_id].all);
+       debugmsg('Final events loaded: ' + current.community_data[community_id].all.length);
+       if (events.length > 0) {
+         showstatus(events.length+ " new events found");
+         if (on_new_events && typeof(on_new_events) == "function") {
+          on_new_events(events);
+         }
+       }
+   });
 }
 
-// load event streams for community
-function load_eventstreams(community_id) {
-  //TODO: for now, load the newest 50 events into a stream called "all"
-  var params = 'community_id=' + current.active_community._id;
-  $.get(server_address+'/api/event?'+params,function(events) {
-    current.community_data[community_id].all = events;
-    $.each(events,function(index,event) {
-      event_add_marker(event);
-    });
+function viewports_do(action,arg) {
+  debugmsg("viewports_do: doing " + action);
+  var viewports = [viewport_map, viewport_list];
+  $.each(viewports,function(key,viewport) {
+    debugmsg("viewports_do: doing " + action + " on " + viewport.name);
+    viewport[action](arg);
   });
 }
-
-function refresh_viewportList() {
-    refresh_eventstreams(current.active_community._id);
-    var items_html = "";
-    var markup = {
-      header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
-              '<ul data-role="listview" data-inset="true" >',
-      footer: '</ul>',
-    };
- 
-    var count = 0;
-    $.each(current.community_data[current.active_community._id].all,function(key,event) {
-            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-							+ event.create_time
-							+" Status: "+event.eventintype_status
-							+"  "+event.intype+': '
-                            + event.detail + "( reported by "
-                            + event.user.username + " at "
-                           + ')</li> ';
-            count += 1;
-    });
-    if (count === 0) {
-      items_html = "<li>No Events found.</li>";
-    }
-    $("#viewportListcontent").html(markup.header+items_html+markup.footer);
-    $("#viewportListcontent").listview();
-    $("#viewportListcontent").listview('refresh');
-}
-
 
 
 //------------------try to get cool map with locations   
 
-function setup_viewportMap() {
+function init_viewportMap() {
   var latlng = new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude);
   var options = {
        zoom : 15,
@@ -652,6 +719,14 @@ function setup_viewportMap() {
        mapTypeId : google.maps.MapTypeId.ROADMAP
   };
   var content = $("#viewportMapcontent");
+  
+  // Add a clearMarkers function to google map
+  google.maps.Map.prototype.clearMarkers = function() {
+    for(var i=0; i < this.markers.length; i++){
+        this.markers[i].setMap(null);
+    }
+    this.markers = [];
+  };
   viewportMap = new google.maps.Map(content[0], options);
 }
  
@@ -663,7 +738,7 @@ function event_add_marker(event) {
     + event.create_time + "  "
     +event.eventintype_status + "</i>"
     //  XXX working on ui concept to edit and event - ;			
-    + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" + 
+    + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" 
     + "This Event id: " +event._id;
 
   marker = new google.maps.Marker({
@@ -675,28 +750,6 @@ function event_add_marker(event) {
   event.event_mapinfo = event_mapinfo;
   event.marker = marker;
 }
-
-
-function refresh_viewportMap() {
-    // Load/update the event data
-    refresh_eventstreams(current.active_community._id);
-
-    // Resize the map as things have changed since init
-    var content = $("#viewportMapcontent");
-    content.height(screen.height - 30);
-    google.maps.event.trigger(viewportMap, 'resize');
-
-    debugmsg("In refresh_viewportMap");
-    // Switch the map for each of the current markers to viewportMap
-    $.each(current.community_data[current.active_community._id].all,function(key,event) {
-      event.marker.setMap(viewportMap);
-      google.maps.event.addListener(event.marker, 'click', function() {
-        infowindow.setContent(event.event_mapinfo);
-        infowindow.open(event.marker.map, event.marker);
-      });
-    });
-}
-
 
 function manmarker_get_position(do_after_drag) {
         //----- Trying to add a moveable marker to upgate location
