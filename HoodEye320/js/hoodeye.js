@@ -728,6 +728,7 @@ function init_viewportMap() {
     this.markers = [];
   };
   viewportMap = new google.maps.Map(content[0], options);
+  viewportMap.markers = [];
 }
  
 function event_add_marker(event) {
