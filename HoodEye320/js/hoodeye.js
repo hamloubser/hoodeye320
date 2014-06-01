@@ -596,7 +596,11 @@ function submitEvent() {
       data: event_data, 
       success: function(response) { 
         showstatus(response); 
-      }
+      },
+      error: function(jqXHR,textStatus,errorThrown) {
+        debugmsg('Save event error:',jqXHR,textStatus,errorThrown);
+        showstatus(textStatus); 
+      },
     });
 }
 
