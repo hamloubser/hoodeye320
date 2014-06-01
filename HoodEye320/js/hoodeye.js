@@ -66,6 +66,7 @@ var viewport_map = {
   clear: function() {
      if (typeof viewportMap === 'object') {
       viewportMap.clearMarkers();
+      viewportMap.latlngbounds = new google.maps.LatLngBounds();
      }
   },
   setup: function() {
@@ -76,13 +77,20 @@ var viewport_map = {
   },
   showevents: function(events) {
     // Switch the map for each of the current markers to viewportMap
+    console.log("showevents started");
     $.each(events,function(key,event) {
+      console.log("showing event "+event._id);
+      debugmsg("showing event "+event._id);
       event.marker.setMap(viewportMap);
+      viewportMap.latlngbounds.extend(event.marker.position);
       google.maps.event.addListener(event.marker, 'click', function() {
         infowindow.setContent(event.event_mapinfo);
         infowindow.open(event.marker.map, event.marker);
       });
     });
+    console.log("resizing map");
+    viewportMap.setCenter(viewportMap.latlngbounds.getCenter());
+    viewportMap.fitBounds(viewportMap.latlngbounds);
   },
 };
 
@@ -124,14 +132,15 @@ var viewport_list = {
 
 
 
-
-function showstatus(msg) {
+// msgtype allows us different behavious, like not vibrating on debug messages
+// or beeping on errors?
+function showstatus(msg,msgtype) {
     $("#statuspopup").html("<p>"+msg+"</p>");
     // open with timeout because of browser issues, apparently
     setTimeout(function(){
         $("#statuspopup").popup("open");
         // navigator.notification.beep(1);
-        if (isphone) { 
+        if (isphone || msgtype != 'debug') { 
           navigator.notification.vibrate(2);
         }
     }, 100);
@@ -669,12 +678,12 @@ function get_event_icon(event) {
 // on_new_events will be called if there are new events with the array of new events including their markers
 function refresh_eventstreams(on_new_events) {
    var community_id = current.active_community._id;
-   showstatus("Refreshing events for " + current.communities[community_id].name);
+   showstatus("Refreshing events for " + current.communities[community_id].name,'debug');
    debugmsg("Refreshing events for " + current.communities[community_id].name);
    // Now load the new events
    var params = 'community_id=' + community_id;
    if (current.community_data[community_id].all.length === 0) {
-     debugmsg("No events found, loading all");
+     debugmsg("No events found, loading all",'debug');
    } else {
      var last_event_id = current.community_data[community_id].all[0]._id;
      params += '&since=' + last_event_id;
@@ -691,7 +700,7 @@ function refresh_eventstreams(on_new_events) {
        current.community_data[community_id].all = events.concat(current.community_data[community_id].all);
        debugmsg('Final events loaded: ' + current.community_data[community_id].all.length);
        if (events.length > 0) {
-         showstatus(events.length+ " new events found");
+         showstatus(events.length+ " new events found",'debug');
          if (on_new_events && typeof(on_new_events) == "function") {
           on_new_events(events);
          }
@@ -729,6 +738,7 @@ function init_viewportMap() {
   };
   viewportMap = new google.maps.Map(content[0], options);
   viewportMap.markers = [];
+  viewportMap.latlngbounds = new google.maps.LatLngBounds();
 }
  
 function event_add_marker(event) {
