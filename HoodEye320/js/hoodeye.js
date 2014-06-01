@@ -112,18 +112,17 @@ function onDeviceReady() {
     
     $(document).delegate('#viewportMappage','pageshow',function(){
         debugmsg("pageshow on #viewportMappage");       
-        // show any loaded events, if the map is ready
+        // If we reload on this page, things have to wait till the map is ready, which takes a while
         mapcheck.onready(function() {
           // Resize map so screen things work, needs work!!
           var content = $("#viewportMapcontent");
           content.height(screen.height - 30);
           google.maps.event.trigger(viewportMap, 'resize');
+          // By then the active community wlll be loaded 
           viewport_map.showevents(current.community_data[current.active_community._id].all);
-        });
-        // then check for new events and show them once loaded
-        refresh_eventstreams(function () { 
-          mapcheck.onready(function() {
-            viewport_map.showevents
+          // then check for new events and show them once loaded
+          refresh_eventstreams(function () { 
+            viewport_map.showevents;
           });
         });
     });
@@ -724,11 +723,11 @@ function init_viewportMap() {
 
 function event_add_marker(event) {
     //debugmsg("adding marker for event:",event._id);
-    event_mapinfo = "<b>"+event.intype  
-    + "</b><br/>  <img src='images/here.png'  alt='image in infowindow'>   "
-    + event.detail + "<br/> <i>@ "
-    + event.create_time + "  "
-    +event.eventintype_status + "</i>"
+    event_mapinfo = "<b>"+event.intype +"</b>" 
+    + "<i>@ " + event.create_time.substring(0,9) + "  " + event.create_time.substring(11,15)
+    + " <br/>" 
+    + " <img src='images/here.png' alt='dot'>" + event.detail + "<br/>" 
+    + event.eventintype_status || event.status + "</i>"
     //  XXX working on ui concept to edit and event - ;			
     + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" 
     + "This Event id: " +event._id;
