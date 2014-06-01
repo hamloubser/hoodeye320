@@ -565,6 +565,7 @@ function submitEvent() {
     
     //This uses jquery.formparams.js
     var event_data = $('#EventForm').formParams();
+    debugmsg('event_data as from form:',event_data);
     
     // Standard event data
     
@@ -582,7 +583,8 @@ function submitEvent() {
     event_data.position = current.position;
     event_data.lat = current.position.coords.latitude;
     event_data.long = current.position.coords.latitude;
-    event_data.device = device;
+    //device has some weird characters in that is causing the post to fail, needs encoding or JSON or something
+    //event_data.device = device;
     
     // if the manmarker is moved use its location.     
     //if ( current.manmarker !== 0  ) {
@@ -591,12 +593,18 @@ function submitEvent() {
     //}
 
     showstatus("Saving event to server...");
-    $.post(server_address +'/api/event',event_data,function() {
-     debugmsg("post to event succeeded",this);
-	   showstatus("Event saved");
+    //debugmsg("post to event: ",event_data);
+    $.post(server_address +'/api/event',event_data,function(response) {
+        //debugmsg("post to event succeeded",this);
+        //debugmsg("response:",response)
+        if (response.status) {
+            showstatus("Event saved");
+        } else {
+            showstatus("Event not saved: "+response.msg);
+        }
     }).fail(function() { 
-      showstatus("Error saving event");
-      debugmsg("post to event failed",this);
+        showstatus("Error saving event: request failed.");
+      //debugmsg("post to event failed",this);
     });
     //function(data,textStatus,jqXHR) { 
     //    debugmsg('Save event success:',jqXHR,textStatus,data);
@@ -750,7 +758,7 @@ function init_viewportMap() {
 }
 
 function event_add_marker(event) {
-    debugmsg("adding marker for event:",event._id);
+    //debugmsg("adding marker for event:",event._id);
     event_mapinfo = "<b>"+event.intype  
     + "</b><br/>  <img src='images/here.png'  alt='image in infowindow'>   "
     + event.detail + "<br/> <i>@ "
