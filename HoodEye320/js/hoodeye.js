@@ -1,6 +1,13 @@
 // JavaScript Document
 //
-//
+
+// load libraries required
+$.getScript('jslibs/jquery.formparams.js');
+$.getScript('jslibs/jsrender/jsrender.min.js');
+
+// example scripts used
+$.getScript('scripts/capture-app.js');
+
 // On phone, wait for PhoneGap to load, in browser, use document.ready()
 var isphone = true;
 if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
@@ -16,25 +23,10 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
     };
 }
 //-----------------------
-var server_address = "http://dev.hoodeye.com:4242";
-// Cute way to acess query string parameters as qs["some_param"]
-var qs = (function(a) {
-    if (a === "") return {};
-    var b = {};
-    for (var i = 0; i < a.length; ++i)
-    {
-        var p=a[i].split('=');
-        if (p.length != 2) continue;
-        b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
-    }
-    return b;
-})(window.location.search.substr(1).split('&'));
+var qs = get_url_params();
+var server_port = qs.port || 4242;
+var server_address = "http://dev.hoodeye.com:" + server_port;
 
-
-if (qs.mode == 'dev') {
-    server_address = "http://dev.hoodeye.com:4343";
-}
-var current = {};
 var current_clean = {
     active_community: { name: "unset"},
     user: { username: "NoUser" },
@@ -58,117 +50,15 @@ var public_community = {
 
 var viewportMap;
 var infowindow = new google.maps.InfoWindow();
-var ismapsetup = false;
+// The next builds an object that allows us to queue callbacks once the map is ready
+var mapcheck = new OnceReady();
 
-// For now, the default 2 viewports: viewport_map and viewport_list, will make this dynamic later
-var viewport_map = {
-    name: 'Default map viewport',
-    clear: function() {
-        if (typeof viewportMap === 'object') {
-            viewportMap.clearMarkers();
-            viewportMap.latlngbounds = new google.maps.LatLngBounds();
-        }
-    },
-    setup: function() {
-        // Map setup is done on system load
-    },
-    newevent: function(event) {
-        event_add_marker(event);
-    },
-    showevents: function(events) {
-        // Switch the map for each of the current markers to viewportMap
-        console.log("showevents started");
-        $.each(events,function(key,event) {
-            //console.log("showing event "+event._id);
-            //debugmsg("showing event "+event._id);
-            event.marker.setMap(viewportMap);
-            viewportMap.latlngbounds.extend(event.marker.position);
-            google.maps.event.addListener(event.marker, 'click', function() {
-                infowindow.setContent(event.event_mapinfo);
-                infowindow.open(event.marker.map, event.marker);
-            });
-        });
-        console.log("resizing map");
-        viewportMap.setCenter(viewportMap.latlngbounds.getCenter());
-        viewportMap.fitBounds(viewportMap.latlngbounds);
-    },
-};
-
-
-var viewport_list = {
-    name: 'Default list viewport',
-    clear: function() {
-        $("#viewportListcontent").html("<h2>Switching community...</h2>");
-    },
-    setup: function() {
-        // static listview setup
-        var markup = {
-            header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
-            '<ul id="viewport_eventlist" data-role="listview" data-inset="true" >',
-            footer: '</ul>',
-        };
-        $("#viewportListcontent").html(markup.header+markup.footer);
-        $("#viewportListcontent").listview();
-    },
-    newevent: function(event) {
-        // Nothing to do for listview
-    },
-    showevents: function(events) {
-        // Listview
-        var items_html ='';
-        $.each(events,function(key,event) {
-            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            + event.create_time
-            +" Status: "+event.eventintype_status
-            +"  "+event.intype+': '
-            + event.detail + "( reported by "
-            + event.user.username + " at "
-            + ')</li> ';
-        });
-        $("#viewport_eventlist").prepend(items_html);
-        $("#viewportListcontent").listview('refresh');
-    },
-};
-
-
-
-// msgtype allows us different behavious, like not vibrating on debug messages
-// or beeping on errors?
-function showstatus(msg,msgtype) {
-    $("#statuspopup").html("<p>"+msg+"</p>");
-    // open with timeout because of browser issues, apparently
-    setTimeout(function(){
-        $("#statuspopup").popup("open");
-        // navigator.notification.beep(1);
-        if (isphone || msgtype != 'debug') { 
-          navigator.notification.vibrate(2);
-        }
-    }, 100);
-    setTimeout(function(){
-        $("#statuspopup").popup("close");
-    }, 3000);
-}
-
-function debugmsg() {
-    var data = {
-        msg: "",
-    };
-    $.each(arguments, function(idx,thisarg) {
-        if (typeof thisarg === 'object') {
-            data.msg += JSON.stringify(thisarg);
-        } else {
-            data.msg += thisarg;
-        }
-        data.msg += ' ';
-    });
-    $.post(server_address+'/api/debugmsg',data);
-}
 
 
 
 // PhoneGap is ready
 function onDeviceReady() {
-    
+    getLocation(init_viewportMap);
     // use credentials on all ajax calls, required for in-browser, may not be required for Cordova
     $(document).ajaxSend(function (event, xhr, settings) {
         settings.xhrFields = {
@@ -192,7 +82,6 @@ function onDeviceReady() {
     //captureApp = new captureApp();
     //captureApp.run();
     
-    getLocation(init_viewportMap);
     $(document).delegate('#loginpage','pageshow',function(){
         if (localStorage.login_username) {
             $("#login_username").val(localStorage.login_username);
@@ -223,15 +112,20 @@ function onDeviceReady() {
     
     $(document).delegate('#viewportMappage','pageshow',function(){
         debugmsg("pageshow on #viewportMappage");       
-        // Resize map so screen things work, needs work!!
-        var content = $("#viewportMapcontent");
-        content.height(screen.height - 30);
-        google.maps.event.trigger(viewportMap, 'resize');
-        
-        // Immediately show any loaded events
-        viewport_map.showevents(current.community_data[current.active_community._id].all);
+        // show any loaded events, if the map is ready
+        mapcheck.onready(function() {
+          // Resize map so screen things work, needs work!!
+          var content = $("#viewportMapcontent");
+          content.height(screen.height - 30);
+          google.maps.event.trigger(viewportMap, 'resize');
+          viewport_map.showevents(current.community_data[current.active_community._id].all);
+        });
         // then check for new events and show them once loaded
-        refresh_eventstreams(viewport_map.showevents);
+        refresh_eventstreams(function () { 
+          mapcheck.onready(function() {
+            viewport_map.showevents
+          });
+        });
     });
     
     $(document).delegate('#viewportListpage','pageshow',function(){
@@ -372,6 +266,7 @@ function submitLogin() {
             localStorage.login_username=username;
             localStorage.login_password=password;
             load_session_user(true);
+            $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
@@ -392,6 +287,7 @@ function submitRegister() {
             localStorage.login_username = submitdata.sername;
             localStorage.login_password = submitdata.password;
             load_session_user(true);
+            $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
         } else {
             load_session_user(true);
             showstatus(result.message);
@@ -616,22 +512,19 @@ function submitEvent() {
 
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
+        // this happens on success
         current.position = position;
-        debugmsg("Got location:",current.position);
         console.log(current.position);
         if (on_success && typeof(on_success) == "function") {
             on_success();
         }
-    },onGeolocationError);
+    },function(error) {
+      showstatus("Could not get the current location");
+      debugmsg("getCurrentPosition error: ",error);
+      // TODO
+      // current.position = ???;
+    });
 }
-
-
-function onGeolocationError(error) {
-    showstatus("Could not get the current location");
-    //current.position = TODO;
-}
-
-
 
 function load_addeventform (key) {
     current.intype = current.active_community.intypes[key] ;
@@ -724,6 +617,78 @@ function refresh_eventstreams(on_new_events) {
     });
 }
 
+//------------------try to get cool map with locations   
+//
+// For now, the default 2 viewports: viewport_map and viewport_list, will make this dynamic later
+var viewport_map = {
+    name: 'Default map viewport',
+    clear: function() {
+        if (typeof viewportMap === 'object') {
+            viewportMap.clearMarkers();
+            viewportMap.latlngbounds = new google.maps.LatLngBounds();
+        }
+    },
+    setup: function() {
+        // Map setup is done on system load
+    },
+    newevent: function(event) {
+        event_add_marker(event);
+    },
+    showevents: function(events) {
+        // Switch the map for each of the current markers to viewportMap
+        console.log("showevents started");
+        $.each(events,function(key,event) {
+            //console.log("showing event "+event._id);
+            //debugmsg("showing event "+event._id);
+            event.marker.setMap(viewportMap);
+            viewportMap.latlngbounds.extend(event.marker.position);
+            google.maps.event.addListener(event.marker, 'click', function() {
+                infowindow.setContent(event.event_mapinfo);
+                infowindow.open(event.marker.map, event.marker);
+            });
+        });
+        console.log("resizing map");
+        viewportMap.setCenter(viewportMap.latlngbounds.getCenter());
+        viewportMap.fitBounds(viewportMap.latlngbounds);
+    },
+};
+
+
+var viewport_list = {
+    name: 'Default list viewport',
+    clear: function() {
+        $("#viewportListcontent").html("<h2>Switching community...</h2>");
+    },
+    setup: function() {
+        // static listview setup
+        var markup = {
+            header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
+            '<ul id="viewport_eventlist" data-role="listview" data-inset="true" >',
+            footer: '</ul>',
+        };
+        $("#viewportListcontent").html(markup.header+markup.footer);
+        $("#viewportListcontent").listview();
+    },
+    newevent: function(event) {
+        // Nothing to do for listview
+    },
+    showevents: function(events) {
+        // Listview
+        var items_html ='';
+        $.each(events,function(key,event) {
+            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
+            + event.create_time
+            +" Status: "+event.eventintype_status
+            +"  "+event.intype+': '
+            + event.detail + "( reported by "
+            + event.user.username + " at "
+            + ')</li> ';
+        });
+        $("#viewport_eventlist").prepend(items_html);
+        $("#viewportListcontent").listview('refresh');
+    },
+};
+
 function viewports_do(action,arg) {
     //debugmsg("viewports_do: doing " + action);
     var viewports = [viewport_map, viewport_list];
@@ -734,17 +699,8 @@ function viewports_do(action,arg) {
 }
 
 
-//------------------try to get cool map with locations   
 
 function init_viewportMap() {
-    var latlng = new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude);
-    var options = {
-        zoom : 15,
-        center : latlng,
-        mapTypeId : google.maps.MapTypeId.ROADMAP
-    };
-    var content = $("#viewportMapcontent");
-    
     // Add a clearMarkers function to google map
     google.maps.Map.prototype.clearMarkers = function() {
         for(var i=0; i < this.markers.length; i++){
@@ -752,9 +708,18 @@ function init_viewportMap() {
         }
         this.markers = [];
     };
+
+    var content = $("#viewportMapcontent");
+    var options = {
+        zoom : 15,
+        center : new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude),
+        mapTypeId : google.maps.MapTypeId.ROADMAP
+    };
+    
     viewportMap = new google.maps.Map(content[0], options);
     viewportMap.markers = [];
     viewportMap.latlngbounds = new google.maps.LatLngBounds();
+    mapcheck.setready();
 }
 
 function event_add_marker(event) {
