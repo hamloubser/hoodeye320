@@ -140,9 +140,9 @@ function showstatus(msg,msgtype) {
     setTimeout(function(){
         $("#statuspopup").popup("open");
         // navigator.notification.beep(1);
-        //if (isphone || msgtype != 'debug') { 
-        navigator.notification.vibrate(2);
-        //}
+        if (isphone || msgtype != 'debug') { 
+          navigator.notification.vibrate(2);
+        }
     }, 100);
     setTimeout(function(){
         $("#statuspopup").popup("close");
@@ -591,12 +591,13 @@ function submitEvent() {
     //}
 
     showstatus("Saving event to server...");
-    debugmsg('testing debug b4 saving event');    
-    debugmsg(JSON.stringify(event_data));
-    debugmsg('isplain:',jQuery.isPlainObject(event_data));
     $.post(server_address +'/api/event',event_data,function() {
+     debugmsg("post to event succeeded",this);
 	   showstatus("Event saved");
-    },'json');
+    }).fail(function() { 
+      showstatus("Error saving event");
+      debugmsg("post to event failed",this);
+    });
     //function(data,textStatus,jqXHR) { 
     //    debugmsg('Save event success:',jqXHR,textStatus,data);
     //    showstatus("Event Saved");
