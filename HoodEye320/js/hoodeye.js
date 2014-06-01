@@ -596,10 +596,7 @@ function submitEvent() {
       data: event_data, 
       success: function(response) { 
         showstatus(response); 
-      },
-      fail: function(response) {
-        showstatus(response); 
-      },
+      }
     });
 }
 
@@ -609,6 +606,7 @@ function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
         current.position = position;
         debugmsg("Got location:",current.position);
+        console.log(current.position);
         if (on_success && typeof(on_success) == "function") {
           on_success();
         }
