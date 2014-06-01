@@ -79,8 +79,8 @@ var viewport_map = {
         // Switch the map for each of the current markers to viewportMap
         console.log("showevents started");
         $.each(events,function(key,event) {
-            console.log("showing event "+event._id);
-            debugmsg("showing event "+event._id);
+            //console.log("showing event "+event._id);
+            //debugmsg("showing event "+event._id);
             event.marker.setMap(viewportMap);
             viewportMap.latlngbounds.extend(event.marker.position);
             google.maps.event.addListener(event.marker, 'click', function() {
@@ -592,7 +592,7 @@ function submitEvent() {
     //  event_data.event_longitude = current.manmarker.lng().toString();
     //}
 
-    showstatus("Saving event to server...");
+    //showstatus("Saving event to server...");
     //debugmsg("post to event: ",event_data);
     $.post(server_address +'/api/event',event_data,function(response) {
         //debugmsg("post to event succeeded",this);
@@ -694,8 +694,8 @@ function get_event_icon(event) {
 // on_new_events will be called if there are new events with the array of new events including their markers
 function refresh_eventstreams(on_new_events) {
     var community_id = current.active_community._id;
-    showstatus("Refreshing events for " + current.communities[community_id].name,'debug');
-    debugmsg("Refreshing events for " + current.communities[community_id].name);
+    //showstatus("Refreshing events for " + current.communities[community_id].name,'debug');
+    //debugmsg("Refreshing events for " + current.communities[community_id].name);
     // Now load the new events
     var params = 'community_id=' + community_id;
     if (current.community_data[community_id].all.length === 0) {
@@ -716,7 +716,7 @@ function refresh_eventstreams(on_new_events) {
         current.community_data[community_id].all = events.concat(current.community_data[community_id].all);
         debugmsg('Final events loaded: ' + current.community_data[community_id].all.length);
         if (events.length > 0) {
-            showstatus(events.length+ " new events found",'debug');
+            showstatus(events.length+ " new events in "+current.active_community.name);
             if (on_new_events && typeof(on_new_events) == "function") {
                 on_new_events(events);
             }
