@@ -477,7 +477,7 @@ function submitEvent() {
     // GPS + device info
     event_data.position = current.position;
     event_data.lat = current.position.coords.latitude;
-    event_data.long = current.position.coords.latitude;
+    event_data.long = current.position.coords.longitude;
     //device has some weird characters in that is causing the post to fail, needs encoding or JSON or something
     //event_data.device = device;
     
@@ -726,11 +726,11 @@ function event_add_marker(event) {
     event_mapinfo = "<b>"+event.intype +"</b>" 
     + "<i>@ " + event.create_time.substring(0,9) + "  " + event.create_time.substring(11,15)
     + " <br/>" 
-    + " <img src='images/here.png' alt='dot'>" + event.detail + "<br/>" 
-    + event.eventintype_status || event.status + "</i>"
+    + " <img src='images/here.png' alt='dot'>" + event.detail + 
+    + (event.eventintype_status || event.status) + "</i>"
     //  XXX working on ui concept to edit and event - ;			
     + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" 
-    + "This Event id: " +event._id;
+    + "This Event id: " +event._id + ' lat: ' +event.lat + ' long: ' +event.long;
     
     marker = new google.maps.Marker({
         position: new google.maps.LatLng(event.lat, event.long),
