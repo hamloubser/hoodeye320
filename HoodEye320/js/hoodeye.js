@@ -275,7 +275,7 @@ function onDeviceReady() {
 }
 
 function load_session_user(require_memberships) {
-    $.get(server_address+'/api/whoami?part=user',function(session_user) {
+    $.get(server_address+'/api/whoami',function(session_user) {
         var isnewuser = current.user.username != session_user.username;
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
@@ -317,7 +317,7 @@ function try_auto_login() {
 
 
 function load_memberships(new_community_id) {
-  $.get(server_address+'/api/whoami?part=memberships',function(memberships) {
+  $.get(server_address+'/api/membership',function(memberships) {
     current.memberships = memberships;
     fix_community_switch_menu();
     switchcommunity(current.user.default_community_id || public_community._id);
@@ -445,6 +445,9 @@ function submitLeavecommunity() {
         fix_community_switch_menu();
         switchcommunity(public_community._id);
         $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+      },
+      fail: function(response) {
+        showstatus("Failure to remove membership:" + response);
       },
     });
 }
@@ -592,6 +595,9 @@ function submitEvent() {
       url: server_address+'/api/event', 
       data: event_data, 
       success: function(response) { 
+        showstatus(response); 
+      },
+      fail: function(response) {
         showstatus(response); 
       },
     });
