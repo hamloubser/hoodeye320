@@ -554,6 +554,19 @@ function load_addeventform (key) {
 function editeventformpage() {
     // Get the event _id from where the _id was stored by the click on the edit button, get event from allevents
     // use thisevent as event is ambigious here
+    // TODO: this if test not working yet
+    console.log('editeventformpage debug');
+    console.log(typeof sessionStorage.event_to_edit);
+    console.log(typeof current.allevents);
+    console.log(typeof current.allevents[sessionStorage.event_to_edit]);
+    if (typeof sessionStorage.event_to_edit === 'undefined'  ||
+        typeof current.allevents === 'undefined' ||
+        typeof current.allevents[sessionStorage.event_to_edit] === 'undefined') {
+      debugmsg("editeventformpage: no event to edit, going to #home");
+      showstatus("editeventformpage: no event to edit, going to #home");
+      $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+      return;
+    }
     thisevent = current.allevents[sessionStorage.event_to_edit];
     console.log('Creating edit event page for event ' + thisevent._id);
     console.log(thisevent);
@@ -696,7 +709,7 @@ var viewport_list = {
             +"  "+event.intype+': ' + event.detail 
             + " (reported by " + event.nickname + ") "
             +" Status: "+event.status
-            + event_edit_link(event)
+            //+ event_edit_link(event)
             + '</li> ';
         });
         $("#viewport_eventlist").prepend(items_html);
