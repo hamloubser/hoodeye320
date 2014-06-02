@@ -666,7 +666,7 @@ var viewport_list = {
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
-        $("#viewportListcontent").listview();
+        $("#viewport_eventlist").listview();
     },
     newevent: function(event) {
         // Nothing to do for listview
@@ -675,16 +675,16 @@ var viewport_list = {
         // Listview
         var items_html ='';
         $.each(events,function(key,event) {
-            items_html += '<li ><img style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            + event.create_time
+            //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
+            items_html += '<li ><img class="ul-li-icon" src='+get_event_icon(event)+'>'
+            + event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)
+            +"  "+event.intype+': ' + event.detail 
+            + " (reported by " + event.nickname + ") "
             +" Status: "+event.eventintype_status
-            +"  "+event.intype+': '
-            + event.detail + "( reported by "
-            + event.user.username + " at "
-            + ')</li> ';
+            + '</li> ';
         });
         $("#viewport_eventlist").prepend(items_html);
-        $("#viewportListcontent").listview('refresh');
+        $("#viewport_eventlist").listview('refresh');
     },
 };
 
