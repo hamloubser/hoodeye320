@@ -35,6 +35,8 @@ var current_clean = {
     memberships: {},
     communities: {},
     community_data: {},
+    allevents: {},
+    event_localinfo: {},
     // TODO: this should prob be new Position or similar...
     position: {},
 };
@@ -81,7 +83,9 @@ function onDeviceReady() {
     // TODO: This has to be integrated into loading the addevent forms
     //captureApp = new captureApp();
     //captureApp.run();
+    //xxx
     
+    // Delegations for showing pages
     $(document).delegate('#loginpage','pageshow',function(){
         if (localStorage.login_username) {
             $("#login_username").val(localStorage.login_username);
@@ -548,11 +552,18 @@ function load_addeventform (key) {
 }
 
 function editeventformpage() {
+    // Get the event _id from where the _id was stored by the click on the edit button, get event from allevents
+    // use thisevent as event is ambigious here
+    thisevent = current.allevents[sessionStorage.event_to_edit];
+    console.log('Creating edit event page for event ' + thisevent._id);
+    console.log(thisevent);
     var c = '';
-    c += '<h3>Community: ' + current.active_community.name + '</h3>';
-    c += 'Event: ' + '<br/>';
+    c += '<h3>Community: ' + thisevent.community_name + '</h3>';
+    c += 'Event type: ' + thisevent.intype_label + '<br/>';
     c += '<h4>Detail:</h4>';
-    c += ' <br/>'+ event.detail + '<br/>';
+    c += thisevent.detail + '<br>';
+    c += 'Added by ' + thisevent.nickname + ' at ' + thisevent.create_time + '<br><br>';
+    //c += 'Debug: ' + JSON.stringify(thisevent);
     $("#editeventformcontent").html(c);
 }
 
@@ -602,10 +613,12 @@ function refresh_eventstreams(on_new_events) {
     $.get(server_address+'/api/event?'+params,function(events) {
         debugmsg('New events loaded: ' + events.length);
         // Add map markers for any new events
+        current.community_data[community_id].all = events.concat(current.community_data[community_id].all);
         $.each(events,function(index,event) {
             viewports_do('newevent',event);
+            // also store all events in a global event object so we can access and edit them from just knowing the _id
+            current.allevents[event._id] = event;
         });
-        current.community_data[community_id].all = events.concat(current.community_data[community_id].all);
         debugmsg('Final events loaded: ' + current.community_data[community_id].all.length);
         if (events.length > 0) {
             showstatus(events.length+ " new events in "+current.active_community.name);
@@ -637,13 +650,15 @@ var viewport_map = {
         // Switch the map for each of the current markers to viewportMap
         console.log("showevents started");
         $.each(events,function(key,event) {
+            var event_marker = current.event_localinfo[event._id].marker;
+            var event_mapinfo = current.event_localinfo[event._id].mapinfo;
             //console.log("showing event "+event._id);
             //debugmsg("showing event "+event._id);
-            event.marker.setMap(viewportMap);
-            viewportMap.latlngbounds.extend(event.marker.position);
-            google.maps.event.addListener(event.marker, 'click', function() {
-                infowindow.setContent(event.event_mapinfo);
-                infowindow.open(event.marker.map, event.marker);
+            event_marker.setMap(viewportMap);
+            viewportMap.latlngbounds.extend(event_marker.position);
+            google.maps.event.addListener(event_marker, 'click', function() {
+                infowindow.setContent(event_mapinfo);
+                infowindow.open(event_marker.map, event_marker);
             });
         });
         console.log("resizing map");
@@ -680,7 +695,8 @@ var viewport_list = {
             + event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)
             +"  "+event.intype+': ' + event.detail 
             + " (reported by " + event.nickname + ") "
-            +" Status: "+event.eventintype_status
+            +" Status: "+event.status
+            + event_edit_link(event)
             + '</li> ';
         });
         $("#viewport_eventlist").prepend(items_html);
@@ -723,23 +739,29 @@ function init_viewportMap() {
 
 function event_add_marker(event) {
     //debugmsg("adding marker for event:",event._id);
-    event_mapinfo = "<b>"+event.intype +"</b>" 
-    + "<i>@ " + event.create_time.substring(0,9) + "  " + event.create_time.substring(11,15)
+    var event_mapinfo = "<b>"+event.intype +"</b>" 
+    + "<i>@ " + event.create_time.substring(0,10) + "  " + event.create_time.substring(11,16)
     + " <br/>" 
-    + " <img src='images/here.png' alt='dot'>" + event.detail + 
-    + (event.eventintype_status || event.status) + "</i>"
+    + " <img src='images/here.png' alt='dot'>" + event.detail + '<br>'
+    + " Reported by: " + event.nickname  + " "
+    + '(' + event.status + ")</i><br>"
     //  XXX working on ui concept to edit and event - ;			
-    + "<br> <a href='#editeventformpage'><img  src='images/edit.png'>EDIT</a>" 
-    + "This Event id: " +event._id + ' lat: ' +event.lat + ' long: ' +event.long;
-    
-    marker = new google.maps.Marker({
+    + event_edit_link(event) + "<br>";
+   
+    var event_marker = new google.maps.Marker({
         position: new google.maps.LatLng(event.lat, event.long),
         animation : google.maps.Animation.DROP,  
         //  draggable: true,
         icon: get_event_icon(event), 
     });
-    event.event_mapinfo = event_mapinfo;
-    event.marker = marker;
+    current.event_localinfo[event._id] = {
+      marker: event_marker,
+      mapinfo: event_mapinfo,
+    };
+}
+
+function event_edit_link(event) {
+    return "<a  href='#editeventformpage' style='float:right' onClick=\"sessionStorage.event_to_edit='" +event._id + "'\"><img  src='images/edit.png'/>";
 }
 
 function manmarker_get_position(do_after_drag) {

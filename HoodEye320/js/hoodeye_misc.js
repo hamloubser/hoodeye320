@@ -62,6 +62,7 @@ function debugmsg() {
         }
         data.msg += ' ';
     });
+    console.log('debugmsg: ' + data.msg);
     $.post(server_address+'/api/debugmsg',data);
 }
 
