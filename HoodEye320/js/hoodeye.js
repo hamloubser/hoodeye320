@@ -765,12 +765,12 @@ function event_add_marker(event) {
     //debugmsg("adding marker for event:",event._id);
     var event_mapinfo = "<b>"+event.intype +"</b>" 
     + "<i>@ " + event.create_time.substring(0,10) + "  " + event.create_time.substring(11,16)
-    + " <br/>" 
-    + " <img src='images/here.png' alt='dot'>" + event.detail + '<br>'
+    + " <br>" 
+    + event_edit_link(event)+ "  " + event.detail + '<br>'
     + " Reported by: " + event.nickname  + " "
     + '(' + event.status + ")</i>"
     //  XXX working on ui concept to edit and event - ;			
-    + event_edit_link(event) + "<br>";
+   
    
     var event_marker = new google.maps.Marker({
         position: new google.maps.LatLng(event.lat, event.long),
