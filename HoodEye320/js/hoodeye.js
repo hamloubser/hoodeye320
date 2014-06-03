@@ -138,7 +138,7 @@ function onDeviceReady() {
         // then check for new events and show them once loaded
         refresh_eventstreams(viewport_list.showevents);
     });
-    
+   
     // page form submit bindings
     
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
@@ -709,6 +709,7 @@ var viewport_list = {
             +"  "+event.intype+': ' + event.detail 
             + " (reported by " + event.nickname + ") "
             +" Status: "+event.status
+		
             //+ event_edit_link(event)
             + '</li> ';
         });
@@ -741,7 +742,17 @@ function init_viewportMap() {
     var options = {
         zoom : 15,
         center : new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude),
-        mapTypeId : google.maps.MapTypeId.ROADMAP
+        mapTypeId : google.maps.MapTypeId.ROADMAP,
+		mapTypeControl: true,
+			mapTypeControlOptions: {
+									style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+									},
+		zoomControl: true,
+					zoomControlOptions: {
+									style: google.maps.ZoomControlStyle.LARGE
+									}
+
+
     };
     
     viewportMap = new google.maps.Map(content[0], options);
