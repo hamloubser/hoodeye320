@@ -748,9 +748,9 @@ function init_viewportMap() {
 									style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
 									},
 		zoomControl: true,
-					zoomControlOptions: {
+			zoomControlOptions: {
 									style: google.maps.ZoomControlStyle.LARGE
-									}
+										}
 
 
     };
@@ -768,7 +768,7 @@ function event_add_marker(event) {
     + " <br/>" 
     + " <img src='images/here.png' alt='dot'>" + event.detail + '<br>'
     + " Reported by: " + event.nickname  + " "
-    + '(' + event.status + ")</i><br>"
+    + '(' + event.status + ")</i>"
     //  XXX working on ui concept to edit and event - ;			
     + event_edit_link(event) + "<br>";
    
