@@ -541,6 +541,7 @@ function getLocation(on_success) {
 }
 
 function load_addeventform (key) {
+    current.event_images = [];
     current.intype = current.active_community.intypes[key] ;
     debugmsg("Loading addevent form for"+current.intype.name);
     var content = $("#addeventformpage div:jqmData(role=content)");
@@ -602,8 +603,7 @@ function make_selecteventlist() {
     debugmsg("Intypes:", current.active_community.intypes);
     $.each(current.active_community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);
-        
-        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d" > '+intype.label+'</a></li>';
+        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d"><img class="ul-li-icon" src="' + get_intype_icon(intype.name) + '">'+intype.label+'</a></li>';
         
     });
     
@@ -621,6 +621,14 @@ function get_event_icon(event) {
     basename = basename.replace(" ","_");
     return "images/"+basename+"_icon.png";
 }
+
+function get_intype_icon(intype) {
+    console.log('intype for icon:'+ intype);
+    basename = intype.replace(" ","_");
+    return "images/"+basename+"_icon.png";
+}
+
+
 
 // on_new_events will be called if there are new events with the array of new events including their markers
 function refresh_eventstreams(on_new_events) {
