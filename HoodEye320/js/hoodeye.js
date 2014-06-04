@@ -286,7 +286,7 @@ function submitLogin() {
             localStorage.login_username=username;
             localStorage.login_password=password;
             load_session_user(true);
-            $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+			switchpage('#home');
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
@@ -307,7 +307,7 @@ function submitRegister() {
             localStorage.login_username = submitdata.sername;
             localStorage.login_password = submitdata.password;
             load_session_user(true);
-            $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+			switchpage('#home');
         } else {
             load_session_user(true);
             showstatus(result.message);
@@ -321,7 +321,7 @@ function submitLogout() {
         showstatus(result.message);
         current.active_community = { name: "unset"};
         load_session_user(true);
-        $.mobile.pageContainer.pagecontainer("change", "#loginpage", {transition: "flow"});
+		switchpage('#loginpage');
     });
 }
 
@@ -360,7 +360,7 @@ function submitLeavecommunity() {
             debugmsg("Memberships now:",current.memberships);
             fix_community_switch_menu();
             switchcommunity(public_community._id);
-            $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+			switchpage('#home');
         },
         fail: function(response) {
             showstatus("Failure to remove membership:" + response);
@@ -587,7 +587,7 @@ function editeventformpage() {
         typeof current.allevents[sessionStorage.event_to_edit] === 'undefined') {
       debugmsg("editeventformpage: no event to edit, going to #home");
       showstatus("editeventformpage: no event to edit, going to #home");
-      $.mobile.pageContainer.pagecontainer("change", "#home", {transition: "flow"});
+	  switchpage('#home');
       return;
     }
     thisevent = current.allevents[sessionStorage.event_to_edit];
@@ -739,8 +739,7 @@ var viewport_list = {
             +"  "+event.intype+': ' + event.detail 
             + " (reported by " + event.nickname + ") "
             +" Status: "+event.status
-		
-            //+ event_edit_link(event)
+            + event_edit_link(event)
             + '</li> ';
         });
         $("#viewport_eventlist").prepend(items_html);
@@ -814,9 +813,16 @@ function event_add_marker(event) {
     };
 }
 
+
 function event_edit_link(event) {
-    return "<a  href='#editeventformpage' style='float:right' onClick=\"sessionStorage.event_to_edit='" +event._id + "'\"><img  src='images/edit.png'/>";
+    return "<img style='float:right' onClick=\"sessionStorage.event_to_edit='" +event._id + "';switchpage('#editeventformpage');\" src='images/edit.png'/>";
 }
+
+function switchpage(page_id) {
+    $.mobile.pageContainer.pagecontainer("change", page_id, {transition: "flow"});
+}
+
+
 
 function manmarker_get_position(do_after_drag) {
     //----- Trying to add a moveable marker to upgate location
