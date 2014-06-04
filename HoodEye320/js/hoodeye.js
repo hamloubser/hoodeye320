@@ -63,6 +63,10 @@ var mapcheck = new OnceReady();
 // PhoneGap is ready
 function onDeviceReady() {
     getLocation(init_viewportMap);
+	 
+	if (typeof localStorage.last_community === 'undefined') {
+	  localStorage.last_community = [];
+	}
     // use credentials on all ajax calls, required for in-browser, may not be required for Cordova
     $(document).ajaxSend(function (event, xhr, settings) {
         settings.xhrFields = {
@@ -178,7 +182,7 @@ function onDeviceReady() {
         // this will always load memberships
         try_auto_login();  
     } else {
-        load_memberships(current.user.default_community_id || public_community._id);
+        load_memberships(localStorage.last_community[current.user.username] || public_community._id);
     }
 }
 
@@ -193,7 +197,7 @@ function load_session_user(require_memberships) {
             fix_user_menu();
             // load membershiups and then switch community
             if(require_memberships) {
-                load_memberships(current.user.default_community_id || public_community._id);
+                load_memberships(localStorage.last_community[current.user.username] || public_community._id);
             }
         }
     });
@@ -217,7 +221,7 @@ function try_auto_login() {
         });
     } else {
         // No login attempt, just load the memberships
-        load_memberships(current.user.default_community_id || public_community._id);
+        load_memberships(localStorage.last_community[current.user.username] || public_community._id);
     }
 }
 
@@ -228,7 +232,7 @@ function load_memberships(new_community_id) {
     $.get(server_address+'/api/membership',function(memberships) {
         current.memberships = memberships;
         fix_community_switch_menu();
-        switchcommunity(current.user.default_community_id || public_community._id);
+        switchcommunity(localStorage.last_community[current.user.username] || public_community._id);
     });
 }
 
@@ -369,6 +373,7 @@ function switchcommunity(community_id) {
             viewports_do('clear');
         }
         current.active_community = current.communities[community_id];
+		localStorage.last_community[current.user.username] = current.active_community._id;
         debugmsg("switchcommunity setting current.active_community to "+current.active_community.name);
         // Initialise data object if its not set
         if (typeof current.community_data[community_id] !== 'object') {
