@@ -30,6 +30,8 @@ var qs = get_url_params();
 var server_port = qs.port || 4242;
 var server_address = "http://dev.hoodeye.com:" + server_port;
 
+var mapzoomlevel = 15;
+
 var current_clean = {
     active_community: { name: "unset"},
     user: { username: "NoUser" },
@@ -122,6 +124,14 @@ function onDeviceReady() {
 		});
 	});
     
+	
+	$(document).on( 'slidestop', "#slider-1" ,function( event ) { 
+	  viewportMap.setZoom($("#slider-1").val());
+	  mapzoomlevel = $("#slider-1").val();
+	});
+
+	
+	
     $(document).delegate('#editeventformpage','pagebeforeshow',function(){
         editeventformpage();
     });
@@ -699,6 +709,9 @@ var viewport_map = {
             //debugmsg("showing event "+event._id);
             event_marker.setMap(viewportMap);
             viewportMap.latlngbounds.extend(event_marker.position);
+			
+			$("#slider-1").val(viewportMap.getZoom());
+			
             google.maps.event.addListener(event_marker, 'click', function() {
                 infowindow.setContent(event_mapinfo);
                 infowindow.open(event_marker.map, event_marker);
@@ -769,17 +782,14 @@ function init_viewportMap() {
 
     var content = $("#viewportMapcontent");
     var options = {
-        zoom : 15,
+        zoom : mapzoomlevel,
         center : new google.maps.LatLng(current.position.coords.latitude, current.position.coords.longitude),
         mapTypeId : google.maps.MapTypeId.ROADMAP,
 		mapTypeControl: true,
 			mapTypeControlOptions: {
 									style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
 									},
-		zoomControl: true,
-			zoomControlOptions: {
-									style: google.maps.ZoomControlStyle.LARGE
-										}
+		
 
 
     };
