@@ -16,13 +16,13 @@ captureApp.prototype = {
     
     run:function() {
         var that = this;
-        id("captureVideo").addEventListener("click", function() {
+        $("#captureVideo").addEventListener("click", function() {
             that._captureVideo.apply(that, arguments);
         });
-        id("captureAudio").addEventListener("click", function() {
+        $("#captureAudio").addEventListener("click", function() {
             that._capureAudio.apply(that, arguments);
         });
-        id("captureImage").addEventListener("click", function() {
+        $("#captureImage").addEventListener("click", function() {
             that._captureImage.apply(that, arguments);
         });
     },
@@ -47,6 +47,7 @@ captureApp.prototype = {
     
     _captureImage:function() {
         var that = this;
+		showstatus("Now taking pic");
         navigator.device.capture.captureImage(function() {
             that._captureSuccess.apply(that, arguments);
         }, function() { 
@@ -55,21 +56,15 @@ captureApp.prototype = {
     },
     
     _captureSuccess:function(capturedFiles) {
-        var i,
-        media = document.getElementById("media");
-        media.innerHTML = "";
+        var i, 
+			html = '';
         for (i=0;i < capturedFiles.length;i+=1) {
-            media.innerHTML+='<p>Capture taken! Its path is: ' + capturedFiles[i].fullPath + '</p>'
+            html +='<p>Capture taken! Its path is: ' + capturedFiles[i].fullPath + '</p>'
         }
+		showstatus(html);
     },
     
     _captureError:function(error) {
-        if (device.uuid == "e0101010d38bde8e6740011221af335301010333" || device.uuid == "e0908060g38bde8e6740011221af335301010333") {
-            alert(error);
-        }
-        else {
-            var media = document.getElementById("media");
-            media.innerHTML = "An error occured! Code:" + error.code;
-        }
+       showstatus("An error occured! Code:" + error.code);
     },
 }

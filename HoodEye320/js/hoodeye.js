@@ -6,7 +6,7 @@ $.getScript('jslibs/jquery.formparams.js');
 $.getScript('jslibs/jsrender/jsrender.min.js');
 
 // example scripts used
-$.getScript('scripts/capture-app.js');
+//$.getScript('scripts/capture-app.js');
 
 // On phone, wait for PhoneGap to load, in browser, use document.ready()
 var isphone = true;
@@ -21,6 +21,9 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
         platform: 'Browser',
         version: '0.0',
     };
+	navigator.device = {};
+	navigator.device.capture = {};
+	navigator.device.capture.captureImage = function() { showstatus("Can't capture image, not on phone"); };
 }
 //-----------------------
 var qs = get_url_params();
@@ -41,7 +44,6 @@ var current_clean = {
     position: {},
 };
 var current = current_clean;
-var captureApp;
 
 // Load the public community from localstorage if available
 // This is current definition, use that if no network connection
@@ -81,8 +83,8 @@ function onDeviceReady() {
     });
     
     // TODO: This has to be integrated into loading the addevent forms
-    //captureApp = new captureApp();
-    //captureApp.run();
+    //current.captureApp = new captureApp();
+    //current.captureApp.run();
     //xxx
     
     // Delegations for showing pages
@@ -109,6 +111,15 @@ function onDeviceReady() {
     $(document).delegate('#addeventformpage','pagebeforeshow',function(){
         getLocation();
     });
+	$(document).on('click',".eventCaptureImage",function() {
+		navigator.device.capture.captureImage(function() {
+			current.event_images += arguments;
+			showstatus("Captured images: " + arguments);
+			debugmsg("Captured images: ",arguments);
+		}, function() {
+		   showstatus("Error capturing image"); 
+		})
+	});
     
     $(document).delegate('#editeventformpage','pagebeforeshow',function(){
         editeventformpage();
@@ -126,7 +137,7 @@ function onDeviceReady() {
           viewport_map.showevents(current.community_data[current.active_community._id].all);
           // then check for new events and show them once loaded
           refresh_eventstreams(function () { 
-            viewport_map.showevents;
+            viewport_map.showevents();
           });
         });
     });
@@ -539,16 +550,20 @@ function load_addeventform (key) {
               $("#addeventformcontent").html(html); 
               debugmsg("loaded input-types/"+filename+".html");
               $("#addeventformpage").enhanceWithin();
-              $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
+              $('#EventForm').bind("submit",function(event) { event.preventDefault(); });
+              $('#EventForm input[type="submit"]').bind("click",function(event) { event.preventDefault(); return submitEvent(); });
           })
     .fail(function() { 
         $.get('input-types/default.html', function(def_html){ 
             $("#addeventformcontent").html(def_html); 
             debugmsg("loaded default input the for "+current.intype.name);
             $("#addeventformpage").enhanceWithin();
-            $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
+              $('#EventForm').bind("submit",function(event) { event.preventDefault(); });
+            $('#EventForm input[type="submit"]').bind("click",function(event) { event.preventDefault(); return submitEvent(); });
+            //$('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
         });
     });
+    //current.captureApp.run();
 }
 
 function editeventformpage() {
@@ -768,7 +783,7 @@ function event_add_marker(event) {
     + " <br>" 
     + event_edit_link(event)+ "  " + event.detail + '<br>'
     + " Reported by: " + event.nickname  + " "
-    + '(' + event.status + ")</i>"
+    + '(' + event.status + ")</i>";
     //  XXX working on ui concept to edit and event - ;			
    
    
