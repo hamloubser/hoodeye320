@@ -748,12 +748,14 @@ var viewport_list = {
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
             items_html += '<li ><img class="ul-li-icon" src='+get_event_icon(event)+'>'
-            + event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)
-            +"  "+event.intype+': ' + event.detail 
-            + " (reported by " + event.nickname + ") "
-            +" Status: "+event.status
-            + event_edit_link(event)
-            + '</li> ';
+			
+			+" <h2 >"+event.intype       +" </h2>" 
+			+" <p>"+ event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)  
+            + " (reported by " + event.nickname + ") " +": </p>"
+            
+			+ event.detail 
+             +"<p style='text-align:right' > Status: "+event.status +"</p>" + event_edit_link(event)
+            + "</li> ";
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
