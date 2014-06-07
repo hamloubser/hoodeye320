@@ -620,7 +620,7 @@ function make_selecteventlist() {
     debugmsg("Intypes:", current.active_community.intypes);
     $.each(current.active_community.intypes, function(key, intype) { 
         debugmsg("Adding intype: "+intype.label+" with key"+key);
-        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d"><img class="ul-li-icon" src="' + get_intype_icon(intype.name) + '">'+intype.label+'</a></li>';
+        options += '<li><a onClick="load_addeventform('+key+')" href="#addeventformpage" data-split-theme="d"  ><img class="ul-li-icon" src="' + get_intype_icon(intype.name) + '">'+intype.label+'</a></li>';
         
     });
     
@@ -747,9 +747,9 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<li ><img class="ul-li-icon" src='+get_event_icon(event)+'>'
+            items_html += '<li ><img class="ul-li-icon"  src='+get_event_icon(event)+'>'
 			
-			+" <h2 >"+event.intype       +" </h2>" 
+			+" <h2 style='text-align: left; margin: 0px; padding: 0px;' >"+event.intype       +" </h2>" 
 			+" <p>"+ event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)  
             + " (reported by " + event.nickname + ") " +": </p>"
             
