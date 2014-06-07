@@ -31,7 +31,7 @@
         
         <!-- homepage: it works better if we do this first, away from the other page definitions -->
         
-        <div data-role="page" id="home" data-theme="b">
+        <div data-role="page" id="home" data-theme="a">
             <div class="ui-content" role="main">            
                 <div id="welcometext">
                     <h1>Loading Hoodeye....</h1>
@@ -48,7 +48,7 @@
         </div>     
 
         <!-- usermenu popup -->
-        <div id="usermenupopup" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
+        <div id="usermenupopup" data-role="popup" data-theme="a" data-position-to="origin" data-transition="slideup">
             <ul id="usermenuoptions" data-role="listview" data-inset="true" data-theme="a">
                 <li><a href="#registerpage" data-theme="c">Register</a></li>
                 <li><a href="#loginpage" data-theme="c">Login</a></li>
@@ -65,7 +65,7 @@
         </div> 
 
         <!-- Select event type menu - popup version -->
-        <div id="selecteventpopup" data-role="popup" data-theme="b" data-position-to="origin" data-transition="slideup">
+        <div id="selecteventpopup" data-role="popup" data-theme="a" data-position-to="origin" data-transition="slideup">
            <h4>Add a new:</h4>
            <ul data-role="listview"   id="selecteventpopuplist"  >    
              <li> Initializing..... </li>
@@ -73,7 +73,7 @@
         </div>
         
         <!-- Select event type menu - page version -->
-        <div data-role="page" id="selecteventpage" data-theme="b">
+        <div data-role="page" id="selecteventpage" data-theme="a">
             <div class="ui-content" role="main">
                 <label for="selecteventlist" class="select" > <h2> What type of Event would you like to submit? </h2> </label>  
                 <ul data-role="listview"   id="selecteventlist" >    
@@ -83,7 +83,7 @@
         </div>        
 
         <!-- Switch community menu popup -->
-        <div data-role="popup" id="switchcommunitypopup" data-theme="b" > 
+        <div data-role="popup" id="switchcommunitypopup" data-theme="a" > 
                 <ul data-role="listview"   id="switchcommunitylist"   >    
                     <li>Waiting for server...</li>
                 </ul>
@@ -95,7 +95,7 @@
         
         <!-- My profile in current community page -->
         
-        <div data-role="page" id="communityprofilepage" data-theme="b" >
+        <div data-role="page" id="communityprofilepage" data-theme="a" >
             <div id='communityprofilecontent' class="ui-content" role="main">
                 <h2>
                     Community profiles has not yet been implemented....
@@ -105,7 +105,7 @@
         
         <!-- User profile page for private settings -->
         
-        <div data-role="page" id="userprofilepage" data-theme="b">
+        <div data-role="page" id="userprofilepage" data-theme="a">
             <div class="ui-content" role="main">
                 <h2>
                     Displaying your user profile and settings will go here.
@@ -131,7 +131,7 @@
         
         <!-- Login form -->
         
-        <div data-role="page" id="loginpage" data-theme="b" >
+        <div data-role="page" id="loginpage" data-theme="a" >
             <div class="ui-content" role="main">
                 <form name="loginForm" id="loginForm">
                     <label for="username">UserName</label><input type="text" name="username" id="login_username" /> <br>
@@ -144,7 +144,7 @@
         
         <!-- Logout form -->
         
-        <div data-role="page" id="logoutpage" data-theme="b">
+        <div data-role="page" id="logoutpage" data-theme="a">
             <div class="ui-content" role="main">
                 <h3> Are you sure you want to log out of HoodEye?</h3>
                 <form name="logoutForm" id="logoutForm">
@@ -155,7 +155,7 @@
         
         <!-- Register form-->
         
-        <div data-role="page" id="registerpage" data-theme="b">
+        <div data-role="page" id="registerpage" data-theme="a">
             <div class="ui-content" role="main">
                 <div id="registerstatus"></div>
                 <form name="registerForm" id="registerForm">
@@ -168,7 +168,7 @@
         </div>       
         
         <!-- joincommunity -->
-        <div data-role="page" id="joincommunitypage" data-theme="b">
+        <div data-role="page" id="joincommunitypage" data-theme="a">
             <div class="ui-content" role="main">
                 <form name="joincommunityForm" id="joincommunityForm">
                     <label for="community">Community</label> 
@@ -183,7 +183,7 @@
 
         <!-- Leave community form -->
         
-        <div data-role="page" id="leavecommunity" data-theme="b">
+        <div data-role="page" id="leavecommunity" data-theme="a">
             <div class="ui-content" role="main">
                 <h3> Are you sure you want to leave the current community?</h3>
                 <form name="leavecommunityForm" id="leavecommunityForm">
@@ -199,7 +199,7 @@
         <div data-role="page" id="viewportMappage" data-theme="a" >
 			   <form>
 					<label for="slider-1">Zoom -               +  :</label>
-					<input name="slider-1" id="slider-1" type="range" min="0" max="100" value="15">
+					<input name="slider-1" id="slider-1" type="range" min="12" max="20" value="15">
 				</form>
 
 
@@ -219,13 +219,13 @@
             <div id="header_template">
                 <div data-role="header" data-position="fixed" >
                     <p class="appheader" style="text-align: left; margin: 0px; padding: 0px; !important;" >Welcome to Hoodeye</p>
-                    <div data-role="navbar" data-iconpos="left" >
-                        <ul > 
-                            <li><a href="#home" >  <img style="width: 40px; height: 40px; " src="images/home.jpg"> </a></li>
-                            <!-- <li><a href="#switchcommunitypage" > <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li> -->
-                            <li><a href="#switchcommunitypopup" data-rel="popup"> <img style="width: 40px; height: 40px;" src="images/imglogin.png"> </a></li>
-                            <li><a href="#communityprofilepage"> <img style="width: 40px; height: 40px;" src="images/me.jpg"> </a></li>
-                            <li><a href="#usermenupopup" data-rel="popup"> <img style="width: 40px; height: 40px;" src="images/accountsetting.jpg"></a></li>
+                    <div data-role="navbar"   >
+                        <ul> 
+                            <li><a href="#home" > <i> Home</i><br> <img style="width: 30px; height: 30px; " src="images/home.jpg"> </a></li>
+                            <!-- <li><a href="#switchcommunitypage" > <img style="width: 30px; height: 30px;" src="images/imglogin.png"> </a></li> -->
+                            <li><a href="#switchcommunitypopup" data-rel="popup"> <i> Change </i><br><img style="width: 30px; height: 30px;" src="images/imglogin.png"> </a></li>
+                            <li><a href="#communityprofilepage"> <i> Who am I</i><br><img style="width: 30px; height: 30px;" src="images/me.jpg"> </a></li>
+                            <li><a href="#usermenupopup" data-rel="popup"> <i> Log in </i><br><img style="width: 30px; height: 30px;" src="images/accountsetting.jpg"></a></li>
                         </ul>
                     </div>
                 </div>
@@ -236,11 +236,12 @@
                 <div data-role="footer"  data-position="fixed">	
                     <div data-role="navbar" data-iconpos="left">
                         <ul> 
-                            <li><a href="#viewmenupopup" data-rel="popup">  <img style="width: 40px; height: 40px;" src="images/see.png"> </a></li>
-                            <!-- <li><a href="#communityeventpage">  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>-->
-                            <li><a href="#selecteventpopup" data-rel="popup" data-position-to="window" data-transition="slideup"  >  <img style="width: 40px; height: 40px;" src="images/mananounce.png"> </a></li>
-                            <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/todopencil.jpg"> </a></li>
-                            <li><a href="#" > <img style="width: 40px; height: 40px;" src="images/earth.jpg"> </a></li>
+                            <li><a href="#viewportListpage" >  <img style="width: 30px; height: 30px;" src="images/see.png"><br><i> News Feed</i></a></li>
+							<!-- <li><a href="#viewmenupopup" data-rel="popup">  <img style="width: 30px; height: 30px;" src="images/see.png"></a></li>-->
+                            <!-- <li><a href="#communityeventpage">  <img style="width: 30px; height: 30px;" src="images/mananounce.png"> </a></li>-->
+                            <li><a href="#selecteventpopup" data-rel="popup" data-position-to="window" data-transition="slideup"  >  <img style="width: 30px; height: 30px;" src="images/mananounce.png"><br><i> Shout out</i></a></li>
+                            <li><a href="#" > <img style="width: 30px; height: 30px;" src="images/todopencil.jpg"><br><i> Actions</i></a></li>
+                            <li><a href="#viewportMappage" > <img style="width: 30px; height: 30px;" src="images/earth.jpg"><br><i> Map</i> </a></li>
                         </ul>
                     </div>
                 </div>           
