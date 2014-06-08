@@ -732,8 +732,8 @@ var viewport_list = {
     setup: function() {
         // static listview setup
         var markup = {
-            header: '<B>' + current.active_community.name + ': Recent events</B>' + 
-            '<ul id="viewport_eventlist" data-role="listview"  data-inset="true">',
+            header: '<h5 style="margin: 0px; padding: 0px;">' + current.active_community.name + ': Recent events</h5>' + 
+            '<ul id="viewport_eventlist" data-role="listview"   data-inset="true" >',
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
@@ -747,14 +747,11 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<li >'+'<img   style="width: 30px; height: 30px; " src='+get_event_icon(event)+'><h2>'
-			+ event.intype       +' </h2>' 
-			 +'<p style="text-align:left" > '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (reported by ' + event.nickname + ') ' +':</p> '
-
-			+ event.detail 
-             +'<p style="text-align:right" > Status: '+event.status +'</p>' + event_edit_link(event)
-            + '</li>';
+            items_html += '<div data-role="content"><li ><b>'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
+			+ event.intype   +' ........  <i>Status: '+event.status     +' </i></b>' 
+			 +'<p style="text-align:left" > '+ event.detail  +':</p> '
+             +'<p style="text-align:right" >'+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
+            + ' (reported by ' + event.nickname + ')' + event_edit_link(event)  +'</p>' + '</li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
