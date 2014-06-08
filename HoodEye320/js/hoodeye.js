@@ -732,8 +732,8 @@ var viewport_list = {
     setup: function() {
         // static listview setup
         var markup = {
-            header: '<h3>' + current.active_community.name + ': Recent events</h3>' + 
-            '<ul id="viewport_eventlist" data-role="listview" data-inset="true" >',
+            header: '<B>' + current.active_community.name + ': Recent events</B>' + 
+            '<ul id="viewport_eventlist" data-role="listview"  data-inset="true">',
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
@@ -747,15 +747,14 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<li ><img class="ul-li-icon"  src='+get_event_icon(event)+'>'
-			
-			+" <h2 style='text-align: left; margin: 0px; padding: 0px;' >"+event.intype       +" </h2>" 
-			+" <p>"+ event.create_time.substring(0,10) + " @ " + event.create_time.substring(11,16)  
-            + " (reported by " + event.nickname + ") " +": </p>"
-            
+            items_html += '<li >'+'<img   style="width: 30px; height: 30px; " src='+get_event_icon(event)+'><h2>'
+			+ event.intype       +' </h2>' 
+			 +'<p style="text-align:left" > '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
+            + ' (reported by ' + event.nickname + ') ' +':</p> '
+
 			+ event.detail 
-             +"<p style='text-align:right' > Status: "+event.status +"</p>" + event_edit_link(event)
-            + "</li> ";
+             +'<p style="text-align:right" > Status: '+event.status +'</p>' + event_edit_link(event)
+            + '</li>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
