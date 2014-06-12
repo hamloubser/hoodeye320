@@ -275,7 +275,7 @@ function set_html_to_layout(html_id,layout_name,layout_type) {
 
 function updateHomeTitle() {
     // Update app header.
-    var newtitle = current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
+    var newtitle = "You are " +current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
     debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
 	set_html_to_layout("#welcometext","msg"+"_" + current.active_community.name,"msg");
@@ -749,11 +749,11 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<div data-role="content"><li ><b>'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
-			+ event.intype   +' ........  <i>Status: '+event.status     +' </i></b>' 
+            items_html += '<div data-role="content"><li ><h4 class="ui-bar ui-bar-a ui-corner-all" >'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
+			+ event.intype   +' ........  <i>Status: '+event.status     +' </i> ' + event_edit_link(event)  +' <h4>' 
 			 +'<p style="text-align:left" > '+ event.detail  +':</p> '
-             +'<p style="text-align:right" >'+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (reported by ' + event.nickname + ')' + event_edit_link(event)  +'</p>' + '</li></Div>';
+             +'<h5 style="text-align:right" >'+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
+            + ' (reported by ' + event.nickname + ')</h5>' + '</li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
