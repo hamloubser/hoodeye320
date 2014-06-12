@@ -734,8 +734,8 @@ var viewport_list = {
     setup: function() {
         // static listview setup
         var markup = {
-            header: '<h5 style="margin: 0px; padding: 0px;">' + current.active_community.name + ': Recent events</h5>' + 
-            '<ul id="viewport_eventlist" data-role="listview"   data-inset="true" >',
+            header: '<h5 >' + current.active_community.name + ': Recent events</h5>' + 
+            '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"  >',
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
@@ -749,11 +749,13 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<div data-role="content" ><li><h6 class="ui-bar ui-bar-a ui-corner-all" >'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
+            items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
+			+'<h6 class="ui-bar ui-bar-a ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (' + event.nickname + ')  <h6>' 
-			 +'<p style="text-align:left"  > '+ event.detail  +' '
-             +'</p><h6 style="text-align:right" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
+            + ' (' + event.nickname + ') <h6>' 
+			 + event.detail  +' '
+             +'<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
