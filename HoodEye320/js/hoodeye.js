@@ -749,11 +749,11 @@ var viewport_list = {
         var items_html ='';
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<div data-role="content"><li ><h4 class="ui-bar ui-bar-a ui-corner-all" >'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
-			+ event.intype   +' ........  <i>Status: '+event.status     +' </i> ' + event_edit_link(event)  +' <h4>' 
-			 +'<p style="text-align:left" > '+ event.detail  +':</p> '
-             +'<h5 style="text-align:right" >'+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (reported by ' + event.nickname + ')</h5>' + '</li></Div>';
+            items_html += '<div data-role="content" ><li><h6 class="ui-bar ui-bar-a ui-corner-all" >'+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
+			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
+            + ' (' + event.nickname + ')  <h6>' 
+			 +'<p style="text-align:left"  > '+ event.detail  +' '
+             +'</p><h6 style="text-align:right" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
@@ -825,7 +825,7 @@ function event_add_marker(event) {
 
 
 function event_edit_link(event) {
-    return "<img style='float:right' onClick=\"sessionStorage.event_to_edit='" +event._id + "';switchpage('#editeventformpage');\" src='images/edit.png'/>";
+    return "<img style='float:right' style='width: 10px; height: 10px;' onClick=\"sessionStorage.event_to_edit='" +event._id + "';switchpage('#editeventformpage');\" src='images/edit.png' />";
 }
 
 function switchpage(page_id) {
