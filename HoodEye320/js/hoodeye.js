@@ -3,7 +3,12 @@
 
 // load libraries required
 $.getScript('jslibs/jquery.formparams.js');
-$.getScript('jslibs/jsrender/jsrender.min.js');
+//$.getScript('jslibs/jsrender/jsrender.min.js');
+
+
+var qs = get_url_params();
+var server_port = qs.port || 4242;
+var server_address = "http://dev.hoodeye.com:" + server_port;
 
 // example scripts used
 //$.getScript('scripts/capture-app.js');
@@ -26,10 +31,6 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 	navigator.device.capture.captureImage = function() { showstatus("Can't capture image, not on phone"); };
 }
 //-----------------------
-var qs = get_url_params();
-var server_port = qs.port || 4242;
-var server_address = "http://dev.hoodeye.com:" + server_port;
-
 var mapzoomlevel = 15;
 
 var current_clean = {
@@ -59,8 +60,10 @@ var infowindow = new google.maps.InfoWindow();
 // The next builds an object that allows us to queue callbacks once the map is ready
 var mapcheck = new OnceReady();
 
-
-
+//Use onready for queuing messages to socket until ready
+var socketcheck = new OnceReady();
+var socket;
+socketcheck.onready(function () { showstatus('socket should be ready'); });
 
 // PhoneGap is ready
 function onDeviceReady() {
@@ -191,6 +194,11 @@ function onDeviceReady() {
     } else {
         load_memberships(current.user.last_community_id || public_community._id);
     }
+	socket = io(server_address);
+	socket.on('connect', function () {
+	  console.info('socket.io is up');
+	  socketcheck.setready();
+	});
 }
 
 function load_session_user(require_memberships) {
