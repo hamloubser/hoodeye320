@@ -192,27 +192,67 @@ function onDeviceReady() {
         // this will always load memberships
         try_auto_login();  
     } else {
-        load_memberships(current.user.last_community_id || public_community._id);
+	    socket_connect();
+        load_memberships();
     }
+}
+
+function socket_connect() {
+	if (socketcheck.isready) {
+	  debugmsg("disconnecting connected socket");
+	  socket_disconnect();
+	}
 	socket = io(server_address);
 	socket.on('connect', function () {
-	  console.info('socket.io is up');
-	  socketcheck.setready();
+	    debugmsg("new socket connected for " + current.user.username);
+		console.info('socket.io is up');
+		socketcheck.setready();
+	});
+	socket.on('info', function (what,detail) {
+	  console.log('socket info:' + what);
+	  console.log(detail);
+	});
+	socket.on('event-extend',function (event_id,extend_data) {
+	  if (typeof current.allevents[event_id] == 'Object') {
+	    var cur_event = current.allevents[event_id];
+	    current.allevents[event._id] = $.extend(true,cur_event,extend_data);
+		console.log('cur_event then extended');
+		console.log(cur_event);
+		console.log(current.allevents[event._id]);
+		//TODO: refresh any views
+	  }
 	});
 }
 
+function socket_disconnect() {
+	if (socketcheck.isready) {
+	    debugmsg("socket disconnecting for " + current.user.username);
+		socket.disconnect();
+		socket = undefined;
+		socketcheck = new OnceReady();
+	}
+}
+
+
+
+
+
 function load_session_user(require_memberships) {
+    // if we're reloading memberships, we're not in startup, so close the socket nicely first
     $.get(server_address+'/api/whoami',function(session_user) {
         var isnewuser = current.user.username != session_user.username;
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
+	        socket_disconnect();
             current = current_clean;
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
             if(require_memberships) {
-                load_memberships(current.user.last_community_id || public_community._id);
+			    // The only time require_memberships is false is on initial connect, rest of time open socket if a new user
+	            socket_connect();
+                load_memberships();
             }
         }
     });
@@ -235,8 +275,9 @@ function try_auto_login() {
             load_session_user(true);
         });
     } else {
-        // No login attempt, just load the memberships
-        load_memberships(current.user.last_community_id || public_community._id);
+        // No login attempt, just load the memberships and open the socket.io
+	    socket_connect();
+        load_memberships();
     }
 }
 
@@ -252,7 +293,7 @@ function load_memberships(new_community_id) {
     $.get(server_address+'/api/membership',function(memberships) {
         current.memberships = memberships;
         fix_community_switch_menu();
-        switchcommunity(current.user.last_community_id || public_community._id);
+        switchcommunity(new_community_id || current.user.last_community_id || public_community._id);
     });
 }
 
@@ -299,6 +340,7 @@ function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
     
+	socket_disconnect();
     //$.get('/api/login?username=' + username + '&password=' + password,function(result) {
     $.post(server_address+'/api/login',submitdata,function(result) {
         if (result.status === 1) {
@@ -321,6 +363,7 @@ function submitRegister() {
         password: encodeURIComponent($("#reg_password").val()),
         password_verify: encodeURIComponent($("#reg_password_verify").val()),
     };
+	socket_disconnect();
     $.post(server_address+'/api/register',submitdata,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
@@ -337,6 +380,7 @@ function submitRegister() {
 
 function submitLogout() {
     //debugmsg(event);
+	socket_disconnect();
     $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.active_community = { name: "unset"};
@@ -358,8 +402,7 @@ function submitJoincommunity() {
             showstatus("Attempt to join " + submitdata.community_name + " failed: " + result.error);
         } else {
             showstatus("Successfully joined " + submitdata.community_name + " as " + submitdata.nickname);
-            load_memberships();
-            switchcommunity(community_id);
+            load_memberships(community_id);
         }
     });
 }
@@ -418,6 +461,7 @@ function switchcommunity(community_id) {
         //
         //For now, keep this here, should move to event submission
         $("#eventcommunity").val(current.active_community._id);
+		socket.emit('getinfo','rooms');
     } else {
         //First load the community data, then try again
         debugmsg("Loading community data for "+community_id);
@@ -439,6 +483,9 @@ function switchcommunity(community_id) {
             showstatus("Server not availale, not switching community now"); 
         });
     }
+	/*if (current.active_community._id) {
+	  socketcheck.onready( function() { socket.join(current.active_community._id); });
+	}*/
 }
 
 function fix_community_switch_menu() {
