@@ -50,7 +50,7 @@ var default_camera_options = {
 //-----------------------
 var mapzoomlevel = 15;
 
-var CleanCurrent = function () {
+function CleanCurrent () {
     this.active_community = { name: "unset"};
     this.user = { username: "NoUser" };
     this.socket_user = '';
