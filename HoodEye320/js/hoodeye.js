@@ -51,20 +51,20 @@ var default_camera_options = {
 var mapzoomlevel = 15;
 
 var CleanCurrent = function () {
-    var active_community = { name: "unset"};
-    var user = { username: "NoUser" };
-    var socket_user = '';
-    var intype = '';
-    var event_images = [];
-    var event_files = [];
-    var communities_to_join = [];
-    var memberships = {};
-    var communities = {};
-    var community_data = {};
-    var allevents = {};
-    var event_localinfo = {};
+    this.active_community = { name: "unset"};
+    this.user = { username: "NoUser" };
+    this.socket_user = '';
+    this.intype = '';
+    this.event_images = [];
+    this.event_files = [];
+    this.communities_to_join = [];
+    this.memberships = {};
+    this.communities = {};
+    this.community_data = {};
+    this.allevents = {};
+    this.event_localinfo = {};
     // TODO: this should prob be new Position or similar...
-    var position = {};
+    this.position = {};
 	return this;
 };
 var current = new CleanCurrent();
