@@ -19,8 +19,10 @@ function OnceReady() {
   this.callbacks = [];
   this.onready = function (new_callback) {
     if (this.isready) {
+      //console.log("running: "+new_callback);
       new_callback();
     } else {
+      //console.log("pushing: "+new_callback);
       this.callbacks.push(new_callback);
     }
   };
@@ -63,6 +65,9 @@ function debugmsg() {
         data.msg += ' ';
     });
     console.log('debugmsg: ' + data.msg);
-    $.post(server_address+'/api/debugmsg',data);
+    //$.post(server_address+'/api/debugmsg',data);
+	socketcheck.onready(function() {
+	  socket.emit('debugmsg',data.msg);
+    });
 }
 

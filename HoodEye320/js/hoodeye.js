@@ -3,7 +3,12 @@
 
 // load libraries required
 $.getScript('jslibs/jquery.formparams.js');
-$.getScript('jslibs/jsrender/jsrender.min.js');
+//$.getScript('jslibs/jsrender/jsrender.min.js');
+
+
+var qs = get_url_params();
+var server_port = qs.port || 4242;
+var server_address = "http://dev.hoodeye.com:" + server_port;
 
 // example scripts used
 //$.getScript('scripts/capture-app.js');
@@ -26,10 +31,6 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 	navigator.device.capture.captureImage = function() { showstatus("Can't capture image, not on phone"); };
 }
 //-----------------------
-var qs = get_url_params();
-var server_port = qs.port || 4242;
-var server_address = "http://dev.hoodeye.com:" + server_port;
-
 var mapzoomlevel = 15;
 
 var current_clean = {
@@ -59,8 +60,10 @@ var infowindow = new google.maps.InfoWindow();
 // The next builds an object that allows us to queue callbacks once the map is ready
 var mapcheck = new OnceReady();
 
-
-
+//Use onready for queuing messages to socket until ready
+var socketcheck = new OnceReady();
+var socket;
+socketcheck.onready(function () { showstatus('socket should be ready'); });
 
 // PhoneGap is ready
 function onDeviceReady() {
@@ -115,14 +118,29 @@ function onDeviceReady() {
         getLocation();
     });
 	$(document).on('click',".eventCaptureImage",function() {
-		navigator.device.capture.captureImage(function() {
-			current.event_images += arguments;
-			showstatus("Captured images: " + arguments);
-			debugmsg("Captured images: ",arguments);
+		var camera_options = {
+		  quality: 50,
+		  destinationType: Camera.DestinationType.FILE_URL,
+	      encodingType: Camera.EncodingType.JPEG,
+		  targetWidth: 800,
+		  targetHeight: 600,
+		};
+		//navigator.device.capture.captureImage(function(media_files) {...
+		navigator.camera.getPicture(function(file_uri) {
+		    var media_file = window.resolveLocalFileSystemURL(file_uri).file;
+			current.event_images += media_file;
+			showstatus("Captured image: " + file_uri);
+			debugmsg("Captured image uri: ",file_uri);
+			debugmsg("Captured image file obj: ",media_file);
 		}, function() {
 		   showstatus("Error capturing image"); 
-		});
+		}, camera_options);
 	});
+	$(document).on('change',".eventAddFile",function(e) {
+	    var file = e.target.files[0];
+		current.event_files = [ file ];
+	});
+    
     
 	
 	$(document).on( 'slidestop', "#slider-1" ,function( event ) { 
@@ -189,22 +207,67 @@ function onDeviceReady() {
         // this will always load memberships
         try_auto_login();  
     } else {
-        load_memberships(current.user.last_community_id || public_community._id);
+	    socket_connect();
+        load_memberships();
     }
 }
 
+function socket_connect() {
+	if (socketcheck.isready) {
+	  debugmsg("disconnecting connected socket");
+	  socket_disconnect();
+	}
+	socket = io(server_address);
+	socket.on('connect', function () {
+	    debugmsg("new socket connected for " + current.user.username);
+		console.info('socket.io is up');
+		socketcheck.setready();
+	});
+	socket.on('info', function (what,detail) {
+	  console.log('socket info:' + what);
+	  console.log(detail);
+	});
+	socket.on('event-extend',function (event_id,extend_data) {
+	  if (typeof current.allevents[event_id] == 'Object') {
+	    var cur_event = current.allevents[event_id];
+	    current.allevents[event._id] = $.extend(true,cur_event,extend_data);
+		console.log('cur_event then extended');
+		console.log(cur_event);
+		console.log(current.allevents[event._id]);
+		//TODO: refresh any views
+	  }
+	});
+}
+
+function socket_disconnect() {
+	if (socketcheck.isready) {
+	    debugmsg("socket disconnecting for " + current.user.username);
+		socket.disconnect();
+		socket = undefined;
+		socketcheck = new OnceReady();
+	}
+}
+
+
+
+
+
 function load_session_user(require_memberships) {
+    // if we're reloading memberships, we're not in startup, so close the socket nicely first
     $.get(server_address+'/api/whoami',function(session_user) {
         var isnewuser = current.user.username != session_user.username;
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
+	        socket_disconnect();
             current = current_clean;
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
             if(require_memberships) {
-                load_memberships(current.user.last_community_id || public_community._id);
+			    // The only time require_memberships is false is on initial connect, rest of time open socket if a new user
+	            socket_connect();
+                load_memberships();
             }
         }
     });
@@ -227,8 +290,9 @@ function try_auto_login() {
             load_session_user(true);
         });
     } else {
-        // No login attempt, just load the memberships
-        load_memberships(current.user.last_community_id || public_community._id);
+        // No login attempt, just load the memberships and open the socket.io
+	    socket_connect();
+        load_memberships();
     }
 }
 
@@ -244,7 +308,7 @@ function load_memberships(new_community_id) {
     $.get(server_address+'/api/membership',function(memberships) {
         current.memberships = memberships;
         fix_community_switch_menu();
-        switchcommunity(current.user.last_community_id || public_community._id);
+        switchcommunity(new_community_id || current.user.last_community_id || public_community._id);
     });
 }
 
@@ -291,6 +355,7 @@ function submitLogin() {
     var username = encodeURIComponent($("#login_username").val());
     var password = encodeURIComponent($("#login_password").val());
     
+	socket_disconnect();
     //$.get('/api/login?username=' + username + '&password=' + password,function(result) {
     $.post(server_address+'/api/login',submitdata,function(result) {
         if (result.status === 1) {
@@ -313,6 +378,7 @@ function submitRegister() {
         password: encodeURIComponent($("#reg_password").val()),
         password_verify: encodeURIComponent($("#reg_password_verify").val()),
     };
+	socket_disconnect();
     $.post(server_address+'/api/register',submitdata,function(result) {
         if (result.status === 1) {
             showstatus(result.message);
@@ -329,6 +395,7 @@ function submitRegister() {
 
 function submitLogout() {
     //debugmsg(event);
+	socket_disconnect();
     $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.active_community = { name: "unset"};
@@ -350,8 +417,7 @@ function submitJoincommunity() {
             showstatus("Attempt to join " + submitdata.community_name + " failed: " + result.error);
         } else {
             showstatus("Successfully joined " + submitdata.community_name + " as " + submitdata.nickname);
-            load_memberships();
-            switchcommunity(community_id);
+            load_memberships(community_id);
         }
     });
 }
@@ -410,6 +476,7 @@ function switchcommunity(community_id) {
         //
         //For now, keep this here, should move to event submission
         $("#eventcommunity").val(current.active_community._id);
+		socket.emit('getinfo','rooms');
     } else {
         //First load the community data, then try again
         debugmsg("Loading community data for "+community_id);
@@ -431,6 +498,9 @@ function switchcommunity(community_id) {
             showstatus("Server not availale, not switching community now"); 
         });
     }
+	/*if (current.active_community._id) {
+	  socketcheck.onready( function() { socket.join(current.active_community._id); });
+	}*/
 }
 
 function fix_community_switch_menu() {
@@ -487,7 +557,7 @@ function updatecommunityprofilepage() {
 // End of membership and community management section
 //
 // Start of Event and display section
-
+ 
 
 function submitEvent() {
     var currentTime = new Date();
@@ -514,6 +584,11 @@ function submitEvent() {
     event_data.long = current.position.coords.longitude;
     //device has some weird characters in that is causing the post to fail, needs encoding or JSON or something
     //event_data.device = device;
+
+	// Clear any addfile input field, that is handeled like images
+	if (event_data.addfile) {
+      delete event_data.addfile;
+	}
     
     // if the manmarker is moved use its location.     
     //if ( current.manmarker !== 0  ) {
@@ -528,6 +603,22 @@ function submitEvent() {
         //debugmsg("response:",response)
         if (response.status) {
             showstatus("Event saved");
+			if (current.event_files.length > 0) {
+              var files_to_save = current.event_files;
+              $.each(files_to_save,function(key,file) {
+			    console.log('saving file to event:'+file.name);
+			    event_save_image(response.event,file);
+			  });
+			  current.event_files = [];
+			}
+			if (current.event_images.length > 0) {
+              var images_to_save = current.event_images;
+              $.each(images_to_save,function(key,file) {
+			    event_save_image(response.event,file);
+			  });
+			  current.event_images = [];
+			}
+            //TODO: trigger load of event
         } else {
             showstatus("Event not saved: "+response.msg);
         }
@@ -541,7 +632,14 @@ function submitEvent() {
     //});
 }
 
-
+function event_save_image(event,file) {
+	console.log('saving event file:');
+	console.log(file.name);
+	// upload a file to the server.
+	var stream = ss.createStream();
+	ss(socket).emit('event-add-file-stream', stream, event.community_id, event._id, file.name);
+	ss.createBlobReadStream(file).pipe(stream);
+}
 
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
@@ -561,6 +659,7 @@ function getLocation(on_success) {
 
 function load_addeventform (key) {
     current.event_images = [];
+    current.event_files = [];
     current.intype = current.active_community.intypes[key] ;
     debugmsg("Loading addevent form for"+current.intype.name);
     var content = $("#addeventformpage div:jqmData(role=content)");
@@ -754,8 +853,15 @@ var viewport_list = {
 			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
-			 + event.detail  +' '
-             +'<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
+			 + event.detail  +'</h6> ';
+			 // Now add any images
+			 if (typeof event.files == 'object') {
+			   $.each(event.files,function(key,filename) {
+			     items_html += "<img src='" + server_address + "/api/file/"+filename+"'/>";
+			   });
+			  }
+
+             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
