@@ -11,6 +11,14 @@ var server_port = qs.port || 4242;
 var server_address = "http://dev.hoodeye.com:" + server_port;
 var ws_server_address = "http://dev.hoodeye.com:" + server_port;
 
+var default_camera_options = {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+    encodingType: Camera.EncodingType.JPEG,
+    targetWidth: 800,
+    targetHeight: 600,
+};
+
 
 // example scripts used
 //$.getScript('scripts/capture-app.js');
@@ -72,6 +80,9 @@ socketcheck.onready(function () { showstatus('socket should be ready'); });
 
 // PhoneGap is ready
 function onDeviceReady() {
+    window.onerror = function (msg, url, line) {
+        debugsmg('Uncaught exception (msg,url,line):',msg,url,line);
+    };
     getLocation(init_viewportMap);
 	 
     // use credentials on all ajax calls, required for in-browser, may not be required for Cordova
@@ -122,23 +133,19 @@ function onDeviceReady() {
     $(document).delegate('#addeventformpage','pagebeforeshow',function(){
         getLocation();
     });
+    $(document).on('click',".eventAttachImage",function() {
+        var camera_options = default_camera_options;
+        camera_options.PictureSourceType  = 0; //PHOTOLIBRARY;
+        //camera_options.PictureSourceType  = 1; //CAMERA - default
+        //camera_options.PictureSourceType  = 2; //SAVEDPHOTOALBUM;
+        event_new_image(camera_options);
+	});
+
 	$(document).on('click',".eventCaptureImage",function() {
-		var camera_options = {
-		  quality: 50,
-		  destinationType: Camera.DestinationType.DATA_URL,
-	      encodingType: Camera.EncodingType.JPEG,
-		  targetWidth: 800,
-		  targetHeight: 600,
-		};
+        var camera_options = default_camera_options;
+        // customise camera_options
 		//navigator.device.capture.captureImage(function(media_files) {...
-		navigator.camera.getPicture(function(imagedata_base64) {
-            image_blob = base64toBlob(imagedata_base64,'image/jpg');
-            image_blob.name = 'photo-'+current.event_images.length+'.jpg';
-            debugmsg("Captured image file obj: ",image_blob.name);
-            current.event_images.push(image_blob);
-		}, function() {
-		   showstatus("Error capturing image"); 
-		}, camera_options);
+        event_new_image(camera_options);
 	});
 	$(document).on('change',".eventAddFile",function(e) {
 	    var file = e.target.files[0];
@@ -214,6 +221,18 @@ function onDeviceReady() {
 	    socket_connect();
         load_memberships();
     }
+}
+
+function event_new_image(camera_options) {
+    navigator.camera.getPicture(function(imagedata_base64) {
+        image_blob = base64toBlob(imagedata_base64,'image/jpg');
+        image_blob.name = 'photo-'+current.event_images.length+'.jpg';
+        debugmsg("Captured image file obj: ",image_blob.name);
+        current.event_images.push(image_blob);
+    }, function() {
+        showstatus("Error capturing image"); 
+    }, camera_options);
+    
 }
 
 function socket_connect() {
@@ -732,7 +751,18 @@ function editeventformpage() {
     c += 'Event type: ' + thisevent.intype_label + '<br/>';
     c += '<h4>Detail:</h4>';
     c += thisevent.detail + '<br>';
-    c += 'Added by ' + thisevent.nickname + ' at ' + thisevent.create_time + '<br><br>';
+    c += 'Added by ' + thisevent.nickname + ' at ' 
+    		+ thisevent.create_time.substring(0,10) + ' @ ' + thisevent.create_time.substring(11,16)  
+    		+ '<br><br>';
+    
+    if (typeof thisevent.files == 'object') {
+        c += '<div class="eventimages">';
+        $.each(thisevent.files,function(key,filename) {
+            c += "<img width=" + img_width+ " src='" + server_address + "/api/file/"+filename+"'/>";
+        });
+        c += '</div>';
+    }
+
     //c += 'Debug: ' + JSON.stringify(thisevent);
     $("#editeventformcontent").html(c);
 }
@@ -879,14 +909,16 @@ var viewport_list = {
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
 			 + event.detail  +'</h6> ';
+            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li>';
+
 			 // Now add any images
 			 if (typeof event.files == 'object') {
 			   $.each(event.files,function(key,filename) {
 			     items_html += "<img width=" + img_width+ " src='" + server_address + "/api/file/"+filename+"'/>";
 			   });
 			  }
+            items_html += '</div>';
 
-             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
