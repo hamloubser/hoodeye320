@@ -66,7 +66,7 @@ function CleanCurrent () {
     // TODO: this should prob be new Position or similar...
     this.position = {};
 	return this;
-};
+}
 var current;
 
 // Load the public community from localstorage if available
@@ -916,7 +916,8 @@ function viewports_setup () {
         viewportMap.setCenter(viewportMap.latlngbounds.getCenter());
         viewportMap.fitBounds(viewportMap.latlngbounds);
     },
-};
+	};
+
 
   viewport_list = {
     name: 'Default list viewport',
@@ -963,7 +964,8 @@ function viewports_setup () {
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
     },
-};
+  };
+}
 
 function viewports_do(action,arg) {
     //debugmsg("viewports_do: doing " + action);
