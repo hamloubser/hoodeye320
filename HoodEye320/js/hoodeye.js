@@ -81,6 +81,9 @@ var infowindow;
 // The next builds an object that allows us to queue callbacks once the map is ready
 var mapcheck;
 
+var viewport_map;
+var viewport_list;
+
 //Use onready for queuing messages to socket until ready
 var socketcheck;
 var socket;
@@ -93,6 +96,7 @@ function onDeviceReady() {
     mapcheck = new OnceReady();
     socketcheck = new OnceReady();
     socketcheck.onready(function () { showstatus('socket should be ready'); });
+	viewports_setup();
     debugmsg('onDeviceReady current:',current);
     
     window.onerror = function (msg, url, line) {
@@ -875,7 +879,8 @@ function refresh_eventstreams(on_new_events) {
 //------------------try to get cool map with locations   
 //
 // For now, the default 2 viewports: viewport_map and viewport_list, will make this dynamic later
-var viewport_map = {
+function viewports_setup () {
+  viewport_map = {
     name: 'Default map viewport',
     clear: function() {
         if (typeof viewportMap === 'object') {
@@ -913,8 +918,7 @@ var viewport_map = {
     },
 };
 
-
-var viewport_list = {
+  viewport_list = {
     name: 'Default list viewport',
     clear: function() {
         $("#viewportListcontent").html("<h2>Switching community...</h2>");
