@@ -65,12 +65,14 @@ function debugmsg() {
         data.msg += ' ';
     });
     console.log('debugmsg: ' + data.msg);
-	if (!socketchek.isready) {
+    $.post(server_address+'/api/debugmsg',data);
+
+	/*if (!socketcheck.isready) {
       $.post(server_address+'/api/debugmsg',data);
 	} else {
 	  socketcheck.onready(function() {
 	    socket.emit('debugmsg',data.msg);
       });
-	}
+	}*/
 }
 
