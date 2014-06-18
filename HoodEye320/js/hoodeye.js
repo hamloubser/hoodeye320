@@ -118,14 +118,29 @@ function onDeviceReady() {
         getLocation();
     });
 	$(document).on('click',".eventCaptureImage",function() {
-		navigator.device.capture.captureImage(function() {
-			current.event_images += arguments;
-			showstatus("Captured images: " + arguments);
-			debugmsg("Captured images: ",arguments);
+		var camera_options = {
+		  quality: 50,
+		  destinationType: Camera.DestinationType.FILE_URL,
+	      encodingType: Camera.EncodingType.JPEG,
+		  targetWidth: 800,
+		  targetHeight: 600,
+		};
+		//navigator.device.capture.captureImage(function(media_files) {...
+		navigator.camera.getPicture(function(file_uri) {
+		    var media_file = window.resolveLocalFileSystemURL(file_uri).file;
+			current.event_images += media_file;
+			showstatus("Captured image: " + file_uri);
+			debugmsg("Captured image uri: ",file_uri);
+			debugmsg("Captured image file obj: ",media_file);
 		}, function() {
 		   showstatus("Error capturing image"); 
-		});
+		}, camera_options);
 	});
+	$(document).on('change',".eventAddFile",function(e) {
+	    var file = e.target.files[0];
+		current.event_files = [ file ];
+	});
+    
     
 	
 	$(document).on( 'slidestop', "#slider-1" ,function( event ) { 
@@ -542,7 +557,7 @@ function updatecommunityprofilepage() {
 // End of membership and community management section
 //
 // Start of Event and display section
-
+ 
 
 function submitEvent() {
     var currentTime = new Date();
@@ -569,6 +584,11 @@ function submitEvent() {
     event_data.long = current.position.coords.longitude;
     //device has some weird characters in that is causing the post to fail, needs encoding or JSON or something
     //event_data.device = device;
+
+	// Clear any addfile input field, that is handeled like images
+	if (event_data.addfile) {
+      delete event_data.addfile;
+	}
     
     // if the manmarker is moved use its location.     
     //if ( current.manmarker !== 0  ) {
@@ -583,6 +603,22 @@ function submitEvent() {
         //debugmsg("response:",response)
         if (response.status) {
             showstatus("Event saved");
+			if (current.event_files.length > 0) {
+              var files_to_save = current.event_files;
+              $.each(files_to_save,function(key,file) {
+			    console.log('saving file to event:'+file.name);
+			    event_save_image(response.event,file);
+			  });
+			  current.event_files = [];
+			}
+			if (current.event_images.length > 0) {
+              var images_to_save = current.event_images;
+              $.each(images_to_save,function(key,file) {
+			    event_save_image(response.event,file);
+			  });
+			  current.event_images = [];
+			}
+            //TODO: trigger load of event
         } else {
             showstatus("Event not saved: "+response.msg);
         }
@@ -596,7 +632,14 @@ function submitEvent() {
     //});
 }
 
-
+function event_save_image(event,file) {
+	console.log('saving event file:');
+	console.log(file.name);
+	// upload a file to the server.
+	var stream = ss.createStream();
+	ss(socket).emit('event-add-file-stream', stream, event.community_id, event._id, file.name);
+	ss.createBlobReadStream(file).pipe(stream);
+}
 
 function getLocation(on_success) {
     navigator.geolocation.getCurrentPosition(function(position){
@@ -616,6 +659,7 @@ function getLocation(on_success) {
 
 function load_addeventform (key) {
     current.event_images = [];
+    current.event_files = [];
     current.intype = current.active_community.intypes[key] ;
     debugmsg("Loading addevent form for"+current.intype.name);
     var content = $("#addeventformpage div:jqmData(role=content)");
@@ -809,8 +853,15 @@ var viewport_list = {
 			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
-			 + event.detail  +' '
-             +'<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
+			 + event.detail  +'</h6> ';
+			 // Now add any images
+			 if (typeof event.files == 'object') {
+			   $.each(event.files,function(key,filename) {
+			     items_html += "<img src='" + server_address + "/api/file/"+filename+"'/>";
+			   });
+			  }
+
+             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li></Div>';
         });
         $("#viewport_eventlist").prepend(items_html);
         $("#viewport_eventlist").listview('refresh');
