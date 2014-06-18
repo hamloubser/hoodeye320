@@ -40,6 +40,8 @@ var current_clean = {
     user: { username: "NoUser" },
     socket_user: '',
     intype: '',
+    event_images: [],
+    event_files: [],
     communities_to_join: [],
     memberships: {},
     communities: {},
@@ -123,19 +125,17 @@ function onDeviceReady() {
 	$(document).on('click',".eventCaptureImage",function() {
 		var camera_options = {
 		  quality: 50,
-		  destinationType: Camera.DestinationType.FILE_URL,
+		  destinationType: Camera.DestinationType.DATA_URL,
 	      encodingType: Camera.EncodingType.JPEG,
 		  targetWidth: 800,
 		  targetHeight: 600,
 		};
 		//navigator.device.capture.captureImage(function(media_files) {...
-		navigator.camera.getPicture(function(file_uri) {
-			debugmsg("Captured image uri: ",file_uri);
-		    var media_file = window.resolveLocalFileSystemURL(file_uri).file;
-			debugmsg("Captured image file obj: ",media_file);
-			current.event_images += media_file;
-			debugmsg("current.event_images now:", current.event_images);
-			showstatus("Captured image: " + file_uri);
+		navigator.camera.getPicture(function(imagedata_base64) {
+            image_blob = base64toBlob(imagedata_base64,'image/jpg');
+            image_blob.name = 'photo-'+current.event_images.length+'.jpg';
+            debugmsg("Captured image file obj: ",image_blob.name);
+            current.event_images.push(image_blob);
 		}, function() {
 		   showstatus("Error capturing image"); 
 		}, camera_options);
@@ -624,6 +624,8 @@ function submitEvent() {
         if (response.status) {
             showstatus("Event saved");
 			debugmsg("current.event_files: ",current.event_files);
+            debugmsg("current.event_images.length: ",current.event_images.length);
+            
 			if (current.event_files.length > 0) {
               var files_to_save = current.event_files;
               $.each(files_to_save,function(key,file) {
@@ -634,8 +636,8 @@ function submitEvent() {
 			}
 			if (current.event_images.length > 0) {
               var images_to_save = current.event_images;
-              $.each(images_to_save,function(key,file) {
-			    event_save_image(response.event,file);
+              $.each(images_to_save,function(key,image_blob) {
+			    event_save_image(response.event,image_blob);
 			  });
 			  current.event_images = [];
 			}
@@ -653,13 +655,13 @@ function submitEvent() {
     //});
 }
 
-function event_save_image(event,file) {
-	debugmsg('saving event file:');
-	debugmsg(file.name);
+function event_save_image(event,image_blob) {
+	debugmsg('saving event image_blob:');
+	debugmsg(image_blob.name);
 	// upload a file to the server.
 	var stream = ss.createStream();
-	ss(socket).emit('event-add-file-stream', stream, event.community_id, event._id, file.name);
-	ss.createBlobReadStream(file).pipe(stream);
+	ss(socket).emit('event-add-file-stream', stream, event.community_id, event._id, image_blob.name);
+	ss.createBlobReadStream(image_blob).pipe(stream);
 }
 
 function getLocation(on_success) {
@@ -867,6 +869,8 @@ var viewport_list = {
     showevents: function(events) {
         // Listview
         var items_html ='';
+        // adw: the ~~ should give an integer value
+        var img_width = ~~($(window).width()*.85);
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
             items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
@@ -878,7 +882,7 @@ var viewport_list = {
 			 // Now add any images
 			 if (typeof event.files == 'object') {
 			   $.each(event.files,function(key,filename) {
-			     items_html += "<img src='" + server_address + "/api/file/"+filename+"'/>";
+			     items_html += "<img width=" + img_width+ " src='" + server_address + "/api/file/"+filename+"'/>";
 			   });
 			  }
 
