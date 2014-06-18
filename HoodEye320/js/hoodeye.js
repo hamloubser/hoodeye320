@@ -9,6 +9,8 @@ $.getScript('jslibs/jquery.formparams.js');
 var qs = get_url_params();
 var server_port = qs.port || 4242;
 var server_address = "http://dev.hoodeye.com:" + server_port;
+var ws_server_address = "http://dev.hoodeye.com:" + server_port;
+
 
 // example scripts used
 //$.getScript('scripts/capture-app.js');
@@ -36,6 +38,7 @@ var mapzoomlevel = 15;
 var current_clean = {
     active_community: { name: "unset"},
     user: { username: "NoUser" },
+    socket_user: '',
     intype: '',
     communities_to_join: [],
     memberships: {},
@@ -217,15 +220,27 @@ function socket_connect() {
 	  debugmsg("disconnecting connected socket");
 	  socket_disconnect();
 	}
+    debugmsg("connecting socket.....");
 	socket = io(server_address);
+    debugmsg('socket:',socket);
+
+    socket.on('info', function (what,detail) {
+        if (what == 'user') {
+            current.socket_user = detail;
+            debugmsg("socket user set to " + detail);            
+        }
+        console.log('socket info:' + what);
+        console.log(detail);
+    });
+    // Do the request to get the current socket_user    
+    socket.emit('getinfo','user);
+    socket.on('error', function () {
+        debugmsg('socket error:',arguments);
+    });
 	socket.on('connect', function () {
 	    debugmsg("new socket connected for " + current.user.username);
 		console.info('socket.io is up');
 		socketcheck.setready();
-	});
-	socket.on('info', function (what,detail) {
-	  console.log('socket info:' + what);
-	  console.log(detail);
 	});
 	socket.on('event-extend',function (event_id,extend_data) {
 	  if (typeof current.allevents[event_id] == 'Object') {
@@ -259,16 +274,21 @@ function load_session_user(require_memberships) {
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
-	        socket_disconnect();
             current = current_clean;
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
             if(require_memberships) {
 			    // The only time require_memberships is false is on initial connect, rest of time open socket if a new user
-	            socket_connect();
                 load_memberships();
             }
+            // if the socket is ready, compare the socket session user to the whoami user and re-connect if required
+            socketcheck.onready(function() {
+                if (current.socket_user != current.user.username) {
+                    debugmsg("  load_session_user: reconnecting socket as user has changed");
+                    socket_connect();
+                } 
+            });
         }
     });
 }
