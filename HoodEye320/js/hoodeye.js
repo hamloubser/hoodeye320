@@ -221,14 +221,15 @@ function onDeviceReady() {
     $(':jqmData(role="page")').page().enhanceWithin();
     
     // Get my user detail and default community and assign it
-    load_session_user(false);
-    if (current.user.username == 'Guest') {
-        // this will always load memberships
-        try_auto_login();  
-    } else {
-	    socket_connect();
-        load_memberships();
-    }
+    load_session_user(false, function() {
+      if (current.user.username == 'Guest') {
+          // this will always load memberships
+          try_auto_login();  
+      } else {
+	      socket_connect();
+          load_memberships();
+      }
+	});
 }
 
 function event_new_image(camera_options) {
@@ -293,7 +294,7 @@ function socket_disconnect() {
 
 
 
-function load_session_user(require_memberships) {
+function load_session_user(require_memberships,next) {
     // if we're reloading memberships, we're not in startup, so close the socket nicely first
     $.get(server_address+'/api/whoami',function(session_user) {
         var isnewuser = current.user.username != session_user.username;
@@ -316,6 +317,7 @@ function load_session_user(require_memberships) {
                 } 
             });
         }
+		if (typeof next == 'function') next();
     });
 }
 
@@ -408,8 +410,9 @@ function submitLogin() {
             showstatus(result.message);
             localStorage.login_username=username;
             localStorage.login_password=password;
-            load_session_user(true);
-			switchpage('#home');
+            load_session_user(true,function() {
+			  switchpage('#home');
+		 	});
         } else {
             alert(result.message);
             // A failed login attempt could log us out from current user, so always check who I am
@@ -430,11 +433,13 @@ function submitRegister() {
             showstatus(result.message);
             localStorage.login_username = submitdata.sername;
             localStorage.login_password = submitdata.password;
-            load_session_user(true);
-			switchpage('#home');
+            load_session_user(true,function () {
+			  switchpage('#home');
+			});
         } else {
-            load_session_user(true);
-            showstatus(result.message);
+            load_session_user(true,function() {
+              showstatus(result.message);
+			});
         }
     });
 }
@@ -445,8 +450,9 @@ function submitLogout() {
     $.post(server_address+'/api/logout',function(result) {
         showstatus(result.message);
         current.active_community = { name: "unset"};
-        load_session_user(true);
-		switchpage('#loginpage');
+        load_session_user(true,function() {
+		  switchpage('#loginpage');
+		});
     });
 }
 
