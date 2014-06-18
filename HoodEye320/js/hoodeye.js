@@ -282,7 +282,7 @@ function socket_connect() {
 }
 
 function socket_disconnect() {
-	if (socketcheck.isready) {
+	if (typeof socketcheck == 'object' && socketcheck.isready) {
 	    debugmsg("socket disconnecting for " + current.user.username);
 		socket.disconnect();
 		socket = undefined;
