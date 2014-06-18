@@ -130,11 +130,12 @@ function onDeviceReady() {
 		};
 		//navigator.device.capture.captureImage(function(media_files) {...
 		navigator.camera.getPicture(function(file_uri) {
-		    var media_file = window.resolveLocalFileSystemURL(file_uri).file;
-			current.event_images += media_file;
-			showstatus("Captured image: " + file_uri);
 			debugmsg("Captured image uri: ",file_uri);
+		    var media_file = window.resolveLocalFileSystemURL(file_uri).file;
 			debugmsg("Captured image file obj: ",media_file);
+			current.event_images += media_file;
+			debugmsg("current.event_images now:", current.event_images);
+			showstatus("Captured image: " + file_uri);
 		}, function() {
 		   showstatus("Error capturing image"); 
 		}, camera_options);
@@ -229,8 +230,8 @@ function socket_connect() {
             current.socket_user = detail;
             debugmsg("socket user set to " + detail);            
         }
-        console.log('socket info:' + what);
-        console.log(detail);
+        debugmsg('socket info:' + what);
+        debugmsg(detail);
     });
     // Do the request to get the current socket_user    
     socket.emit('getinfo','user');
@@ -239,16 +240,15 @@ function socket_connect() {
     });
 	socket.on('connect', function () {
 	    debugmsg("new socket connected for " + current.user.username);
-		console.info('socket.io is up');
 		socketcheck.setready();
 	});
 	socket.on('event-extend',function (event_id,extend_data) {
 	  if (typeof current.allevents[event_id] == 'object') {
 	    var cur_event = current.allevents[event_id];
 	    current.allevents[event._id] = $.extend(true,cur_event,extend_data);
-		console.log('cur_event then extended');
-		console.log(cur_event);
-		console.log(current.allevents[event._id]);
+		debugmsg('cur_event then extended:' + event_id);
+		//debugsmg(cur_event);
+		debugmsg(current.allevents[event._id]);
 		//TODO: refresh any views
 	  }
 	});
@@ -623,10 +623,11 @@ function submitEvent() {
         //debugmsg("response:",response)
         if (response.status) {
             showstatus("Event saved");
+			debugmsg("current.event_files: ",current.event_files);
 			if (current.event_files.length > 0) {
               var files_to_save = current.event_files;
               $.each(files_to_save,function(key,file) {
-			    console.log('saving file to event:'+file.name);
+			    debugmsg('saving file to event:'+file.name);
 			    event_save_image(response.event,file);
 			  });
 			  current.event_files = [];
@@ -653,8 +654,8 @@ function submitEvent() {
 }
 
 function event_save_image(event,file) {
-	console.log('saving event file:');
-	console.log(file.name);
+	debugmsg('saving event file:');
+	debugmsg(file.name);
 	// upload a file to the server.
 	var stream = ss.createStream();
 	ss(socket).emit('event-add-file-stream', stream, event.community_id, event._id, file.name);
