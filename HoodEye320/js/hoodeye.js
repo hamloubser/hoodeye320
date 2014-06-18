@@ -67,7 +67,7 @@ function CleanCurrent () {
     this.position = {};
 	return this;
 };
-var current = new CleanCurrent();
+var current;
 
 // Load the public community from localstorage if available
 // This is current definition, use that if no network connection
@@ -77,17 +77,22 @@ var public_community = {
 };
 
 var viewportMap;
-var infowindow = new google.maps.InfoWindow();
+var infowindow;
 // The next builds an object that allows us to queue callbacks once the map is ready
-var mapcheck = new OnceReady();
+var mapcheck;
 
 //Use onready for queuing messages to socket until ready
-var socketcheck = new OnceReady();
+var socketcheck;
 var socket;
-socketcheck.onready(function () { showstatus('socket should be ready'); });
 
 // PhoneGap is ready
 function onDeviceReady() {
+    // Seems this is necessary again?!? 
+    infowindow = new google.maps.InfoWindow();
+    current = new CleanCurrent();
+    mapcheck = new OnceReady();
+    socketcheck = new OnceReady();
+    socketcheck.onready(function () { showstatus('socket should be ready'); });
     debugmsg('onDeviceReady current:',current);
     
     window.onerror = function (msg, url, line) {
