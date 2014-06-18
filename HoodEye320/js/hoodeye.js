@@ -786,6 +786,8 @@ function editeventformpage() {
     thisevent = current.allevents[sessionStorage.event_to_edit];
     console.log('Creating edit event page for event ' + thisevent._id);
     console.log(thisevent);
+    var img_width = ~~($(window).width()*0.85);
+
     var c = '';
     c += '<h3>Community: ' + thisevent.community_name + '</h3>';
     c += 'Event type: ' + thisevent.intype_label + '<br/>';
