@@ -88,7 +88,7 @@ socketcheck.onready(function () { showstatus('socket should be ready'); });
 // PhoneGap is ready
 function onDeviceReady() {
     window.onerror = function (msg, url, line) {
-        debugsmg('Uncaught exception (msg,url,line):',msg,url,line);
+        debugmsg('Uncaught exception (msg,url,line):',msg,url,line);
     };
     getLocation(init_viewportMap);
 	 
@@ -249,7 +249,6 @@ function socket_connect() {
 	}
     debugmsg("connecting socket.....");
 	socket = io(server_address);
-    debugmsg('socket:',socket);
 
     socket.on('info', function (what,detail) {
         if (what == 'user') {
