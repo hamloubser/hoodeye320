@@ -65,9 +65,12 @@ function debugmsg() {
         data.msg += ' ';
     });
     console.log('debugmsg: ' + data.msg);
-    //$.post(server_address+'/api/debugmsg',data);
-	socketcheck.onready(function() {
-	  socket.emit('debugmsg',data.msg);
-    });
+	if (!socketchek.isready) {
+      $.post(server_address+'/api/debugmsg',data);
+	} else {
+	  socketcheck.onready(function() {
+	    socket.emit('debugmsg',data.msg);
+      });
+	}
 }
 
