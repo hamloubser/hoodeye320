@@ -233,7 +233,7 @@ function socket_connect() {
         console.log(detail);
     });
     // Do the request to get the current socket_user    
-    socket.emit('getinfo','user);
+    socket.emit('getinfo','user');
     socket.on('error', function () {
         debugmsg('socket error:',arguments);
     });
@@ -243,7 +243,7 @@ function socket_connect() {
 		socketcheck.setready();
 	});
 	socket.on('event-extend',function (event_id,extend_data) {
-	  if (typeof current.allevents[event_id] == 'Object') {
+	  if (typeof current.allevents[event_id] == 'object') {
 	    var cur_event = current.allevents[event_id];
 	    current.allevents[event._id] = $.extend(true,cur_event,extend_data);
 		console.log('cur_event then extended');
