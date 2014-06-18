@@ -88,6 +88,8 @@ socketcheck.onready(function () { showstatus('socket should be ready'); });
 
 // PhoneGap is ready
 function onDeviceReady() {
+    debugmsg('onDeviceReady current:',current);
+    
     window.onerror = function (msg, url, line) {
         debugmsg('Uncaught exception (msg,url,line):',msg,url,line);
     };
@@ -296,12 +298,28 @@ function socket_disconnect() {
 
 function load_session_user(require_memberships,next) {
     // if we're reloading memberships, we're not in startup, so close the socket nicely first
+    try {
+    	debugmsg('current:',current);
+    }
+    catch(err) {
+        debugmsg('current err:',err);
+    }
+    if (typeof current != 'object' ) {
+        current = new CleanCurrent();
+    }
     $.get(server_address+'/api/whoami',function(session_user) {
-        var isnewuser = typeof current.user != 'object' || current.user.username != session_user.username;
+        if (typeof current.user != 'object') {
+            current = new CleanCurrent();
+            isnewuser = true;
+        }
+        debugmsg('current user:',current.user);
+        if (current.user.username != session_user.username) {
+            current = new CleanCurrent();
+            isnewuser = true;
+        }
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
-            current = new CleanCurrent();
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
