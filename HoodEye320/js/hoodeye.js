@@ -67,7 +67,7 @@ var CleanCurrent = function () {
     var position = {};
 	return this;
 };
-var current = new CleanCurrent;
+var current = new CleanCurrent();
 
 // Load the public community from localstorage if available
 // This is current definition, use that if no network connection
@@ -297,11 +297,11 @@ function socket_disconnect() {
 function load_session_user(require_memberships,next) {
     // if we're reloading memberships, we're not in startup, so close the socket nicely first
     $.get(server_address+'/api/whoami',function(session_user) {
-        var isnewuser = current.user.username != session_user.username;
+        var isnewuser = typeof current.user != 'object' || current.user.username != session_user.username;
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
-            current = new CleanCurrent;
+            current = new CleanCurrent();
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
@@ -913,7 +913,7 @@ var viewport_list = {
         // Listview
         var items_html ='';
         // adw: the ~~ should give an integer value
-        var img_width = ~~($(window).width()*.85);
+        var img_width = ~~($(window).width()*0.85);
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
             items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
