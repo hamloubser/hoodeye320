@@ -11,13 +11,6 @@ var server_port = qs.port || 4242;
 var server_address = "http://dev.hoodeye.com:" + server_port;
 var ws_server_address = "http://dev.hoodeye.com:" + server_port;
 
-var default_camera_options = {
-    quality: 50,
-    destinationType: Camera.DestinationType.DATA_URL,
-    encodingType: Camera.EncodingType.JPEG,
-    targetWidth: 800,
-    targetHeight: 600,
-};
 
 
 // example scripts used
@@ -39,7 +32,21 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
 	navigator.device = {};
 	navigator.device.capture = {};
 	navigator.device.capture.captureImage = function() { showstatus("Can't capture image, not on phone"); };
+    var Camera = {};
+    Camera.DestinationType = {};
+    Camera.EncodingType = {};
+    Camera.DestinationType.DATA_URL = 0;
+    Camera.EncodingType.JPEG = 0;
 }
+    
+var default_camera_options = {
+    quality: 50,
+    destinationType: Camera.DestinationType.DATA_URL,
+    encodingType: Camera.EncodingType.JPEG,
+    targetWidth: 800,
+    targetHeight: 600,
+};
+
 //-----------------------
 var mapzoomlevel = 15;
 
@@ -135,9 +142,9 @@ function onDeviceReady() {
     });
     $(document).on('click',".eventAttachImage",function() {
         var camera_options = default_camera_options;
-        camera_options.PictureSourceType  = 0; //PHOTOLIBRARY;
+        //camera_options.PictureSourceType  = 0; //PHOTOLIBRARY;
         //camera_options.PictureSourceType  = 1; //CAMERA - default
-        //camera_options.PictureSourceType  = 2; //SAVEDPHOTOALBUM;
+        camera_options.PictureSourceType  = 2; //SAVEDPHOTOALBUM;
         event_new_image(camera_options);
 	});
 
