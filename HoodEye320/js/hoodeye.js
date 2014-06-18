@@ -50,23 +50,24 @@ var default_camera_options = {
 //-----------------------
 var mapzoomlevel = 15;
 
-var current_clean = {
-    active_community: { name: "unset"},
-    user: { username: "NoUser" },
-    socket_user: '',
-    intype: '',
-    event_images: [],
-    event_files: [],
-    communities_to_join: [],
-    memberships: {},
-    communities: {},
-    community_data: {},
-    allevents: {},
-    event_localinfo: {},
+var CleanCurrent = function () {
+    var active_community = { name: "unset"};
+    var user = { username: "NoUser" };
+    var socket_user = '';
+    var intype = '';
+    var event_images = [];
+    var event_files = [];
+    var communities_to_join = [];
+    var memberships = {};
+    var communities = {};
+    var community_data = {};
+    var allevents = {};
+    var event_localinfo = {};
     // TODO: this should prob be new Position or similar...
-    position: {},
+    var position = {};
+	return this;
 };
-var current = current_clean;
+var current = new CleanCurrent;
 
 // Load the public community from localstorage if available
 // This is current definition, use that if no network connection
@@ -299,7 +300,7 @@ function load_session_user(require_memberships) {
         debugmsg("load_session_user isnewuser: "+isnewuser);
         debugmsg("session username: "+session_user.username," current loaded username:"+current.user.username);
         if (isnewuser) {
-            current = current_clean;
+            current = new CleanCurrent;
             current.user = session_user;
             fix_user_menu();
             // load membershiups and then switch community
