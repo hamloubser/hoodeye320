@@ -657,7 +657,8 @@ function submitEvent() {
     var currentTime = new Date();
     
     //This uses jquery.formparams.js
-    var event_data = $('#EventForm').formParams();
+    var event_data = {};
+	event_data.data = $('#EventForm').formParams();
     debugmsg('event_data as from form:',event_data);
     
     // Standard event data
