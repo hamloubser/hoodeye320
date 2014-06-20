@@ -292,6 +292,19 @@ function socket_connect() {
 		//TODO: refresh any views
 	  }
 	});
+	socket.on('event-saved',function (community_id,event_id) {
+		console.log('event-saved in '+community_id+' new id: '+event_id);
+		if (current.active_community._id == community_id) {
+          refresh_eventstreams(function () {
+		    if ($.mobile.activePage.attr("id") == 'viewportListpage') {
+			  viewport_list.showevents();
+			}
+		    if ($.mobile.activePage.attr("id") == 'viewportMappage') {
+		      viewport_map.showevents();
+			}
+		  });
+		}
+	});
 }
 
 function socket_disconnect() {
