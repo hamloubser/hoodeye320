@@ -97,3 +97,24 @@ function base64toBlob(base64Data, contentType) {
     }
     return new Blob(byteArrays, { type: contentType });
 }
+
+
+//sync_get: mostly for loading templates from local files, returns the result of the get or undefined on any failure
+function sync_get(url) {
+  var result;
+  $.ajax({ url: url, async: false, success: function(response) { result = response; }});
+  return result;
+}
+
+// Load template with fallback, call next(rendered_html)
+var loaded_fragments = { };
+//var load_fragment_path = '/fragments/';
+var load_fragment_path = '';
+function load_fragment(fragment_spec) {
+   // if no path given, assume relative local path
+	if (!loaded_fragments[fragment_spec]) {
+      loaded_fragments[fragment_spec] = sync_get(fragment_spec);
+	}
+	return loaded_fragments[fragment_spec];
+}
+

@@ -807,7 +807,7 @@ function editeventformpage() {
     c += '<h3>Community: ' + thisevent.community_name + '</h3>';
     c += 'Event type: ' + thisevent.intype_label + '<br/>';
     c += '<h4>Detail:</h4>';
-    c += thisevent.detail + '<br>';
+    c += thisevent.data.detail + '<br>';
     c += 'Added by ' + thisevent.nickname + ' at ' 
     		+ thisevent.create_time.substring(0,10) + ' @ ' + thisevent.create_time.substring(11,16)  
     		+ '<br><br>';
@@ -966,7 +966,7 @@ function viewports_setup () {
 			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
-			 + event.detail  +'</h6> ';
+			 + event.data.detail  +'</h6> ';
             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li>';
 
 			 // Now add any images
@@ -1024,15 +1024,21 @@ function init_viewportMap() {
     mapcheck.setready();
 }
 
+var event_mapmarker_template;
 function event_add_marker(event) {
     //debugmsg("adding marker for event:",event._id);
-    var event_mapinfo = "<b>"+event.intype +"</b>" 
+	if (!event_mapmarker_template) { 
+		event_mapmarker_template = _.template(load_fragment('templates/event_mapmarker_template.tmpl'));
+    }
+	var event_mapinfo = event_mapmarker_template({event: event});
+
+    /* var event_mapinfo = "<b>"+event.intype +"</b>" 
     + "<i>@ " + event.create_time.substring(0,10) + "  " + event.create_time.substring(11,16)
     + " <br>" 
-    + event_edit_link(event)+ "  " + event.detail + '<br>'
+    + event_edit_link(event)+ "  " + event.data.detail + '<br>'
     + " Reported by: " + event.nickname  + " "
     + '(' + event.status + ")</i>";
-    //  XXX working on ui concept to edit and event - ;			
+    //  XXX working on ui concept to edit and event - ;			*/
    
    
     var event_marker = new google.maps.Marker({
