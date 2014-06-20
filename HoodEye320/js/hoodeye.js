@@ -1022,7 +1022,7 @@ function viewports_setup () {
     setup: function() {
         // static listview setup
         var markup = {
-            header: '<h5 >' + current.active_community.name + ': Recent events</h5>' + 
+            header: '' + current.active_community.name + ': Recent events' + 
             '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"  >',
             footer: '</ul>',
         };
@@ -1040,12 +1040,12 @@ function viewports_setup () {
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
             items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
-			+'<h6 class="ui-bar ui-bar-a ui-corner-all" style=" margin: 0px; padding: 0px;" >'
-			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
+			+'<h4 class="ui-bar ui-bar-a ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+			+'<img   style="width: 25px; height: 25px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
 			 + object_to_html(event.data)  
-			 +'</h6> ';
+			 +'</h4> ';
             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li>';
 
 			 // Now add any images
