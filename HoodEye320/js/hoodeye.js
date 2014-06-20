@@ -1,4 +1,4 @@
-f// JavaScript Document
+// JavaScript Document
 //
 
 // load libraries required
@@ -156,7 +156,7 @@ function onDeviceReady() {
         var camera_options = default_camera_options;
         //camera_options.PictureSourceType  = 0; //PHOTOLIBRARY;
         //camera_options.PictureSourceType  = 1; //CAMERA - default
-        camera_options.PictureSourceType  = 2; //SAVEDPHOTOALBUM;
+        camera_options.PictureSourceType  = 0; //SAVEDPHOTOALBUM;
         event_new_image(camera_options);
 	});
 
