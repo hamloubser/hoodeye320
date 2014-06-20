@@ -3,6 +3,8 @@
           <div data-role="fieldcontain">
              <label for="comment">Add details  </label>
 						 <textarea name="detail" type="text" placeholder=""><%=event.data.detail%> </textarea>
+						 <textarea name="detail2" type="text" placeholder=""><% print(event.data.detail2||event.data.detail)%> </textarea>
+						  <textarea name="append.detail" type="text" placeholder=""> </textarea>
           </div>
 
     <!-- This is mostly working but looks bad/confusing
@@ -27,6 +29,6 @@
           </div>
 
 		  
-
+		<input name='newstate'  data-inline="true" value="edited"  type='hidden' > 
        <input name='submit'  data-inline="true" value="SEND NOW"  type='submit' > 
       </form>
