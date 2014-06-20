@@ -1,26 +1,30 @@
-<form id = "EventForm">
-<label for="comment">Comment  </label>
-             <textarea name="detail" type="text" placeholder=""> </textarea>
-          </div>
+    <form id = "EventForm">
+          
+    <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>What did you see ?</legend>
+        <input name="What" id="radio-choice-h-2a" type="radio" checked="checked" value="Person">
+        <label for="radio-choice-h-2a">Person<br><img style="width: 40px; height: 40px;" src="images/pedestriancrossing.png"></label>
+        <input name="What" id="radio-choice-h-2b" type="radio" value="Car">
+        <label for="radio-choice-h-2b">Car<br><img style="width: 40px; height: 40px;" src="images/car.png"></label>
+        <input name="What" id="radio-choice-h-2c" type="radio" value="other">
+        <label for="radio-choice-h-2c">Other<br><img style="width: 40px; height: 40px;" src="images/Panic_icon.png"></label>
+    </fieldset>
+<br><br>
+      <fieldset data-role="controlgroup" data-type="horizontal">
+        <legend>What about it ?:</legend>
+        <input name="andWhat" id="checkbox-h-2a" type="checkbox" value="Know it">
+        <label for="checkbox-h-2a">Know it <br><img style="width: 40px; height: 40px;" src="images/expert.png"></label>
+        <input name="andWhat" id="checkbox-h-2b" type="checkbox" value="Danger">
+        <label for="checkbox-h-2b">Danger<br><img style="width: 40px; height: 40px;" src="images/Warning_icon.png"></label>
+        <input name="andWhat" id="checkbox-h-2c" type="checkbox" value="I Not Safe">
+        <label for="checkbox-h-2c">I Not Safe<br><img style="width: 40px; height: 40px;" src="images/shooting.png"></label>
+    </fieldset>
+   
+        
+        
 
-          <div class="content">
-            <div class="action-area ch50">
-                <!--button class="button dh" id="captureVideo" type="hidden">Capture Video</button >
-                <button class="button dh" id="captureAudio" type="hidden">Capture Audio</button -->
-                <button class="button dh" id="captureImage">Capture Warning Image</button>
-               
-                
-                
-                
-            </div>
-            <div class="result-area ch50">
-                <div class="results">
-                    <div id="media"></div>
-                </div>
-                <div class="separator"></div>
-            </div>
-          </div>
-
-          <p> <br><br><br>   </p>
-         <h1>    <input name='submit'  value="Report" data-icon="alert" type='submit' style="color:black; background-color:#ed1c24">    </h1>
-      </form>
+    <br><br>
+        
+      <input type="submit" data-inline="true" value="Submit">
+     
+    </form>  
