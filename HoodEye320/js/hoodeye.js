@@ -736,24 +736,25 @@ function submitEvent() {
 function submitEditEvent() {
     // Get the event to edit from the session storoage where it got saved on click
 	var event_data = {};
-    event_data._id = current.allevents[sessionStorage.event_to_edit];
+    event_data = current.allevents[sessionStorage.event_to_edit];
 
     var currentTime = new Date();
     
     //This uses jquery.formparams.js
 	var newdata = $('#EventEditForm').formParams();
-    debugmsg('event_data as from form:',event_data);
+    debugmsg('event_data as from form:',newdata);
 
     //TODO: Move key data fields out of event_data.newdata into event_data if they're present eg. position
 
-	event_data.data = newdata;
+	event_data.data = _.defaults(newdata,event_data.data);
     
     // Standard event data
     
     //event_data.status = "new";
     //event_data.update_time = currentTime.toISOString();
     
-    //debugmsg("post to edit event: ",event_data);
+    debugmsg("post to edit event: ",event_data);
+	//TODO: rather just update data than overwrite the event
     $.post(server_address +'/api/event',event_data,function(response) {
         //debugmsg("post to event succeeded",this);
         //debugmsg("response:",response)
@@ -867,8 +868,14 @@ function editeventformpage() {
     console.log(thisevent);
     var img_width = ~~($(window).width()*0.85);
 
-    var c = sync_get('input-types/'+thisevent.intype_name+'_Edit.html');
-	if (!c) {
+    var tmpl = sync_get('input-types/'+thisevent.intype+'_Edit.html');
+    console.log('file to load: input-types/'+thisevent.intype_name+'_Edit.html');
+	console.log('event edit form after load attempt:');
+	var c;
+	if (tmpl) {
+	  c = _.template(tmpl,{event: thisevent});
+	  console.log(c);
+	} else {
 		c = '';
 		c += '<h3>Community: ' + thisevent.community_name + '</h3>';
 		c += 'Event type: ' + thisevent.intype_label + '<br/>';
@@ -889,6 +896,10 @@ function editeventformpage() {
 
     //c += 'Debug: ' + JSON.stringify(thisevent);
     $("#editeventformcontent").html(c);
+    $("#editeventformpage").enhanceWithin();
+    $('#EventEditForm').bind("submit",function(event) { event.preventDefault(); });
+    $('#EventEditForm input[type="submit"]').bind("click",function(event) { event.preventDefault(); return submitEditEvent(); });
+
 }
 
 
