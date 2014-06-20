@@ -745,6 +745,18 @@ function submitEditEvent() {
     debugmsg('event_data as from form:',newdata);
 
     //TODO: Move key data fields out of event_data.newdata into event_data if they're present eg. position
+	if (newdata.newstatus) {
+	  event_data.status = newstatus;
+	  delete newdata.newstatus;
+	}
+	if (newdata.append) {
+      var append = newdata.append;
+	  delete newdata.append;
+      _.each(append,function(value,key) {
+	    newdata.key += value;
+	  });
+	}
+
 
 	event_data.data = _.defaults(newdata,event_data.data);
     
