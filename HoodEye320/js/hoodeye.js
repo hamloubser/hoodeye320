@@ -145,8 +145,8 @@ function onDeviceReady() {
         quality: 50,
         destinationType: Camera.DestinationType.DATA_URL,
         encodingType: Camera.EncodingType.JPEG,
-        targetWidth: 800,
-        targetHeight: 600,
+        targetWidth: 600,
+        targetHeight: 400,
     };
     
     $(document).delegate('#addeventformpage','pagebeforeshow',function(){
