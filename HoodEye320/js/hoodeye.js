@@ -6,6 +6,7 @@ $.getScript('jslibs/jquery.formparams.js');
 //$.getScript('jslibs/jsrender/jsrender.min.js');
 
 
+
 var qs = get_url_params();
 var server_port = qs.port || 4242;
 var server_address = "http://dev.hoodeye.com:" + server_port;
@@ -214,6 +215,7 @@ function onDeviceReady() {
     // page form submit bindings
     
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
+    $('#EventEditForm').bind("submit",function(event) { event.preventDefault(); return submitEditEvent(); });
     $('#loginForm').bind("submit",function(event) { event.preventDefault(); submitLogin(); });
     $('#logoutForm').bind("submit",function(event) { event.preventDefault(); submitLogout(); });
     $('#registerForm').bind("submit",function(event) { event.preventDefault(); return submitRegister(); });
@@ -732,6 +734,67 @@ function submitEvent() {
     //});
 }
 
+function submitEditEvent() {
+    // Get the event to edit from the session storoage where it got saved on click
+	var event_data = {};
+    event_data = current.allevents[sessionStorage.event_to_edit];
+
+    var currentTime = new Date();
+    
+    //This uses jquery.formparams.js
+	var newdata = $('#EventEditForm').formParams();
+    debugmsg('event_data as from form:',newdata);
+
+    //TODO: Move key data fields out of event_data.newdata into event_data if they're present eg. position
+
+	event_data.data = _.defaults(newdata,event_data.data);
+    
+    // Standard event data
+    
+    //event_data.status = "new";
+    //event_data.update_time = currentTime.toISOString();
+    
+    debugmsg("post to edit event: ",event_data);
+	//TODO: rather just update data than overwrite the event
+    $.post(server_address +'/api/event',event_data,function(response) {
+        //debugmsg("post to event succeeded",this);
+        //debugmsg("response:",response)
+        if (response.status) {
+            showstatus("Event edited");
+			debugmsg("current.event_files: ",current.event_files);
+            debugmsg("current.event_images.length: ",current.event_images.length);
+            
+			if (current.event_files.length > 0) {
+              var files_to_save = current.event_files;
+              $.each(files_to_save,function(key,file) {
+			    debugmsg('saving file to event:'+file.name);
+			    event_save_image(response.event,file);
+			  });
+			  current.event_files = [];
+			}
+			if (current.event_images.length > 0) {
+              var images_to_save = current.event_images;
+              $.each(images_to_save,function(key,image_blob) {
+			    event_save_image(response.event,image_blob);
+			  });
+			  current.event_images = [];
+			}
+            //TODO: trigger load of event
+        } else {
+            showstatus("Event not edited: "+response.msg);
+        }
+    }).fail(function() { 
+        showstatus("Error editing event: request failed.");
+      //debugmsg("post to event failed",this);
+    });
+    //function(data,textStatus,jqXHR) { 
+    //    debugmsg('Save event success:',jqXHR,textStatus,data);
+    //    showstatus("Event Saved");
+    //});
+}
+
+
+
 function event_save_image(event,image_blob) {
 	debugmsg('saving event image_blob:');
 	debugmsg(image_blob.name);
@@ -806,15 +869,24 @@ function editeventformpage() {
     console.log(thisevent);
     var img_width = ~~($(window).width()*0.85);
 
-    var c = '';
-    c += '<h3>Community: ' + thisevent.community_name + '</h3>';
-    c += 'Event type: ' + thisevent.intype_label + '<br/>';
-    c += '<h4>Detail:</h4>';
-    c += thisevent.data.detail + '<br>';
-    c += 'Added by ' + thisevent.nickname + ' at ' 
-    		+ thisevent.create_time.substring(0,10) + ' @ ' + thisevent.create_time.substring(11,16)  
-    		+ '<br><br>';
-    
+    var tmpl = sync_get('input-types/'+thisevent.intype+'_Edit.html');
+    console.log('file to load: input-types/'+thisevent.intype_name+'_Edit.html');
+	console.log('event edit form after load attempt:');
+	var c;
+	if (tmpl) {
+	  c = _.template(tmpl,{event: thisevent});
+	  console.log(c);
+	} else {
+		c = '';
+		c += '<h3>Community: ' + thisevent.community_name + '</h3>';
+		c += 'Event type: ' + thisevent.intype_label + '<br/>';
+		c += '<h4>Detail:</h4>';
+		c += thisevent.data.detail + '<br>';
+		c += 'Added by ' + thisevent.nickname + ' at ' 
+		+ thisevent.create_time.substring(0,10) + ' @ ' + thisevent.create_time.substring(11,16)  
+		+ '<br><br>';
+	}
+
     if (typeof thisevent.files == 'object') {
         c += '<div class="eventimages">';
         $.each(thisevent.files,function(key,filename) {
@@ -825,6 +897,10 @@ function editeventformpage() {
 
     //c += 'Debug: ' + JSON.stringify(thisevent);
     $("#editeventformcontent").html(c);
+    $("#editeventformpage").enhanceWithin();
+    $('#EventEditForm').bind("submit",function(event) { event.preventDefault(); });
+    $('#EventEditForm input[type="submit"]').bind("click",function(event) { event.preventDefault(); return submitEditEvent(); });
+
 }
 
 
