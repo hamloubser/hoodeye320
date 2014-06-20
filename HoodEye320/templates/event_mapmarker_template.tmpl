@@ -1,4 +1,4 @@
-<b> <%= event.intype_label %> </b> <i>@ <%= event.create_time %> in <%= community.name %></i>
+<b> <%= event.intype_label %> </b> <i>@ <%= event.create_time %> </i>
 <br>
-<% print(event_edit_link(event)) %> <%= event.data.detail %><br>
+<% print(event_edit_link(event)) %> <% print(object_to_html(event.data)) %><br>
 Reported by: <%= event.nickname %> (<%= event.status %>)

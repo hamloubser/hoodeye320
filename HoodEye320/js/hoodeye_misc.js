@@ -118,3 +118,43 @@ function load_fragment(fragment_spec) {
 	return loaded_fragments[fragment_spec];
 }
 
+String.prototype.capitalize = function() {
+	return this.charAt(0).toUpperCase() + this.slice(1);
+}
+
+function object_to_html (data) {
+  var html = '';
+  if (typeof data == 'string') {
+    return data;
+  }
+	      console.log('data: ' + typeof data);
+	      console.log(data);
+  if (typeof data == 'array') {
+	  _.each(data,function(index,avalue) {
+		  html += object_to_html(avalue) + ', ';
+	  });
+	  return html;
+  }
+  if (typeof data == 'object') {
+      var html_end = '';
+      var html_join = '';
+	  _.each(data,function(value,key) {
+	      console.log('value: ' + typeof value + '....' + value);
+	      console.log('key: ' + typeof key);
+		  if (typeof key == 'string') {
+		    html += key.capitalize().replace("_"," ") + ': ';
+		    html += object_to_html(value) + '<br>';
+		  } else {
+		    // should be a number..
+		    html += html_join + object_to_html(value);
+            html_join = ', ';
+            html_end = '<br>';
+		  }
+		  //html += key.replace("_"," ") +': ' + object_to_html(value) + '<br>';
+	  });
+	  html += html_end;
+	return html;
+  }
+  console.log('object_to_html uncaught type:' + typeof data);
+  return JSON.stringify(data);
+}

@@ -297,9 +297,11 @@ function socket_connect() {
 		if (current.active_community._id == community_id) {
           refresh_eventstreams(function () {
 		    if ($.mobile.activePage.attr("id") == 'viewportListpage') {
+			  console.log("event-saved: showing list events");
 			  viewport_list.showevents();
 			}
 		    if ($.mobile.activePage.attr("id") == 'viewportMappage') {
+			  console.log("event-saved: showing map events");
 		      viewport_map.showevents();
 			}
 		  });
@@ -967,7 +969,8 @@ function viewports_setup () {
 			+'<img   style="width: 20px; height: 20px; " src='+get_event_icon(event)+'>'
 			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
             + ' (' + event.nickname + ') <h6>' 
-			 + event.data.detail  +'</h6> ';
+			 + object_to_html(event.data)  
+			 +'</h6> ';
             items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li>';
 
 			 // Now add any images
