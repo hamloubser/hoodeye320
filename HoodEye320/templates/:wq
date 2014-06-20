@@ -1,4 +1,0 @@
-<b> {{= event.intype_label }} </b> <i>@ {{= event.create_time }} </i>
-<br>
-{{ event_edit_link(event) }} {{= event.detail }}br>
-Reported by: {{= event.nickname }} ({{= event.status }})
