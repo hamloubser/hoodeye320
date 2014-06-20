@@ -1,4 +1,4 @@
-// JavaScript Document
+f// JavaScript Document
 //
 
 // load libraries required
@@ -39,13 +39,7 @@ if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
     Camera.EncodingType.JPEG = 0;
 }
     
-var default_camera_options = {
-    quality: 50,
-    destinationType: Camera.DestinationType.DATA_URL,
-    encodingType: Camera.EncodingType.JPEG,
-    targetWidth: 800,
-    targetHeight: 600,
-};
+
 
 //-----------------------
 var mapzoomlevel = 15;
@@ -147,7 +141,13 @@ function onDeviceReady() {
         updatecommunityprofilepage();
     });
     
-    
+    var default_camera_options = {
+        quality: 50,
+        destinationType: Camera.DestinationType.DATA_URL,
+        encodingType: Camera.EncodingType.JPEG,
+        targetWidth: 800,
+        targetHeight: 600,
+    };
     
     $(document).delegate('#addeventformpage','pagebeforeshow',function(){
         getLocation();
@@ -162,6 +162,8 @@ function onDeviceReady() {
 
 	$(document).on('click',".eventCaptureImage",function() {
         var camera_options = default_camera_options;
+        camera_options.PictureSourceType  = 1; //CAMERA - default
+
         // customise camera_options
 		//navigator.device.capture.captureImage(function(media_files) {...
         event_new_image(camera_options);
