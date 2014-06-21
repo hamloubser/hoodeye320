@@ -1,0 +1,14 @@
+    <form id = "EventEditForm">
+          
+           
+	 <label for="Title" >Calendar Event</label><input name="Title"  type="Text" value="<%=event.data.Title%>">
+	 <label >Date  </label><input name="Date" type="date" data-role="date" value="<%=event.data.Date%>">
+	 <label >Time  </label> <input name="Time" type="time" data-role="time" value="<%=event.data.Time%>">
+	<label for="comment">Event details---location from map  - Choose roles to invite  </label>
+             <textarea name="detail" type="text" ><%=event.data.detail%></textarea>
+	
+	<input name='newstate'  data-inline="true" value="edited"  type='hidden' > 
+      <input type="submit" data-inline="true" value="SEND NOW">
+   <h6>  last update : <%=event.update_time%></h6>
+	<h6> create date : <%=event.create_time%></h6>
+    </form>  
