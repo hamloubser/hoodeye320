@@ -1048,7 +1048,7 @@ function viewports_setup () {
         // static listview setup
         var markup = {
             header: '' + current.active_community.name + ': Recent events' + 
-            '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"  >',
+            '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"   >',
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
@@ -1064,16 +1064,20 @@ function viewports_setup () {
         var img_width = ~~($(window).width()*0.85);
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
-			+'<h4 class="ui-bar ui-bar-a ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+            items_html += '<div data-role="content"  ><li style=" margin: 0px; padding: 0px;" >'
+			+'<h6 class="ui-bar ui-bar-e ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+			//+'<h6> '
 			+'<img   style="width: 25px; height: 25px; " src='+get_event_icon(event)+'>'
-			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (' + event.nickname + ') <h6>' 
+           + '</h6>' 
+			//+ object_to_html(event.data)  
+			
 			 + object_to_html(event.data)  
-			 +'</h4> ';
-            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' 
+			// +'</h6> '
+            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > ' 
+			+'  (' + event.nickname + ')...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16) 
+			+' Status: '+event.status +'...' 
 			//+ event_edit_link(event)  //removed edit for list
-			+'</h6></li>';
+			+'</h6><p style="color:blue">______________________________________________________________</p></li>';
 
 			 // Now add any images
 			 if (typeof event.files == 'object') {
