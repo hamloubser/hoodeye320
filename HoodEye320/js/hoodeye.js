@@ -78,6 +78,7 @@ var mapcheck;
 
 var viewport_map;
 var viewport_list;
+var viewport_action;
 
 //Use onready for queuing messages to socket until ready
 var socketcheck;
@@ -211,7 +212,13 @@ function onDeviceReady() {
         // then check for new events and show them once loaded
         refresh_eventstreams(viewport_list.showevents);
     });
-   
+   $(document).delegate('#viewportActionpage','pageshow',function(){
+        debugmsg("pageshow on #viewportActionpage");       
+        // Immediately show all my events for edit and action
+        viewport_action.showevents(current.community_data[current.active_community._id].all);
+        // then check for new events and show them once loaded
+        refresh_eventstreams(viewport_action.showevents);
+    });
     // page form submit bindings
     
     $('#EventForm').bind("submit",function(event) { event.preventDefault(); return submitEvent(); });
@@ -301,6 +308,10 @@ function socket_connect() {
 		    if ($.mobile.activePage.attr("id") == 'viewportListpage') {
 			  console.log("event-saved: showing list events");
 			  viewport_list.showevents();
+			}   //TODO  - only my events for edit and action
+			if ($.mobile.activePage.attr("id") == 'viewportActionpage') {
+			  console.log("event-saved: showing My edits of actions");
+			  viewport_action.showevents();
 			}
 		    if ($.mobile.activePage.attr("id") == 'viewportMappage') {
 			  console.log("event-saved: showing map events");
@@ -1035,16 +1046,17 @@ function viewports_setup () {
     name: 'Default list viewport',
     clear: function() {
         $("#viewportListcontent").html("<h2>Switching community...</h2>");
+		
     },
     setup: function() {
         // static listview setup
         var markup = {
             header: '' + current.active_community.name + ': Recent events' + 
-            '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"  >',
+            '<ul id="viewport_eventlist" style=" margin: 0px; padding: 0px;" data-role="listview"   data-inset="true"   >',
             footer: '</ul>',
         };
         $("#viewportListcontent").html(markup.header+markup.footer);
-        $("#viewport_eventlist").listview();
+		$("#viewport_eventlist").listview();
     },
     newevent: function(event) {
         // Nothing to do for listview
@@ -1056,14 +1068,20 @@ function viewports_setup () {
         var img_width = ~~($(window).width()*0.85);
         $.each(events,function(key,event) {
             //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
-            items_html += '<div data-role="content" style="margin: 0px; padding: 0px;" ><li style=" margin: 0px; padding: 0px;" >'
-			+'<h4 class="ui-bar ui-bar-a ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+            items_html += '<div data-role="content"  ><li style=" margin: 0px; padding: 0px;" >'
+			+'<h6 class="ui-bar ui-bar-e ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+			//+'<h6> '
 			+'<img   style="width: 25px; height: 25px; " src='+get_event_icon(event)+'>'
-			+ '<b>'+event.intype +'</b>'   +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
-            + ' (' + event.nickname + ') <h6>' 
+           + '</h6>' 
+			//+ object_to_html(event.data)  
+			
 			 + object_to_html(event.data)  
-			 +'</h4> ';
-            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'...' + event_edit_link(event)  +'</h6></li>';
+			// +'</h6> '
+            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > ' 
+			+'  (' + event.nickname + ')...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16) 
+			+' Status: '+event.status +'...' 
+			//+ event_edit_link(event)  //removed edit for list
+			+'</h6><p style="color:blue">_______________________________________________________________________________________________________________________________________________________</p></li>';
 
 			 // Now add any images
 			 if (typeof event.files == 'object') {
@@ -1078,11 +1096,68 @@ function viewports_setup () {
         $("#viewport_eventlist").listview('refresh');
     },
   };
+  
+   viewport_action = {
+    name: 'Default Action viewport',
+    clear: function() {
+        $("#viewportActioncontent").html("<h2>Switching community...</h2>");
+		
+    },
+    setup: function() {
+        // static listview setup
+        var markup = {
+            header: '' + current.active_community.name + ': Edit and Actions events' + 
+            '<ul id="viewport_eventaction" style=" margin: 0px; padding: 0px;" data-role="listview"  data-inset="true"  >',
+            footer: '</ul>',
+        };
+        $("#viewportActioncontent").html(markup.header+markup.footer);
+		$("#viewport_eventaction").listview();
+    },
+    newevent: function(event) {
+        // Nothing to do for listview
+    },
+    showevents: function(events) {
+        // ActionEditview
+        var items_html ='';
+        // adw: the ~~ should give an integer value
+        var img_width = ~~($(window).width()*0.85);
+        $.each(events,function(key,event) {
+            //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
+           //items_html += '<li ><img class="ul-li-icon" style="width: 20px; height: 20px;" src='+get_event_icon(event)+'>'
+            items_html += '<div data-role="content"  ><li style=" margin: 0px; padding: 0px;" >'
+			+'<h6 class="ui-bar ui-bar-e ui-corner-all" style=" margin: 0px; padding: 0px;" >'
+			//+'<h6> '
+			+'<img   style="width: 25px; height: 25px; " src='+get_event_icon(event)+'>'
+          
+			//+ object_to_html(event.data)  
+			
+			+ event.nickname +' ...  '+event.create_time.substring(0,10) + ' @ ' + event.create_time.substring(11,16)  
+           + '</h6>' 
+			 + object_to_html(event.data)  
+			// +'</h4> ';
+            items_html += '<h6 style="text-align: right; margin: 0px; padding: 0px" > Status: '+event.status +'..EDIT.' + event_edit_link(event) 
++'</h6><p style="color:red">_______________________________________________________________________________________________________________________________________________________</p></li>';
+
+			 // Now add any images
+			 if (typeof event.files == 'object') {
+			   $.each(event.files,function(key,filename) {
+			     items_html += "<img width=" + img_width+ " src='" + server_address + "/api/file/"+filename+"'/>";
+			   });
+			  }
+            items_html += '</div>';
+
+        });
+        $("#viewport_eventaction").prepend(items_html);
+        $("#viewport_eventaction").listview('refresh');
+    },
+  }; 
+  
+  
 }
 
 function viewports_do(action,arg) {
     //debugmsg("viewports_do: doing " + action);
-    var viewports = [viewport_map, viewport_list];
+    var viewports = [viewport_map, viewport_list, viewport_action];
     $.each(viewports,function(key,viewport) {
         //debugmsg("viewports_do: doing " + action + " on " + viewport.name);
         viewport[action](arg);
