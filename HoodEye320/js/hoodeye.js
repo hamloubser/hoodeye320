@@ -736,8 +736,8 @@ function submitEvent() {
 
 function submitEditEvent() {
     // Get the event to edit from the session storoage where it got saved on click
-	var event_data = {};
-    event_data = current.allevents[sessionStorage.event_to_edit];
+	var edit_event = {};
+    edit_event = current.allevents[sessionStorage.event_to_edit];
 
     var currentTime = new Date();
     
@@ -745,30 +745,34 @@ function submitEditEvent() {
 	var newdata = $('#EventEditForm').formParams();
     debugmsg('event_data as from form:',newdata);
 
-    //TODO: Move key data fields out of event_data.newdata into event_data if they're present eg. position
+    //TODO: Move key data fields out of newdata into edit_event if they're present eg. position
 	if (newdata.newstatus) {
-	  event_data.status = newstatus;
+	  edit_event.status = newdata.newstatus;
 	  delete newdata.newstatus;
 	}
 	if (newdata.append) {
+	  console.log('appending newdata');
       var append = newdata.append;
 	  delete newdata.append;
       _.each(append,function(value,key) {
+	    console.log('appending ' + value + ' to ' + key);
 	    newdata.key += value;
 	  });
 	}
+    debugmsg('newdata after: ',newdata);
 
 
-	event_data.data = _.defaults(newdata,event_data.data);
+	edit_event.data = _.defaults(newdata,edit_event.data);
+    debugmsg('edit_event after: ',edit_event);
     
     // Standard event data
     
     //event_data.status = "new";
     //event_data.update_time = currentTime.toISOString();
     
-    debugmsg("post to edit event: ",event_data);
+    debugmsg("post to edit event: ",edit_event);
 	//TODO: rather just update data than overwrite the event
-    $.post(server_address +'/api/event',event_data,function(response) {
+    $.post(server_address +'/api/event',edit_event,function(response) {
         //debugmsg("post to event succeeded",this);
         //debugmsg("response:",response)
         if (response.status) {
