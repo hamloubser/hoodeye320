@@ -455,8 +455,8 @@ function set_html_to_layout(html_id,layout_name,layout_type) {
 
 function updateHomeTitle() {
     // Update app header.
-    var newtitle = port + " You are " +current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
-    debugmsg("Setting title to "+newtitle);
+   var newtitle = port + ": You are " +current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
+   debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
 	set_html_to_layout("#welcometext","msg"+"_" + current.active_community.name,"msg");
 	// $("#welcometext").page('refresh');
