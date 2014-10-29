@@ -58,7 +58,7 @@
             <ul id="usermenuoptions" data-role="listview" data-inset="true" data-theme="a">
                 <li><a href="#registerpage" data-theme="c">Register</a></li>
                 <li><a href="#loginpage" data-theme="c">Login</a></li>
-				 <li><a href="#Environmentpage" data-theme="c">Environment</a></li>
+				 <li><a href="#environmentpage" data-theme="c">Port</a></li>
             </ul>
         </div> 
         
@@ -175,15 +175,15 @@
         </div>       
 		
 		        <!--  Environment Change form-->
-        <div data-role="page" id="Environmentpage" data-theme="a" >
+        <div data-role="page" id="environmentpage" data-theme="a" >
             <div class="ui-content" role="main">
                 <form name="EnvironmentForm" id="EnvironmentForm">
-                <fieldset data-role="controlgroup" data-type="vertical">
-					<legend>Change your App Environment</legend>
-					<input name="Environment" id="radio-choice-h-2a" type="radio" checked="checked" value="4242">
-					<label for="radio-choice-h-2a">Stable port 4242</label>
-					<input name="Environment" id="radio-choice-h-2b" type="radio" value="4343">
-					<label for="radio-choice-h-2b">Development port 4343 </label>
+                <fieldset data-role="controlgroup" name="port" data-type="vertical">
+					<legend>Change your App port Environment</legend>
+					<input  name="portnumber"id="port4242" type="radio" checked="checked" value="4242">
+					<label for="port4242">Stable port 4242</label>
+					<input  name="portnumber" id="port4343" type="radio" value="4343">
+					<label for="port4343">Development port 4343 </label>
 				   <!-- <input name="Environment" id="radio-choice-h-2c" type="radio" value="other">
 					<label for="radio-choice-h-2c">Other</label>-->
 				</fieldset>   

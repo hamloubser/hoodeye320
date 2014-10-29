@@ -8,11 +8,11 @@ $.getScript('jslibs/jquery.formparams.js');
 
 
 var qs = get_url_params();
-var server_port = qs.port || 4242;
+var server_port = qs.port || localStorage.port || 4242 ;
 var server_address = "http://dev.hoodeye.com:" + server_port;
 var ws_server_address = "http://dev.hoodeye.com:" + server_port;
-
-
+// Port is for changing the environment - not sure how this conflicts with the above info yet
+var port = "live";
 
 // example scripts used
 //$.getScript('scripts/capture-app.js');
@@ -132,6 +132,10 @@ function onDeviceReady() {
         }
     });
     
+	$(document).delegate('#environmentpage','pageshow',function(){
+    // port = $("#port").val;
+    });
+	
     $(document).delegate('#joincommunitypage','pagebeforeshow',function(){
         // Update the list of available communities to join
         update_communities_to_join();
@@ -226,6 +230,7 @@ function onDeviceReady() {
     $('#loginForm').bind("submit",function(event) { event.preventDefault(); submitLogin(); });
     $('#logoutForm').bind("submit",function(event) { event.preventDefault(); submitLogout(); });
     $('#registerForm').bind("submit",function(event) { event.preventDefault(); return submitRegister(); });
+    $('#EnvironmentForm').bind("submit",function(event) { event.preventDefault(); return submitPort(); });
     $('#joincommunityForm').bind("submit",function(event) { event.preventDefault(); return submitJoincommunity(); });
     $('#leavecommunityForm').bind("submit",function(event) { event.preventDefault(); return submitLeavecommunity(); });
     
@@ -421,15 +426,21 @@ function fix_user_menu() {
     // If logged in, change the usermenu options
     if (current.user.username != "Guest") {
         $("#usermenuoptions").html('<li><a href="#userprofilepage" data-theme="c">Private Profile</a></li>'+
-                                   '<li><a href="#logoutpage" data-theme="c">Logout</a></li>');
+                                   '<li><a href="#logoutpage" data-theme="c">Logout</a></li>'+
+								   '<li><a href="#environmentpage" data-theme="c">Environment</a></li>'
+								   );
         $("#usermenuoptions").listview();
         $("#usermenuoptions").listview('refresh');
+
         debugmsg("Setting usermenu to profile/logout");
     } else {
         $("#usermenuoptions").html('<li><a href="#registerpage" data-theme="c">Register</a></li>'+
-                                   '<li><a href="#loginpage" data-theme="c">Login</a></li>');
+                                   '<li><a href="#loginpage" data-theme="c">Login</a></li>'+
+								   '<li><a href="#environmentpage" data-theme="c">Environment</a></li>'
+								   );
         $("#usermenuoptions").listview();
-        $("#usermenuoptions").listview('refresh');		
+        $("#usermenuoptions").listview('refresh');	
+	
         debugmsg("Setting usermenu to login/register");
     }
     $("#usermenupopup").popup();
@@ -444,11 +455,12 @@ function set_html_to_layout(html_id,layout_name,layout_type) {
 
 function updateHomeTitle() {
     // Update app header.
-    var newtitle = "You are " +current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
+    var newtitle = port + " You are " +current.user.username + " in " + current.active_community.name + " as " + getNickname4Community();
     debugmsg("Setting title to "+newtitle);
     $('.appheader').html(newtitle);
 	set_html_to_layout("#welcometext","msg"+"_" + current.active_community.name,"msg");
 	// $("#welcometext").page('refresh');
+		showstatus(port);
 }
 
 function submitLogin() {
@@ -499,6 +511,44 @@ function submitRegister() {
 			});
         }
     });
+}
+
+
+function submitPort() {
+    //debugmsg(event);
+	//localStorage.port = $("#port").val;
+	//port = encodeURIComponent($("#port").val())
+	//if ($('#port4242').checked() == "checked") {
+   //         port = $('#port4242').val();
+    //    } else 
+	//	if ($('#port4343').checked() == "checked") {
+   //        port =  $('#port4343').val() ;
+   //     } else{ port = "4242" }
+	port = $("input[name=portnumber]:checked").val();
+	localStorage.port = port ;
+	//port = $('#port4242').val() || $('#port4343').val() ;
+	debugmsg(port);debugmsg($('#port4242').val());debugmsg($('#port4343').val());
+	//showstatus("The PORT is"+port);
+//	socket_disconnect();
+	
+  
+//$.mobile.pageContainer.pagecontainer("change", '/?port='+port, {reload: true});
+//		switchpage('#home');
+//		 $("#home").page('refresh');
+	
+			socket_disconnect();
+    $.post(server_address+'/api/logout',function(result) {
+        showstatus(result.message);
+        current.active_community = { name: "unset"};
+        load_session_user(true,function() {
+		  switchpage('#home');
+		  updateHomeTitle();
+		//   $("#home").page('refresh');
+		 });
+    });
+    
+
+
 }
 
 function submitLogout() {
