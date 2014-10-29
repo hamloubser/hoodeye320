@@ -8,7 +8,7 @@ $.getScript('jslibs/jquery.formparams.js');
 
 
 var qs = get_url_params();
-var server_port = qs.port || localStorage.port || 4242 ;
+var server_port = qs.port || 4242 ;
 var server_address = "http://dev.hoodeye.com:" + server_port;
 var ws_server_address = "http://dev.hoodeye.com:" + server_port;
 // Port is for changing the environment - not sure how this conflicts with the above info yet
