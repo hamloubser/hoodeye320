@@ -1,2 +1,3 @@
 cordova.js
-localhost-windows/node_modules
+run-client-as-webpage/node_modules
+hoodeye.appcache
