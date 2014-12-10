@@ -19,7 +19,8 @@ var port = "live";
 
 // On phone, wait for PhoneGap to load, in browser, use document.ready()
 var isphone = true;
-if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+// if (navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
+if (navigator.userAgent.match(/xxx(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/)) {
     document.addEventListener("deviceready", onDeviceReady, false);
 } else {
     $(document).ready(onDeviceReady);
